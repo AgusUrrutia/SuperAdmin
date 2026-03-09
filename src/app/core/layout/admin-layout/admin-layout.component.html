@@ -1,0 +1,19 @@
+<div class="d-flex flex-nowrap" style="height: 100vh; overflow: hidden;">
+  <!-- Sidebar Container -->
+  @if (isSidebarVisible) {
+    <div class="bg-dark text-white" style="width: 250px; min-width: 250px;">
+      <app-sidebar (closeSidebar)="toggleSidebar()"></app-sidebar>
+    </div>
+  }
+
+  <!-- Main Content Container -->
+  <div class="d-flex flex-column flex-grow-1 bg-light" style="overflow-x: hidden;">
+    <!-- Navbar Container -->
+    <app-navbar (openSidebar)="toggleSidebar()" [isSidebarHidden]="!isSidebarVisible"></app-navbar>
+
+    <!-- Page Content -->
+    <main class="flex-grow-1 p-4 overflow-auto">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

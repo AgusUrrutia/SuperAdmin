@@ -1,0 +1,54 @@
+<div class="d-flex flex-column h-100 p-3" style="background-color: #1a1e23;">
+  <!-- Branding Area -->
+  <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3 border-secondary">
+    <a href="/" class="d-flex align-items-center text-white text-decoration-none">
+      <span class="fs-4 fw-semibold me-2">SuperAdmin</span>
+    </a>
+
+    <!-- Close Button -->
+    <button (click)="onClose()" type="button"
+      class="btn btn-outline-secondary border-0 btn-sm p-1 d-flex align-items-center justify-content-center text-white"
+      style="width: 32px; height: 32px;">
+      <span class="fw-bold" style="font-size: 1.2rem; line-height: 1;">&times;</span>
+    </button>
+  </div>
+
+  <!-- Navigation -->
+  <ul class="nav nav-pills flex-column mb-auto">
+    <!-- Categories Collapse (No White Frame) -->
+    <li class="nav-item mb-1">
+      <button class="nav-link text-white w-100 text-start d-flex align-items-center justify-content-between px-2"
+        type="button" data-bs-toggle="collapse" data-bs-target="#categoriesCollapse" aria-expanded="true"
+        style="color: #cccccc !important;">
+        Apps
+        <span class="dropdown-toggle"></span>
+      </button>
+      <div class="collapse show w-100 mt-1" id="categoriesCollapse">
+        <ul class="nav flex-column ps-3 py-1" style="font-size: 0.95rem;">
+          <li class="nav-item w-100"><a class="nav-link py-2 px-2 text-white-50 w-100 rounded-1 text-decoration-none"
+              href="#">SGS</a></li>
+          <li class="nav-item w-100"><a class="nav-link py-2 px-2 text-white-50 w-100 rounded-1 text-decoration-none"
+              href="#">B2B</a></li>
+          <li class="nav-item w-100"><a class="nav-link py-2 px-2 text-white-50 w-100 rounded-1 text-decoration-none"
+              href="#">AD</a></li>
+
+        </ul>
+      </div>
+    </li>
+
+    <!-- User Admin Link -->
+    <li class="nav-item mb-1 mt-3">
+      <a href="/users" class="nav-link text-white px-2" style="color: #cccccc !important;">
+        Administración de Usuarios
+      </a>
+    </li>
+  </ul>
+
+  <!-- EK Footer Logo -->
+  <div class="mt-auto d-flex justify-content-center pt-4">
+    <div class="d-flex align-items-end" style="line-height: 1;">
+      <span class="fw-bold text-white mb-0" style="font-size: 2.2rem; margin-right: -2px; letter-spacing: -1px;">e</span>
+      <span class="fw-bold text-danger mb-0" style="font-size: 2.2rem; letter-spacing: -2px;">K</span>
+    </div>
+  </div>
+</div>
