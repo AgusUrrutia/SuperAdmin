@@ -1,0 +1,88 @@
+<div class="roles-modal-container">
+    <!-- Header -->
+    <div class="header d-flex align-items-center mb-4">
+        <mat-icon class="me-2 text-dark">group</mat-icon>
+        <h2 class="title mb-0 me-3">Usuarios</h2>
+        <span class="count">{{ totalCount }}</span>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="cerrar()"></button>
+    </div>
+
+    <!-- Agregar Usuario Section -->
+    <div class="card p-3 mb-4 add-user-section border-light shadow-sm">
+        <label class="section-label mb-2 fw-semibold">AGREGAR NUEVO USUARIO</label>
+        <div class="d-flex gap-2">
+            <div class="flex-grow-1 position-relative">
+                <input type="text" 
+                       class="form-control" 
+                       placeholder="Seleccionar Usuario..." 
+                       [(ngModel)]="busquedaUsuario"
+                       (input)="filtrarUsuarios()"
+                       [matAutocomplete]="auto"
+                >
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="seleccionarUsuario($event.option.value)">
+                    <mat-option *ngFor="let op of usuariosSugeridos" [value]="op.email">
+                        {{ op.email }}
+                    </mat-option>
+                </mat-autocomplete>
+            </div>
+            <button class="btn btn-add d-flex align-items-center justify-content-center" (click)="agregarUsuario()">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Lista y Filtro -->
+    <div class="card list-section border-light shadow-sm overflow-hidden">
+        <div class="p-3 border-bottom search-wrapper">
+          <div class="position-relative">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input type="text" 
+                   class="form-control search-input" 
+                   placeholder="Filtrar por ID, nombre o email..."
+                   [(ngModel)]="filtroTabla"
+            >
+          </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="fw-bold border-0">ID</th>
+                        <th class="fw-bold border-0">NOMBRE / EMAIL</th>
+                        <th class="border-0"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let u of usuariosFiltrados">
+                        <td class="id-cell">{{ u.id }}</td>
+                        <td class="email-cell">{{ u.email }}</td>
+                        <td class="text-end px-3">
+                            <button class="btn btn-delete p-1" (click)="quitarUsuario(u.id)">
+                                <mat-icon>delete_outline</mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer / Paginacion -->
+        <div class="p-3 d-flex justify-content-between align-items-center footer-section bg-white border-top">
+            <span class="total-text">Total: {{ totalCount }}</span>
+            <div class="d-flex align-items-center gap-2 pagination-controls">
+                <button (click)="cambiarPagina(-1)" 
+                        [disabled]="paginaActual === 1"
+                        class="btn btn-sm btn-outline-light d-flex align-items-center p-1 rounded-circle">
+                    <mat-icon>chevron_left</mat-icon>
+                </button>
+                <span class="page-info"><strong>{{ paginaActual }}</strong> / {{ totalPaginas }}</span>
+                <button (click)="cambiarPagina(1)" 
+                        [disabled]="paginaActual === totalPaginas"
+                        class="btn btn-sm btn-outline-light d-flex align-items-center p-1 rounded-circle">
+                    <mat-icon>chevron_right</mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

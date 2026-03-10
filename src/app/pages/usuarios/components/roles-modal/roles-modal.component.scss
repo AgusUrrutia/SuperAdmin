@@ -1,0 +1,265 @@
+.roles-modal-container {
+    padding: 20px;
+    background-color: #fcfcfc;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    height: 580px; /* Altura FIJA para estabilidad absoluta */
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        .mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            opacity: 0.8;
+        }
+        .title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #222;
+        }
+        .count {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #555;
+        }
+        .btn-close {
+            box-shadow: none;
+            cursor: pointer;
+            filter: grayscale(1);
+            opacity: 0.5;
+            &:hover {
+                opacity: 1;
+                filter: none;
+            }
+        }
+    }
+
+    .add-user-section {
+        background-color: #ffffff;
+        border: 1px solid #dae1e7;
+        border-radius: 10px;
+        padding: 15px !important;
+        margin-bottom: 15px !important;
+
+        .section-label {
+            color: #555;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            height: 38px;
+            border: 1.2px solid #dae1e7;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #222;
+            padding: 0 12px;
+            
+            &::placeholder {
+                color: #888;
+            }
+
+            &:focus {
+                border-color: #627d98;
+                box-shadow: 0 0 0 3px rgba(98, 125, 152, 0.1);
+            }
+        }
+
+        .btn-add {
+            background-color: #9fb3c8;
+            color: #ffffff;
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            padding: 0;
+            transition: background-color 0.2s;
+            border: none;
+
+            &:hover {
+                background-color: #627d98;
+            }
+
+            .mat-icon {
+                font-size: 24px;
+                width: 24px;
+                height: 24px;
+            }
+        }
+    }
+
+    /* Estilos para el Autocomplete */
+    ::ng-deep .mat-mdc-autocomplete-panel {
+        background-color: #ffffff !important;
+        border-radius: 8px !important;
+        border: 1px solid #dae1e7 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+        max-height: 250px !important;
+
+        .mat-mdc-option {
+            min-height: 40px !important;
+            padding: 0 15px !important;
+            font-size: 0.9rem !important;
+            color: #102a43 !important; /* Sugerencias más oscuras */
+
+            &:hover {
+                background-color: #f8fafc !important;
+            }
+
+            &.mat-mdc-option-active {
+                background-color: #f1f5f8 !important;
+            }
+        }
+    }
+
+    .list-section {
+        background-color: #ffffff;
+        border: 1px solid #dae1e7;
+        border-radius: 10px;
+        flex-grow: 1; /* Ocupar el espacio restante */
+        display: flex;
+        flex-direction: column;
+        min-height: 320px; /* Asegurar altura suficiente para 5 filas */
+
+        .search-wrapper {
+            background-color: #f8fafc;
+            padding: 10px 14px !important;
+            display: flex;
+            justify-content: flex-start;
+
+            .position-relative {
+                display: flex;
+                align-items: center;
+                background-color: #ffffff;
+                border: 1.2px solid #dae1e7;
+                border-radius: 6px;
+                padding-left: 36px;
+                overflow: hidden;
+                width: 70%; /* Filtro menos ancho */
+                
+                &:focus-within {
+                    border-color: #627d98;
+                }
+            }
+
+            .search-icon {
+                position: absolute;
+                left: 10px;
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+                color: #829ab1; /* Más oscuro */
+            }
+
+            .search-input {
+                border: none;
+                height: 36px;
+                box-shadow: none;
+                color: #222;
+                font-size: 0.88rem;
+
+                &::placeholder {
+                    color: #888;
+                }
+            }
+        }
+
+        .table-responsive {
+            min-height: 250px; /* Altura fija para evitar que el modal salte */
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1; /* Empuja el footer hacia abajo */
+        }
+
+        .table {
+            th {
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+                font-size: 0.7rem;
+                padding: 10px 15px;
+                background-color: #f8fafc;
+                color: #555 !important;
+            }
+
+            td {
+                padding: 8px 15px;
+                font-size: 0.88rem;
+                border-bottom: 1px solid #f1f5f8;
+
+                &.id-cell {
+                    color: #666;
+                    font-weight: 500;
+                }
+                
+                &.email-cell {
+                    color: #222;
+                    font-weight: 500;
+                }
+            }
+
+            .btn-delete {
+                padding: 4px;
+                color: #829ab1; /* Más oscuro */
+                transition: color 0.2s;
+                border: none;
+                background: none;
+
+                &:hover {
+                    color: #ef4e4e;
+                }
+
+                .mat-icon {
+                    font-size: 18px;
+                    width: 18px;
+                    height: 18px;
+                }
+            }
+        }
+    }
+
+    .footer-section {
+        padding: 10px 16px !important;
+        font-size: 0.8rem;
+        
+        .total-text {
+            color: #486581;
+            font-weight: 500;
+        }
+
+        .pagination-controls {
+            .btn-outline-light {
+                border: 1px solid #f1f5f8;
+                color: #627d98;
+                width: 28px;
+                height: 28px;
+                
+                &:hover:not(:disabled) {
+                    background-color: #f8fafc;
+                    border-color: #dae1e7;
+                }
+
+                &:disabled {
+                    opacity: 0.3;
+                    cursor: not-allowed;
+                }
+
+                .mat-icon {
+                    font-size: 18px;
+                    width: 18px;
+                    height: 18px;
+                }
+            }
+
+            .page-info {
+                color: #334e68;
+                font-size: 0.8rem;
+                padding: 0 8px;
+                
+                strong {
+                    color: #102a43;
+                }
+            }
+        }
+    }
+}

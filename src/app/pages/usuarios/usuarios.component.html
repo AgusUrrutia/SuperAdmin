@@ -1,0 +1,54 @@
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0" style="color: #222;">Gestión de Usuarios</h2>
+        <button (click)="abrirModal()" class="btn-dark-custom">
+            + Crear Nuevo Usuario
+        </button>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">ID / NOMBRE</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">CORREO</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">ROL</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">ESTADO</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">ÚLTIMA CONEXIÓN</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let u of usuarios">
+                            <td class="py-3 px-4 border-bottom">
+                                <span class="fw-bold text-dark">{{ u.nombre }}</span>
+                                <small class="text-muted d-block">{{ u.id }}</small>
+                            </td>
+                            <td class="py-3 px-4 border-bottom text-muted">{{ u.correo }}</td>
+                            <td class="py-3 px-4 border-bottom">
+                                <span class="badge fw-normal p-2 px-3" 
+                                      [ngClass]="u.rol === 'SuperAdmin' ? 'bg-dark text-white' : 'bg-secondary text-white'">
+                                    {{ u.rol }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4 border-bottom">
+                                <span class="badge rounded-pill border fw-normal p-2 px-3" 
+                                      [ngClass]="u.estado === 'Activo' ? 'bg-success-subtle text-success border-success' : 'bg-danger-subtle text-danger border-danger'">
+                                    {{ u.estado }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4 border-bottom text-muted">{{ u.conexion }}</td>
+                            <td class="py-3 px-4 border-bottom">
+                                <button class="btn btn-outline-primary btn-sm me-2" style="width: 70px;">Editar</button>
+                                <button class="btn btn-outline-dark btn-sm me-2" style="width: 70px;" (click)="abrirModalRoles(u)">Rol</button>
+                                <button class="btn btn-outline-danger btn-sm" style="width: 70px;">Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

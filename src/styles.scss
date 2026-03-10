@@ -1,4 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+/* Estilos globales para modales personalizados */
+.custom-modal-panel {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+    .mdc-dialog__surface {
+      border-radius: 15px !important;
+      overflow: hidden !important;
+      padding: 0 !important;
+      min-height: inherit !important;
+      height: inherit !important;
+    }
+  }
+}
