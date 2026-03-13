@@ -12,7 +12,7 @@
                 <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
                     <thead class="bg-light">
                         <tr>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">ID / NOMBRE</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">NOMBRE</th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold">CORREO</th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold">ROL</th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold">ESTADO</th>
@@ -24,7 +24,6 @@
                         <tr *ngFor="let u of usuarios">
                             <td class="py-3 px-4 border-bottom">
                                 <span class="fw-bold text-dark">{{ u.nombre }}</span>
-                                <small class="text-muted d-block">{{ u.id }}</small>
                             </td>
                             <td class="py-3 px-4 border-bottom text-muted">{{ u.correo }}</td>
                             <td class="py-3 px-4 border-bottom">
@@ -41,9 +40,9 @@
                             </td>
                             <td class="py-3 px-4 border-bottom text-muted">{{ u.conexion }}</td>
                             <td class="py-3 px-4 border-bottom">
-                                <button class="btn btn-outline-primary btn-sm me-2" style="width: 70px;">Editar</button>
-                                <button class="btn btn-outline-dark btn-sm me-2" style="width: 70px;" (click)="abrirModalRoles(u)">Rol</button>
-                                <button class="btn btn-outline-danger btn-sm" style="width: 70px;">Eliminar</button>
+                                <button class="btn btn-primary btn-sm me-2" style="width: 85px;" (click)="abrirModalEditar(u)">Editar</button>
+                                <button class="btn btn-dark btn-sm me-2" style="width: 85px;" (click)="abrirModalRoles(u)">Rol</button>
+                                <button class="btn btn-danger btn-sm" style="width: 85px;">Eliminar</button>
                             </td>
                         </tr>
                     </tbody>

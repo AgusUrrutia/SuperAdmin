@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ModalService } from '../../shared/services/modal.service';
 import { CrearUsuarioComponent } from './components/crear-usuario/crear.component';
 import { RolesModalComponent } from './components/roles-modal/roles-modal.component';
+import { EditarUsuarioComponent } from './components/editar-usuario/editar-usuario.component';
 
 @Component({
   selector: 'app-usuarios',
@@ -17,11 +18,14 @@ import { RolesModalComponent } from './components/roles-modal/roles-modal.compon
       padding: 8px 20px;
       border-radius: 6px;
       font-weight: 500;
-      transition: background-color 0.2s;
+      transition: all 0.2s;
       &:hover {
         background-color: #444;
       }
     }
+    .btn-primary { background-color: #2b6cb0; border-color: #2b6cb0; }
+    .btn-dark { background-color: #222; border-color: #222; }
+    .btn-danger { background-color: #c53030; border-color: #c53030; }
   `]
 })
 export class UsuariosComponent {
@@ -45,6 +49,14 @@ export class UsuariosComponent {
   abrirModalRoles(usuario: any) {
     this.modalService.open(RolesModalComponent, { usuario }, '650px').afterClosed().subscribe(res => {
       console.log('Modal de roles cerrado');
+    });
+  }
+
+  abrirModalEditar(usuario: any) {
+    this.modalService.open(EditarUsuarioComponent, usuario, '650px').afterClosed().subscribe(res => {
+      if (res) {
+        console.log('Usuario actualizado, refrescando lista...');
+      }
     });
   }
 }

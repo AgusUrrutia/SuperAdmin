@@ -23,11 +23,12 @@ Tomando como base la captura de pantalla provista:
 - **Fondo Central:** El área de contenido y la tabla de datos descansan sobre una superficie gris clara (`bg-light` o similar, ej. `#d1d1d1` en el prototipo) para separar visualmente la zona de acciones ("Sidebar") de la zona de información.
 - **Top Navbar:** Diseñada como envoltorio para encabezados, perfil de usuario (ej. Admin User) y un menú Dropdown tipo "App Switcher" (icono grid 3x3) para redirección nativa con `<a target="_blank">` hacia diferentes ecosistemas hermanos, como la plataforma B2B de rankodigital. Se incorpora el logo en la base del Sidebar.
 
-## 3. Integración Visual
-La aplicación integra Angular con:
-- **Iconografía:** Posible uso de FontAwesome, Bootstrap Icons o Material Icons para los símbolos lógicos (ej. el chip de *Hardware ST* o el símbolo "X").
-- **Componentes HTML Base:**
-  - Tablas para listar colecciones (`table`, `table-striped`).
-  - Textos de encabezado fuertes para centrado (`<h1 class="text-center">`).
+## 3. Integración Visual y Modales
+Se ha implementado un **Sistema de Diseño para Modales** unificado:
+- **Paleta de Colores Neutra:** Eliminación de tonos azules en favor de Negro (`#222`) para elementos principales y Grises neutros (`#555`, `#888`) para secundarios, logrando una estética sobria.
+- **Cabeceras Estandarizadas:** Uso de iconos de Material Design, títulos en negro absoluto y botones de cierre (X) integrados.
+- **Campos de Formulario:** Labels en mayúsculas con fuente pequeña y negrita. Inputs nítidos con placeholders oscurecidos.
+- **Botones de Acción:** Botón principal con fondo negro sólido (`#222`) y efectos de hover suaves.
+- **Estabilidad Dimensional:** Alturas controladas para evitar movimientos bruscos de la UI.
 
-*Nota para el equipo de desarrollo:* Todas las clases CSS personalizadas o anulaciones a la lógica base de Bootstrap deben limitarse y localizarse dentro de `styles.scss` (para estilos globales del layout) o en el propio CSS del componente en cascada (`sidebar.component.scss`).
+*Nota para el equipo de desarrollo:* Todas las clases CSS personalizadas o anulaciones a la lógica base de Bootstrap deben limitarse y localizarse dentro de `styles.scss` (para estilos globales del layout) o en el propio CSS del componente en cascada (`sidebar.component.scss`). Para modales, se debe respetar el sistema de clases neutras de alto contraste.

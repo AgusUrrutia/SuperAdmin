@@ -87,4 +87,13 @@ src/app
 
 
 
-*Nota para la IA:* El código fuente está en el "Día Cero". El CLI ha generado únicamente la plantilla vacía. Todos los lineamientos anteriores deben usarse como directiva de diseño para generar código nuevo.
+## 5. Implementaciones Destacadas
+
+### Gestión de Roles y Usuarios
+- **Modales CRUD Premium:** Implementación de `CrearUsuarioComponent`, `EditarUsuarioComponent` y `RolesModalComponent` con diseño estandarizado y neutrura cromática.
+- **Lógica de Asignación de Roles:** Sistema de búsqueda predictiva con `MatAutocomplete` y gestión de listados locales con confirmaciones mediante `SweetAlert2`.
+- **Paginación en Modales:** Implementación de lógica de paginado manual para optimizar la visualización de datos en espacios reducidos.
+- **ModalService:** Capa de abstracción sobre `MatDialog` para centralizar la configuración de diálogos (panelClass, width, height fijo).
+- **Servicios Centralizados:** `UsuarioAdminService` gestiona las operaciones de integración (mock) mediante observables de RxJS.
+
+*Nota para la IA:* El sistema ha evolucionado integrando un robusto framework de componentes para la administración de usuarios. Los nuevos módulos deben seguir la arquitectura de componentes Standalone y el sistema de diseño neutro establecido.

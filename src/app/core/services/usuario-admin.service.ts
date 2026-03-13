@@ -18,4 +18,13 @@ export class UsuarioAdminService {
     // Simulamos una respuesta exitosa
     return of({ success: true, data: usuario }).pipe(delay(1000));
   }
+
+  /**
+   * Mock de actualización de usuario
+   */
+  updateUser(id: any, usuario: any): Observable<any> {
+    console.log('Actualizando usuario:', id, usuario);
+    // Simulamos una respuesta exitosa
+    return of({ success: true, data: usuario }).pipe(delay(1000));
+  }
 }
