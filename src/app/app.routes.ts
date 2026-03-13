@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -12,6 +13,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
+    canActivate: [authGuard],
     loadComponent: () => import('./core/layout/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
     children: [
       {
@@ -23,6 +25,27 @@ export const routes: Routes = [
         redirectTo: 'users',
         pathMatch: 'full'
       }
+    ]
+  },
+  {
+    path: 'sgs',
+    canActivate: [authGuard],
+    loadComponent: () => import('./core/layout/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
+    children: [
+    ]
+  },
+  {
+    path: 'b2b',
+    canActivate: [authGuard],
+    loadComponent: () => import('./core/layout/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
+    children: [
+    ]
+  },
+  {
+    path: 'ad',
+    canActivate: [authGuard],
+    loadComponent: () => import('./core/layout/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
+    children: [
     ]
   }
 ];
