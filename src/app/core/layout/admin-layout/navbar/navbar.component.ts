@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,11 +8,31 @@ import { Router } from '@angular/router';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   @Input() isSidebarHidden = false;
   @Output() openSidebar = new EventEmitter<void>();
+  username: string = '';
 
   constructor(private router: Router) { }
+
+  ngOnInit(): void {
+    const storedUser = localStorage.getItem('usuario');
+    if (storedUser) {
+      this.username = storedUser;
+    } else {
+      const sessionUser = sessionStorage.getItem('user');
+      if (sessionUser) {
+        try {
+          const parsed = JSON.parse(sessionUser);
+          this.username = parsed.usuario || 'Usuario';
+        } catch (e) {
+          this.username = 'Usuario';
+        }
+      } else {
+        this.username = 'Usuario';
+      }
+    }
+  }
 
   onToggleSidebar() {
     this.openSidebar.emit();
@@ -20,6 +40,7 @@ export class NavbarComponent {
 
   logout() {
     sessionStorage.clear();
+    localStorage.removeItem('usuario');
     this.router.navigate(['/login']);
   }
 }
