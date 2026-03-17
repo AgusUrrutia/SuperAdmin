@@ -32,6 +32,19 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./core/layout/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
     children: [
+      {
+        path: 'grupos',
+        loadComponent: () => import('./modulos/sgs/tabla-admin-grupo/tabla-admin-grupo.component').then(m => m.TablaAdminGrupoComponent)
+      },
+      {
+        path: 'usuarios',
+        loadComponent: () => import('./modulos/sgs/tabla-admin-usuario/tabla-admin-usuario.component').then(m => m.TablaAdminUsuarioComponent)
+      },
+      {
+        path: '',
+        redirectTo: 'grupos',
+        pathMatch: 'full'
+      }
     ]
   },
   {
