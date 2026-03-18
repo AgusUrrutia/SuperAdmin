@@ -1,0 +1,58 @@
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0" style="color: #222;">Administración de Usuarios</h2>
+        <button class="btn-dark-custom" (click)="crearUsuario()">
+            + Crear Nuevo Usuario
+        </button>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">ID USUARIO</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">EMAIL/USUARIO</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">NOMBRE</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">EMAIL PERSONAL</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">GP CUSTOMER</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">ESTADO</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">INTENTOS</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let u of filas">
+                            <td class="py-3 px-4 border-bottom text-muted">{{ u['ID Usuario'] }}</td>
+                            <td class="py-3 px-4 border-bottom text-muted">{{ u['Email/Usuario'] }}</td>
+                            <td class="py-3 px-4 border-bottom">
+                                <span class="fw-bold text-dark">{{ u['Nombre'] }}</span>
+                            </td>
+                            <td class="py-3 px-4 border-bottom text-muted">{{ u['Email Personal'] }}</td>
+                            <td class="py-3 px-4 border-bottom text-muted">{{ u['GP Customer'] }}</td>
+                            <td class="py-3 px-4 border-bottom">
+                                <span class="badge rounded-pill border fw-normal p-2 px-3"
+                                    [ngClass]="u['Estado'] === 'Activo' ? 'bg-success-subtle text-success border-success' : 'bg-danger-subtle text-danger border-danger'">
+                                    {{ u['Estado'] }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4 border-bottom text-muted">{{ u['Intentos'] }}</td>
+                            <td class="py-3 px-4 border-bottom">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary btn-sm" style="width: 85px;"
+                                        (click)="editarUsuario(u)">Editar</button>
+                                    <button class="btn btn-danger btn-sm" style="width: 85px;"
+                                        (click)="eliminarUsuario(u)">Eliminar</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="filas.length === 0">
+                            <td colspan="8" class="text-center py-4 text-muted">No hay usuarios cargados</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

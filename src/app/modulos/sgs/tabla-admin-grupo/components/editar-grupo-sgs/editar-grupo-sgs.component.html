@@ -1,0 +1,21 @@
+<div class="crear-container">
+    <div class="header-modal d-flex align-items-center mb-0">
+        <mat-icon class="me-2 header-icon">edit_note</mat-icon>
+        <h2 class="title mb-0">Editar Grupo SGS</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="cancelar()"></button>
+    </div>
+
+    <div class="form-content">
+        <div class="field full-width">
+            <label class="section-label">Nombre del Grupo</label>
+            <input type="text" [(ngModel)]="nombreGrupo" class="form-control" placeholder="Ingrese el nombre del grupo">
+        </div>
+    </div>
+
+    <div class="actions-modal p-3 d-flex justify-content-end align-items-center bg-white border-top">
+        <button (click)="guardar()" class="btn-save" [disabled]="estaCargando">
+            <span *ngIf="!estaCargando">Guardar Cambios</span>
+            <span *ngIf="estaCargando">Procesando...</span>
+        </button>
+    </div>
+</div>

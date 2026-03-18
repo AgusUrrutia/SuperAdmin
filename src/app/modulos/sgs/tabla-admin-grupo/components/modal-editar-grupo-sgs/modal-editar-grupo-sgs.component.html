@@ -1,0 +1,145 @@
+<div class="edit-modal-container">
+    <!-- Header -->
+    <div class="header-modal d-flex align-items-center mb-0">
+        <mat-icon class="me-2 header-icon">group_work</mat-icon>
+        <h2 class="title mb-0">Editar Grupo: <span class="group-name-highlight">{{ grupo.GRUPO }}</span></h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="cancelar()"></button>
+    </div>
+
+    <div class="modal-body-content">
+        <div class="sections-grid">
+
+            <!-- Sección Usuarios -->
+            <div class="section-card">
+                <div class="section-header">
+                    <mat-icon class="section-icon">people</mat-icon>
+                    <span class="section-title">Usuarios</span>
+                    <span class="count-badge">{{ usuariosSeleccionados.length }}</span>
+                </div>
+
+                <div class="section-controls">
+                    <label class="control-label">Asignar nuevo usuario</label>
+                    <div class="input-action-group">
+                        <app-autocomplete-select [options]="usuariosNoSeleccionados" [placeholder]="'Buscar usuario...'"
+                            [(ngModel)]="usuarioSeleccionadoDropdown">
+                        </app-autocomplete-select>
+                        <button class="btn-add-mini" (click)="agregarUsuario()"
+                            [disabled]="!usuarioSeleccionadoDropdown">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container-mini">
+                    <div class="search-mini">
+                        <mat-icon>search</mat-icon>
+                        <input type="text" [(ngModel)]="searchUsuario" (input)="applyUsuarioFilter()"
+                            placeholder="Filtrar lista...">
+                    </div>
+
+                    <table class="table-mini">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Usuario / Nombre</th>
+                                <th class="text-end"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let u of getUsuariosPage()">
+                                <td class="col-id"><code>{{ u.ID_USUARIO }}</code></td>
+                                <td class="col-main text-truncate">{{ u.MAIL }}</td>
+                                <td class="text-end">
+                                    <button class="btn-delete-mini" (click)="eliminarUsuario(u.ID_USUARIO)">
+                                        <mat-icon>delete_outline</mat-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="usuariosFiltrados.length === 0">
+                                <td colspan="3" class="empty-state">No hay usuarios</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="pagination-mini" *ngIf="totalUsuarios > pageSizeUsuario">
+                        <button (click)="changePageUsuario(-1)" [disabled]="currentPageUsuario === 0">
+                            <mat-icon>chevron_left</mat-icon>
+                        </button>
+                        <span>{{ currentPageUsuario + 1 }} / {{ Math.ceil(totalUsuarios / pageSizeUsuario) }}</span>
+                        <button (click)="changePageUsuario(1)"
+                            [disabled]="(currentPageUsuario + 1) * pageSizeUsuario >= totalUsuarios">
+                            <mat-icon>chevron_right</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección Formularios -->
+            <div class="section-card">
+                <div class="section-header">
+                    <mat-icon class="section-icon">description</mat-icon>
+                    <span class="section-title">Formularios</span>
+                    <span class="count-badge badge-blue">{{ formulariosSeleccionados.length }}</span>
+                </div>
+
+                <div class="section-controls">
+                    <label class="control-label">Asignar nuevo formulario</label>
+                    <div class="input-action-group">
+                        <app-autocomplete-select [options]="formulariosNoSeleccionados"
+                            [placeholder]="'Buscar formulario...'" [(ngModel)]="formularioSeleccionadoDropdown">
+                        </app-autocomplete-select>
+                        <button class="btn-add-mini" (click)="agregarFormulario()"
+                            [disabled]="!formularioSeleccionadoDropdown">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container-mini">
+                    <div class="search-mini">
+                        <mat-icon>search</mat-icon>
+                        <input type="text" [(ngModel)]="searchFormulario" (input)="applyFormularioFilter()"
+                            placeholder="Filtrar lista...">
+                    </div>
+
+                    <table class="table-mini">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Formulario</th>
+                                <th class="text-end"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let f of getFormulariosPage()">
+                                <td class="col-id"><span class="id-tag-blue">{{ f.ID }}</span></td>
+                                <td class="col-main text-truncate">{{ f.NOMBRE }}</td>
+                                <td class="text-end">
+                                    <button class="btn-delete-mini" (click)="eliminarFormulario(f.ID)">
+                                        <mat-icon>delete_outline</mat-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="formulariosFiltrados.length === 0">
+                                <td colspan="3" class="empty-state">No hay formularios</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="pagination-mini" *ngIf="totalFormularios > pageSizeFormulario">
+                        <button (click)="changePageFormulario(-1)" [disabled]="currentPageFormulario === 0">
+                            <mat-icon>chevron_left</mat-icon>
+                        </button>
+                        <span>{{ currentPageFormulario + 1 }} / {{ Math.ceil(totalFormularios / pageSizeFormulario)
+                            }}</span>
+                        <button (click)="changePageFormulario(1)"
+                            [disabled]="(currentPageFormulario + 1) * pageSizeFormulario >= totalFormularios">
+                            <mat-icon>chevron_right</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

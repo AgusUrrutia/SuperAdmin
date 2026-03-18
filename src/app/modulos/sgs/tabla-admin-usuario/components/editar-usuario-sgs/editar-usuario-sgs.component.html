@@ -1,0 +1,46 @@
+<div class="crear-container">
+    <div class="header-modal d-flex align-items-center mb-0">
+        <mat-icon class="me-2 header-icon">edit</mat-icon>
+        <h2 class="title mb-0">Editar Usuario SGS</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="cancelar()"></button>
+    </div>
+
+    <div class="form-content">
+        <div class="field">
+            <label class="section-label">Email / Usuario</label>
+            <input type="text" [(ngModel)]="mail" class="form-control" placeholder="Ingrese email">
+        </div>
+        <div class="field">
+            <label class="section-label">Mail Personal *</label>
+            <input type="email" [(ngModel)]="mailPersonal" class="form-control" placeholder="Ingrese mail personal">
+        </div>
+
+        <div class="field">
+            <label class="section-label">Nombre</label>
+            <input type="text" [(ngModel)]="nombre" class="form-control" placeholder="Ingrese nombre">
+        </div>
+        <div class="field">
+            <label class="section-label">Apellido</label>
+            <input type="text" [(ngModel)]="apellido" class="form-control" placeholder="Ingrese apellido">
+        </div>
+
+        <div class="field">
+            <label class="section-label">GP Customer (GP_CUSTNMBR)</label>
+            <input type="text" [(ngModel)]="gpCustnmbr" class="form-control" placeholder="Ingrese código GP">
+        </div>
+        <div class="field">
+            <label class="section-label">Estado</label>
+            <select [(ngModel)]="activo" class="form-control">
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="actions-modal p-3 d-flex justify-content-end align-items-center bg-white border-top">
+        <button (click)="guardar()" class="btn-save" [disabled]="estaCargando">
+            <span *ngIf="!estaCargando">Guardar Cambios</span>
+            <span *ngIf="estaCargando">Procesando...</span>
+        </button>
+    </div>
+</div>

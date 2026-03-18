@@ -1,0 +1,29 @@
+<div class="ac-wrapper" [class.disabled]="disabled">
+    <div class="ac-input-wrap" (click)="!disabled && onInputFocus()" [class.invalid]="invalid"
+        [ngStyle]="{ 'background': disabled ? '#e9ecef' : 'white' }">
+        <input type="text" class="ac-input" [class.invalid]="invalid" [attr.aria-invalid]="invalid ? 'true' : null"
+            [attr.title]="invalid ? (errorMessage || 'Valor inválido') : null" [placeholder]="placeholder"
+            [(ngModel)]="inputText" [disabled]="disabled" (focus)="onInputFocus()" (input)="onInputChange()"
+            (keydown)="onKeyDown($event)" autocomplete="off"
+            [ngStyle]="{ 'background': disabled ? '#e9ecef' : 'white' }"
+            style="border: none; outline: none; box-shadow: none;" />
+    </div>
+
+    <div class="ac-panel-status" *ngIf="selected && !isOpen">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height: 14px; fill: #28a745;">
+            <path
+                d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" />
+        </svg>
+    </div>
+
+    <div class="ac-panel" *ngIf="isOpen">
+        <div *ngIf="filtered.length === 0" class="ac-empty">Sin coincidencias</div>
+        <ul class="ac-list" *ngIf="filtered.length > 0">
+            <li *ngFor="let opt of filtered; let i = index; trackBy: trackByVal" class="ac-option"
+                [class.highlight]="i === highlightedIndex" (mouseenter)="highlightedIndex = i"
+                (mousedown)="$event.preventDefault()" (click)="selectOption(opt)" [title]="getLabel(opt)">
+                {{ getLabel(opt) }}
+            </li>
+        </ul>
+    </div>
+</div>

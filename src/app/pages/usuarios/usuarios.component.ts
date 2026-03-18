@@ -36,7 +36,7 @@ export class UsuariosComponent {
     { id: '#003', nombre: 'Mario Ruiz', correo: 'mario.rz@ranko.com', rol: 'Ventas', estado: 'Inactivo', conexion: 'Hace 2 semanas' }
   ];
 
-  constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService) { }
 
   abrirModal() {
     this.modalService.open(CrearUsuarioComponent).afterClosed().subscribe(res => {

@@ -1,0 +1,49 @@
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0" style="color: #222;">Administración de Grupos</h2>
+        <button class="btn-dark-custom" (click)="crearGrupo()">
+            + Crear Nuevo Grupo
+        </button>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">ID GRUPO</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">NOMBRE GRUPO</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">CANT. USUARIOS</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">CANT. FORMULARIOS</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let g of filas">
+                            <td class="py-3 px-4 border-bottom text-muted">{{ g['ID Grupo'] }}</td>
+                            <td class="py-3 px-4 border-bottom">
+                                <span class="fw-bold text-dark">{{ g['Nombre Grupo'] }}</span>
+                            </td>
+                            <td class="py-3 px-4 border-bottom text-muted">{{ g['Cant. Usuarios'] }}</td>
+                            <td class="py-3 px-4 border-bottom text-muted">{{ g['Cant. Formularios'] }}</td>
+                            <td class="py-3 px-4 border-bottom">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary btn-sm" style="width: 85px;"
+                                        (click)="editarGrupo(g)">Editar</button>
+                                    <button class="btn btn-primary btn-sm" style="width: 85px;"
+                                        (click)="cambiarNombreGrupo(g)">Cambiar nombre</button>
+                                    <button class="btn btn-danger btn-sm" style="width: 85px;"
+                                        (click)="eliminarGrupo(g)">Eliminar</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="filas.length === 0">
+                            <td colspan="5" class="text-center py-4 text-muted">No hay grupos cargados</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
