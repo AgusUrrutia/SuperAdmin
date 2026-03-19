@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GroupService } from '../services/group.service';
+import { SpinnerGrandeComponent } from '../../../shared/components/spinner-grande/spinner-grande.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CrearGrupoSgsComponent } from './components/crear-grupo-sgs/crear-grupo-sgs.component';
 import { EditarGrupoSgsComponent } from './components/editar-grupo-sgs/editar-grupo-sgs.component';
@@ -10,7 +11,7 @@ import Swal from 'sweetalert2';
 @Component({
     selector: 'app-tabla-admin-grupo',
     standalone: true,
-    imports: [CommonModule, MatDialogModule],
+    imports: [CommonModule, MatDialogModule, SpinnerGrandeComponent],
     templateUrl: './tabla-admin-grupo.component.html',
     styles: [`
     .btn-dark-custom {
@@ -32,6 +33,7 @@ import Swal from 'sweetalert2';
 })
 export class TablaAdminGrupoComponent implements OnInit {
 
+    cargando: boolean = true;
     filas: any[] = [];
     usuarios: any[] = [];
     formularios: any[] = [];
@@ -43,10 +45,12 @@ export class TablaAdminGrupoComponent implements OnInit {
 
     ngOnInit(): void {
         this.groupService.groups$.subscribe((res: any) => {
-            if (res) {
+            // El BehaviorSubject inicializa con [], así que esperamos a que llegue el objeto real con GRUPOS
+            if (res && res.GRUPOS !== undefined) {
                 this.processGroupData(res);
                 this.usuarios = res.USUARIOS || [];
                 this.formularios = res.FORMULARIOS || [];
+                this.cargando = false;
             }
         });
 

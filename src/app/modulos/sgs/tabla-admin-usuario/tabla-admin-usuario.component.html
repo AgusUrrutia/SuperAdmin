@@ -23,33 +23,40 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let u of filas">
-                            <td class="py-3 px-4 border-bottom text-muted">{{ u['ID Usuario'] }}</td>
-                            <td class="py-3 px-4 border-bottom text-muted">{{ u['Email/Usuario'] }}</td>
-                            <td class="py-3 px-4 border-bottom">
-                                <span class="fw-bold text-dark">{{ u['Nombre'] }}</span>
-                            </td>
-                            <td class="py-3 px-4 border-bottom text-muted">{{ u['Email Personal'] }}</td>
-                            <td class="py-3 px-4 border-bottom text-muted">{{ u['GP Customer'] }}</td>
-                            <td class="py-3 px-4 border-bottom">
-                                <span class="badge rounded-pill border fw-normal p-2 px-3"
-                                    [ngClass]="u['Estado'] === 'Activo' ? 'bg-success-subtle text-success border-success' : 'bg-danger-subtle text-danger border-danger'">
-                                    {{ u['Estado'] }}
-                                </span>
-                            </td>
-                            <td class="py-3 px-4 border-bottom text-muted">{{ u['Intentos'] }}</td>
-                            <td class="py-3 px-4 border-bottom">
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-primary btn-sm" style="width: 85px;"
-                                        (click)="editarUsuario(u)">Editar</button>
-                                    <button class="btn btn-danger btn-sm" style="width: 85px;"
-                                        (click)="eliminarUsuario(u)">Eliminar</button>
-                                </div>
+                        <tr *ngIf="cargando">
+                            <td colspan="8" class="text-center py-5 border-0">
+                                <app-spinner-grande minHeight="200px"></app-spinner-grande>
                             </td>
                         </tr>
-                        <tr *ngIf="filas.length === 0">
-                            <td colspan="8" class="text-center py-4 text-muted">No hay usuarios cargados</td>
-                        </tr>
+                        <ng-container *ngIf="!cargando">
+                            <tr *ngFor="let u of filas">
+                                <td class="py-3 px-4 border-bottom text-muted">{{ u['ID Usuario'] }}</td>
+                                <td class="py-3 px-4 border-bottom text-muted">{{ u['Email/Usuario'] }}</td>
+                                <td class="py-3 px-4 border-bottom">
+                                    <span class="fw-bold text-dark">{{ u['Nombre'] }}</span>
+                                </td>
+                                <td class="py-3 px-4 border-bottom text-muted">{{ u['Email Personal'] }}</td>
+                                <td class="py-3 px-4 border-bottom text-muted">{{ u['GP Customer'] }}</td>
+                                <td class="py-3 px-4 border-bottom">
+                                    <span class="badge rounded-pill border fw-normal p-2 px-3"
+                                        [ngClass]="u['Estado'] === 'Activo' ? 'bg-success-subtle text-success border-success' : 'bg-danger-subtle text-danger border-danger'">
+                                        {{ u['Estado'] }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 border-bottom text-muted">{{ u['Intentos'] }}</td>
+                                <td class="py-3 px-4 border-bottom">
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-primary btn-sm" style="width: 85px;"
+                                            (click)="editarUsuario(u)">Editar</button>
+                                        <button class="btn btn-danger btn-sm" style="width: 85px;"
+                                            (click)="eliminarUsuario(u)">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="filas.length === 0">
+                                <td colspan="8" class="text-center py-4 text-muted">No hay usuarios cargados</td>
+                            </tr>
+                        </ng-container>
                     </tbody>
                 </table>
             </div>

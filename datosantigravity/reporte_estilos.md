@@ -31,4 +31,10 @@ Se ha implementado un **Sistema de Diseño para Modales** unificado:
 - **Botones de Acción:** Botón principal con fondo negro sólido (`#222`) y efectos de hover suaves.
 - **Estabilidad Dimensional:** Alturas controladas para evitar movimientos bruscos de la UI.
 
-*Nota para el equipo de desarrollo:* Todas las clases CSS personalizadas o anulaciones a la lógica base de Bootstrap deben limitarse y localizarse dentro de `styles.scss` (para estilos globales del layout) o en el propio CSS del componente en cascada (`sidebar.component.scss`). Para modales, se debe respetar el sistema de clases neutras de alto contraste.
+## 4. Elementos de Carga y Feedback Visual (Spinners)
+Para mantener la coherencia absoluta con el diseño sobrio y neutral de la plataforma, se definió un estándar estricto para los estados de carga asíncrona:
+- **Ausencia de Colores Vivos:** Todos los spinners de la aplicación descartan el uso de colores primarios (azul, rojo, etc) en favor de las utilidades `text-black` o `text-dark` de Bootstrap para mantener una elegancia premium.
+- **Componentización (Standalone):** Se dispusieron componentes universales (`<app-spinner-grande>` y `<app-spinner-chico>`) construidos directamente sobre `.spinner-border` y `.spinner-border-sm`.
+- **Centrado Absoluto:** Utilizan internamente Flexbox (`d-flex justify-content-center align-items-center w-100`) asegurando que el peso visual permanezca constante al reemplazar contenido de tablas o al deshabilitar botones.
+
+*Nota para el equipo de desarrollo:* Todas las clases CSS personalizadas o anulaciones a la lógica base de Bootstrap deben limitarse y localizarse dentro de `styles.scss` o en el propio CSS del componente en cascada. Para modales y estados de carga, se debe respetar el sistema de clases neutras de alto contraste.

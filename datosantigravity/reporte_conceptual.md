@@ -11,6 +11,7 @@ Recientemente se ha definido un **Sistema de Diseño para Modales** que prioriza
 - **Estabilidad Visual:** Los modales mantienen una altura fija para evitar "saltos" en la interfaz al filtrar datos o navegar por páginas.
 - **Botones de Acción:** Botón principal en color negro sólido (`#222`) alineado a la derecha, siguiendo la jerarquía visual de la aplicación.
 - **Input Placeholders:** Oscurecidos para garantizar la legibilidad en pantallas con diferentes niveles de brillo.
+- **Feedback de Sistema (Carga):** Estandarización de Spinners negros y centrados (tamaño grande para reemplazo de contenido como tablas y tamaño chico para botones) para proveer contexto claro al usuario de que el sistema se encuentra procesando información, mejorando drásticamente la percepción de fluidez (UX).
 
 ## 2. Propósito y Objetivos
 - **Gestión Centralizada:** Permitir la administración de múltiples inquilinos (Tenants/Organizaciones), usuarios globales y configuraciones del sistema desde una única interfaz gráfica.

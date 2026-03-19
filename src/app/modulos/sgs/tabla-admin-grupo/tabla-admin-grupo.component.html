@@ -20,27 +20,34 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let g of filas">
-                            <td class="py-3 px-4 border-bottom text-muted">{{ g['ID Grupo'] }}</td>
-                            <td class="py-3 px-4 border-bottom">
-                                <span class="fw-bold text-dark">{{ g['Nombre Grupo'] }}</span>
-                            </td>
-                            <td class="py-3 px-4 border-bottom text-muted">{{ g['Cant. Usuarios'] }}</td>
-                            <td class="py-3 px-4 border-bottom text-muted">{{ g['Cant. Formularios'] }}</td>
-                            <td class="py-3 px-4 border-bottom">
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-primary btn-sm" style="width: 85px;"
-                                        (click)="editarGrupo(g)">Editar</button>
-                                    <button class="btn btn-primary btn-sm" style="width: 85px;"
-                                        (click)="cambiarNombreGrupo(g)">Cambiar nombre</button>
-                                    <button class="btn btn-danger btn-sm" style="width: 85px;"
-                                        (click)="eliminarGrupo(g)">Eliminar</button>
-                                </div>
+                        <tr *ngIf="cargando">
+                            <td colspan="5" class="text-center py-5 border-0">
+                                <app-spinner-grande minHeight="200px"></app-spinner-grande>
                             </td>
                         </tr>
-                        <tr *ngIf="filas.length === 0">
-                            <td colspan="5" class="text-center py-4 text-muted">No hay grupos cargados</td>
-                        </tr>
+                        <ng-container *ngIf="!cargando">
+                            <tr *ngFor="let g of filas">
+                                <td class="py-3 px-4 border-bottom text-muted">{{ g['ID Grupo'] }}</td>
+                                <td class="py-3 px-4 border-bottom">
+                                    <span class="fw-bold text-dark">{{ g['Nombre Grupo'] }}</span>
+                                </td>
+                                <td class="py-3 px-4 border-bottom text-muted">{{ g['Cant. Usuarios'] }}</td>
+                                <td class="py-3 px-4 border-bottom text-muted">{{ g['Cant. Formularios'] }}</td>
+                                <td class="py-3 px-4 border-bottom">
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-primary btn-sm" style="width: 85px;"
+                                            (click)="editarGrupo(g)">Editar</button>
+                                        <button class="btn btn-primary btn-sm" style="width: 85px;"
+                                            (click)="cambiarNombreGrupo(g)">Cambiar nombre</button>
+                                        <button class="btn btn-danger btn-sm" style="width: 85px;"
+                                            (click)="eliminarGrupo(g)">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="filas.length === 0">
+                                <td colspan="5" class="text-center py-4 text-muted">No hay grupos cargados</td>
+                            </tr>
+                        </ng-container>
                     </tbody>
                 </table>
             </div>

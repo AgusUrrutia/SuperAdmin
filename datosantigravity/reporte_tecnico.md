@@ -89,6 +89,11 @@ src/app
 
 ## 5. Implementaciones Destacadas
 
+### Componentes Visuales Reutilizables (Spinners)
+- **Spinners Standalone:** Creación de `SpinnerGrandeComponent` y `SpinnerChicoComponent` utilizando directivas nativas de Angular y clases de Bootstrap (`spinner-border`, `spinner-border-sm`, `text-black`).
+- **Arquitectura Centrada:** Empleo de Flexbox (`d-flex justify-content-center align-items-center w-100`) para garantizar la completa adaptabilidad y centrado del cargador dentro de modales o celdas de tabla.
+- **Gestión Asíncrona:** Implementación condicional (`*ngIf="cargando"`) y tipado riguroso con `BehaviorSubject` inicializado explícitamente en `null` para controlar de manera estricta el ciclo de vida de carga de datos sin destellos visuales.
+
 ### Gestión de Roles y Usuarios
 - **Modales CRUD Premium:** Implementación de `CrearUsuarioComponent`, `EditarUsuarioComponent` y `RolesModalComponent` con diseño estandarizado y neutrura cromática.
 - **Lógica de Asignación de Roles:** Sistema de búsqueda predictiva con `MatAutocomplete` y gestión de listados locales con confirmaciones mediante `SweetAlert2`.

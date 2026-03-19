@@ -30,7 +30,7 @@ export class UsuarioAdminService {
         });
     }
 
-    private users = new BehaviorSubject<any[]>([]);
+    private users = new BehaviorSubject<any[] | null>(null);
     users$ = this.users.asObservable();
 
     getUsers(estado: string = 'all', fetch: number = 100, offset: number = 0, buscar: string = ''): Observable<any> {

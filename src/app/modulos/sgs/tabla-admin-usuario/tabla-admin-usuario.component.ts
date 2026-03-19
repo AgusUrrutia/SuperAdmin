@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UsuarioAdminService } from '../services/usuario-admin.service';
+import { SpinnerGrandeComponent } from '../../../shared/components/spinner-grande/spinner-grande.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CrearUsuarioSgsComponent } from './components/crear-usuario-sgs/crear-usuario-sgs.component';
 import { EditarUsuarioSgsComponent } from './components/editar-usuario-sgs/editar-usuario-sgs.component';
@@ -9,7 +10,7 @@ import Swal from 'sweetalert2';
 @Component({
     selector: 'app-tabla-admin-usuario',
     standalone: true,
-    imports: [CommonModule, MatDialogModule],
+    imports: [CommonModule, MatDialogModule, SpinnerGrandeComponent],
     templateUrl: './tabla-admin-usuario.component.html',
     styles: [`
     .btn-dark-custom {
@@ -31,6 +32,7 @@ import Swal from 'sweetalert2';
 })
 export class TablaAdminUsuarioComponent implements OnInit {
 
+    cargando: boolean = true;
     filas: any[] = [];
 
     constructor(
@@ -40,8 +42,9 @@ export class TablaAdminUsuarioComponent implements OnInit {
 
     ngOnInit(): void {
         this.usuarioAdminService.users$.subscribe((res) => {
-            if (res) {
+            if (res !== null) {
                 this.processUserData(res);
+                this.cargando = false;
             }
         });
 
