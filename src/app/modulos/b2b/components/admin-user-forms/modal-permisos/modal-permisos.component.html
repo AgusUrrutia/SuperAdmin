@@ -1,0 +1,57 @@
+<div class="crear-container">
+    <div class="header-modal d-flex align-items-center mb-0">
+        <mat-icon class="me-2 header-icon">front_hand</mat-icon>
+        <h2 class="title mb-0">Gestión de Permisos y Módulos</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="onCancelar()"></button>
+    </div>
+
+    <div class="form-content">
+        <div class="field mb-3">
+            <label class="section-label">Seleccionar Rol para Permisos</label>
+            <select class="form-control form-select" name="rolPermisos" [(ngModel)]="rolSeleccionadoPermisos" (ngModelChange)="cargarModulosPorRol($event)">
+                <option [ngValue]="null" disabled>-- Seleccione Rol --</option>
+                @for (rol of usuario.ROLES; track rol.ROL) {
+                    <option [ngValue]="rol">{{ rol.ROL }}</option>
+                }
+            </select>
+        </div>
+
+        <div class="table-responsive border rounded mt-3">
+            <table class="table table-hover mb-0" style="font-size: 0.9rem;">
+                <thead class="table-light text-muted" style="font-size: 0.8rem; letter-spacing: 0.5px;">
+                    <tr>
+                        <th class="fw-semibold">MÓDULO / MENÚ</th>
+                        <th class="fw-semibold text-center mt-2">LECTURA</th>
+                        <th class="fw-semibold text-center mt-2">ESCRITURA</th>
+                        <th class="fw-semibold text-center">ACCIÓN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (modulo of modulos; track modulo.ID_MENU) {
+                    <tr>
+                        <td class="align-middle fw-medium">{{ modulo.MENU }}</td>
+                        <td class="align-middle text-center">
+                            <input class="form-check-input mt-2" type="checkbox" [(ngModel)]="modulo.lectura" style="width: 1.1em; height: 1.1em; cursor:pointer;" />
+                        </td>
+                        <td class="align-middle text-center">
+                            <input class="form-check-input mt-2" type="checkbox" [(ngModel)]="modulo.escritura" style="width: 1.1em; height: 1.1em; cursor:pointer;" />
+                        </td>
+                        <td class="align-middle text-center">
+                            <button class="btn btn-sm btn-outline-dark px-2 py-1 shadow-sm" (click)="enviarPermisoModulo(modulo)" title="Guardar permisos">
+                                <mat-icon style="font-size: 16px; width:16px; height:16px;">save</mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+                    }
+                    @if (modulos.length === 0) {
+                        <tr><td colspan="4" class="text-center py-4 text-muted">No hay módulos disponibles o asigne un rol.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="actions-modal p-3 d-flex justify-content-end align-items-center bg-white border-top mt-0">
+        <button type="button" class="btn btn-light border py-2 px-4 shadow-sm" style="font-size: 0.9rem; font-weight: 500;" (click)="onCancelar()">Cerrar</button>
+    </div>
+</div>

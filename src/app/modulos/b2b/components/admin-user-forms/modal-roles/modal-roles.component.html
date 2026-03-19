@@ -1,0 +1,45 @@
+<div class="crear-container">
+    <div class="header-modal d-flex align-items-center mb-0">
+        <mat-icon class="me-2 header-icon">accessibility</mat-icon>
+        <h2 class="title mb-0">Gestión de Roles</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="onCancelar()"></button>
+    </div>
+
+    <div class="form-content">
+        <div class="field mb-3">
+            <label class="section-label">Seleccionar Nuevo Rol</label>
+            <select class="form-control form-select" name="rol" [(ngModel)]="rolSeleccionado"
+                (ngModelChange)="agregarRol($event)">
+                <option [ngValue]="null" disabled selected>-- Seleccione un rol para agregar --</option>
+                @for (rol of rolesDisponibles; track $index) {
+                <option [ngValue]="rol">{{ rol.nombre }}</option>
+                }
+            </select>
+        </div>
+
+        <h5 class="mb-2 text-muted mt-3" style="font-size: 0.95rem; font-weight: 600;">Roles Asignados</h5>
+
+        @if (usuario.ROLES && usuario.ROLES.length > 0) {
+        <div class="badges-container d-flex flex-wrap gap-2">
+            @for (rol of usuario.ROLES; track $index) {
+            <span class="badge border bg-light text-dark d-flex align-items-center px-3 py-2"
+                style="font-size: 0.85rem; border-radius: 20px;">
+                {{ rol.ROL }}
+                @if(rol.ROL === "Distribuidor") {
+                <!--  <mat-icon class="ms-2 text-primary" style="cursor: pointer; font-size: 18px; width: 18px; height: 18px;" (click)="editarPerfilesRol(rol)">edit</mat-icon> -->
+                }
+                <mat-icon class="ms-2 text-danger" style="cursor: pointer; font-size: 18px; width: 18px; height: 18px;"
+                    (click)="eliminarRol(rol.ID_ROLES)">close</mat-icon>
+            </span>
+            }
+        </div>
+        } @else {
+        <p class="text-muted mb-0" style="font-size: 0.9rem;">No se han asignado roles aún a este usuario.</p>
+        }
+    </div>
+
+    <div class="actions-modal p-3 d-flex justify-content-end align-items-center bg-white border-top mt-0">
+        <button type="button" class="btn btn-light border py-2 px-4 shadow-sm"
+            style="font-size: 0.9rem; font-weight: 500;" (click)="onCancelar()">Cerrar</button>
+    </div>
+</div>

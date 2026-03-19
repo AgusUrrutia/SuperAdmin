@@ -1,0 +1,41 @@
+<div class="crear-container">
+    <div class="header-modal d-flex align-items-center mb-0">
+        <mat-icon class="me-2 header-icon">edit</mat-icon>
+        <h2 class="title mb-0">Editar Distribuidor</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="cancelar()"></button>
+    </div>
+
+    <div class="form-content">
+        <div class="field mb-3">
+            <label class="section-label">Correo Electrónico</label>
+            <input type="text" class="form-control" [(ngModel)]="usuario.MAIL" placeholder="Ingrese correo">
+        </div>
+
+        <div class="field mb-3">
+            <label class="section-label">Código de Cliente</label>
+            <input type="text" class="form-control" [(ngModel)]="usuario.GP_CUSTNMBR" placeholder="Código">
+        </div>
+
+        <div class="field mt-3">
+            <label class="section-label mb-2">Selecciona uno o varios perfiles:</label>
+            <div class="d-flex flex-column gap-2 ms-2">
+                @for (opcion of opciones; track opcion.id_perfil) {
+                    <div class="form-check">
+                        <input class="form-check-input bg-dark border-dark" type="checkbox"
+                            [checked]="isPerfilSelected(opcion.id_perfil)"
+                            (change)="toggleOpcion(opcion.id_perfil, $event)"
+                            style="cursor: pointer;">
+                        <label class="form-check-label" style="font-size: 0.9rem; margin-top: 1px;">
+                            {{ opcion.nombre_perfil }}
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="actions-modal p-3 d-flex justify-content-end align-items-center bg-white border-top mt-0">
+        <button type="button" class="btn btn-light border me-2 py-2 px-4 shadow-sm" style="font-size: 0.9rem; font-weight: 500;" (click)="cancelar()">Cancelar</button>
+        <button type="button" class="btn-save" (click)="guardar()">Guardar Perfiles</button>
+    </div>
+</div>

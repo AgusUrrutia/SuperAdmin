@@ -37,4 +37,8 @@ Para mantener la coherencia absoluta con el diseño sobrio y neutral de la plata
 - **Componentización (Standalone):** Se dispusieron componentes universales (`<app-spinner-grande>` y `<app-spinner-chico>`) construidos directamente sobre `.spinner-border` y `.spinner-border-sm`.
 - **Centrado Absoluto:** Utilizan internamente Flexbox (`d-flex justify-content-center align-items-center w-100`) asegurando que el peso visual permanezca constante al reemplazar contenido de tablas o al deshabilitar botones.
 
+## 5. Refactorización Post-Migración: Módulo B2B / Usuarios
+- **Clase Unificada (`.crear-container`):** Para alinear los componentes provenientes de proyectos ajenos (como en la reciente migración B2B), los CSS asociados a los modales (`modal-crear`, `modal-editar`, `modal-roles` y `modal-permisos`) fueron homogeneizados dirigiéndolos hacia un único mapa de estilo que aplica el esquema nativo Bootstrap (estilos sin borde interno visible, separación consistente entre inputs y header alineado a la izquierda con icono).
+- **Abandono de Angular Material Tabs:** Los estilos sobrecargados de selectores `.mat-mdc-tab-header` y envolturas pesadas fueron completamente suprimidos, derivando en un diseño de vistas atómicas modulares mucho más limpio, enfocado y amigable con el rendimiento (DOM liviano).
+
 *Nota para el equipo de desarrollo:* Todas las clases CSS personalizadas o anulaciones a la lógica base de Bootstrap deben limitarse y localizarse dentro de `styles.scss` o en el propio CSS del componente en cascada. Para modales y estados de carga, se debe respetar el sistema de clases neutras de alto contraste.

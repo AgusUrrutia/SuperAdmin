@@ -1,0 +1,69 @@
+<div class="crear-container">
+    <div class="header-modal d-flex align-items-center mb-0">
+        <mat-icon class="me-2 header-icon">edit</mat-icon>
+        <h2 class="title mb-0">Editar Usuario</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="onCancelar()"></button>
+    </div>
+
+    <form #form="ngForm" (ngSubmit)="guardar()">
+        <div class="form-content">
+            <h5 class="mb-3 text-muted" style="font-size: 0.95rem; font-weight: 600;">Datos Personales</h5>
+            <div class="row mb-3">
+                <div class="col-6 field">
+                    <label class="section-label">Nombre <span class="text-danger">*</span></label>
+                    <input type="text" name="nombre" class="form-control" [(ngModel)]="usuario.NOMBRE" required />
+                </div>
+                <div class="col-6 field">
+                    <label class="section-label">Apellido <span class="text-danger">*</span></label>
+                    <input type="text" name="apellido" class="form-control" [(ngModel)]="usuario.APELLIDO" required />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6 field">
+                    <label class="section-label">Email / Usuario</label>
+                    <input type="text" name="mail" class="form-control" [(ngModel)]="usuario.MAIL" />
+                </div>
+                <div class="col-6 field">
+                    <label class="section-label">Email Personal</label>
+                    <input type="email" name="mailPersonal" class="form-control" [(ngModel)]="usuario.MAIL_PERSONAL" />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12 field">
+                    <label class="section-label">Código Cliente GP <span class="text-danger">*</span></label>
+                    <input type="text" name="gpCustnmbr" class="form-control" [(ngModel)]="usuario.GP_CUSTNMBR" required />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6 field">
+                    <label class="section-label">Teléfono</label>
+                    <input type="text" name="telefono" class="form-control bg-light" [(ngModel)]="usuario.TELEFONO1" disabled="true" />
+                </div>
+                <div class="col-6 field">
+                    <label class="section-label">Razón Social</label>
+                    <input type="text" name="razonSocial" class="form-control bg-light" [(ngModel)]="usuario.RAZONSOCIAL" disabled="true" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 field">
+                    <label class="section-label">Domicilio</label>
+                    <input type="text" name="domicilio" class="form-control bg-light" [(ngModel)]="usuario.DOMICILIO" disabled="true" />
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="actions-modal p-3 d-flex justify-content-between align-items-center bg-white border-top mt-0">
+        <div>
+            @if(usuario.ACTIVO === "1") {
+                <button type="button" class="btn btn-outline-danger shadow-sm fw-medium px-4 py-2" style="font-size: 0.9rem;" (click)="changeActivo()">Deshabilitar Usuario</button>
+            } @else {
+                <button type="button" class="btn btn-outline-success shadow-sm fw-medium px-4 py-2" style="font-size: 0.9rem;" (click)="changeActivo()">Habilitar Usuario</button>
+            }
+        </div>
+        <div>
+            <button type="button" class="btn btn-light border me-2 py-2 px-4 shadow-sm" style="font-size: 0.9rem; font-weight: 500;" (click)="onCancelar()">Cancelar</button>
+            <button (click)="guardar()" class="btn-save" [disabled]="form.invalid">Guardar Cambios</button>
+        </div>
+    </div>
+</div>t-dialog-actions>

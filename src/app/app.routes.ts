@@ -52,6 +52,15 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./core/layout/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
     children: [
+      {
+        path: 'usuarios',
+        loadComponent: () => import('./modulos/b2b/admin-usuarios/admin-usuarios.component').then(m => m.AdminUsuariosComponent)
+      },
+      {
+        path: '',
+        redirectTo: 'usuarios',
+        pathMatch: 'full'
+      }
     ]
   },
   {

@@ -1,0 +1,57 @@
+<div class="crear-container">
+    <div class="header-modal d-flex align-items-center mb-0">
+        <mat-icon class="me-2 header-icon">person_add</mat-icon>
+        <h2 class="title mb-0">Agregar Nuevo Usuario</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="onCancelar()"></button>
+    </div>
+
+    <form #form="ngForm" (ngSubmit)="crear()">
+        <div class="form-content">
+            <!-- Email -->
+            <div class="field full-width mb-3">
+                <label class="section-label">Email <span class="text-danger">*</span></label>
+                <input
+                    type="email"
+                    name="mail"
+                    class="form-control"
+                    [(ngModel)]="nuevoUsuario.MAIL"
+                    required
+                    #mailCtrl="ngModel"
+                    placeholder="Ingrese el email"
+                />
+                @if (mailCtrl.invalid && (mailCtrl.dirty || mailCtrl.touched)) {
+                    <small class="text-danger mt-1">
+                        @if (mailCtrl.errors?.['required']) { El email es requerido. }
+                        @else { Debe ser un email válido. }
+                    </small>
+                }
+            </div>
+
+            <!-- Código Cliente GP -->
+            <div class="field full-width">
+                <label class="section-label">Código Cliente GP <span class="text-danger">*</span></label>
+                <input
+                    type="text"
+                    name="gpCustnmbr"
+                    class="form-control"
+                    [(ngModel)]="nuevoUsuario.GP_CUSTNMBR"
+                    required
+                    #gpCtrl="ngModel"
+                    placeholder="Ej: DA0030"
+                />
+                @if (gpCtrl.invalid && (gpCtrl.dirty || gpCtrl.touched)) {
+                    <small class="text-danger mt-1">El código de cliente es requerido.</small>
+                }
+            </div>
+        </div>
+    </form>
+
+    <div class="actions-modal p-3 d-flex justify-content-end align-items-center bg-white border-top">
+        <button type="button" class="btn btn-light border me-2 py-2 px-4 shadow-sm" (click)="onCancelar()" style="font-size: 0.9rem; font-weight: 500;">
+            Cancelar
+        </button>
+        <button (click)="crear()" class="btn-save" [disabled]="form.invalid">
+            Crear Usuario
+        </button>
+    </div>
+</div>

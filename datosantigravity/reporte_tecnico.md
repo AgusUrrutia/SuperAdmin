@@ -101,4 +101,9 @@ src/app
 - **ModalService:** Capa de abstracción sobre `MatDialog` para centralizar la configuración de diálogos (panelClass, width, height fijo).
 - **Servicios Centralizados:** `UsuarioAdminService` gestiona las operaciones de integración (mock) mediante observables de RxJS.
 
+### Migración B2B: Módulo Admin Usuarios
+- **Independencia de Modales:** El "súper modal" con pestañas (`mat-tab-group`) proveniente de EKB2B fue refactorizado aplicando el principio Single Responsibility: se extrajeron `ModalRolesComponent` (gestión de perfiles) y `ModalPermisosComponent` (gestión de módulos de lectura/escritura) como diálogos completamente aislados del `ModalEditarComponent` (datos personales).
+- **Adecuación Visual (UI/UX):** Se reemplazaron todas las directivas intrusivas de Angular Material (`mat-form-field`, `mat-select`, `mat-input`) por controles nativos HTML5 potenciados por las clases clásicas de Bootstrap y contenidas bajo el wrapper `.crear-container` para igualar exactamente el esquema cromático de SGS.
+- **Agnosticismo de Estado Local:** Se actualizó `usuario.service.ts` para usar la URL online de configuración de `proyectSettings` eliminando las dependencias duras del `localStorage`, delegando la consulta bruta completa de `getAllUsers()` como corresponde a un SuperAdministrador.
+
 *Nota para la IA:* El sistema ha evolucionado integrando un robusto framework de componentes para la administración de usuarios. Los nuevos módulos deben seguir la arquitectura de componentes Standalone y el sistema de diseño neutro establecido.
