@@ -30,6 +30,7 @@ export class ModalPermisosComponent implements OnInit {
     private userService: UsuarioService,
     @Inject(MAT_DIALOG_DATA) public data: {
       usuario: any,
+      roles: any[],
       permisosHeredar: any[]
     }
   ) {
@@ -101,7 +102,7 @@ export class ModalPermisosComponent implements OnInit {
     if (modulo.lectura && modulo.escritura) accion = 2;
     else if (modulo.lectura) accion = 1;
     else if (modulo.escritura) accion = 2;
-    
+
     if (!modulo.lectura && !modulo.escritura) {
       this.userService.quitarPermiso(this.usuario.ID_USUARIO, modulo.ID_MENU).subscribe({
         next: () => {
@@ -111,10 +112,29 @@ export class ModalPermisosComponent implements OnInit {
       });
       return;
     }
-    
-    // Fallback if rolSeleccionadoPermisos has diff structure
-    const idRol = this.rolSeleccionadoPermisos.id_rol || this.rolSeleccionadoPermisos.ID_ROL;
-    this.userService.updatePermissions(this.usuario.ID_USUARIO, modulo.ID_MENU, accion, idRol).subscribe({
+
+    // 1. Buscamos el nombre del rol que tenemos seleccionado
+    const nombreRol = this.rolSeleccionadoPermisos.ROL;
+
+    // 2. Buscamos en la lista maestra de roles (data.roles) que vino del backend (getAllRoles).
+    // Usamos 'nombre' o 'ROL' para comparar, y el campo 'valor' o 'ID_ROLES' para extraer el ID.
+    const rolMaestro = (this.data.roles || []).find(r =>
+      (r.nombre?.toLowerCase() === nombreRol?.toLowerCase()) ||
+      (r.ROL?.toLowerCase() === nombreRol?.toLowerCase())
+    );
+
+    // 3. Priorizamos el ID del rol maestro, de lo contrario usamos el que ya tenía el usuario.
+    const idRolReal = rolMaestro ? (rolMaestro.valor || rolMaestro.ID_ROLES) :
+      (this.rolSeleccionadoPermisos.ID_ROLES ||
+        this.rolSeleccionadoPermisos.ID_ROL ||
+        this.rolSeleccionadoPermisos.id_rol);
+
+    console.log('--- Resumen de Roles ---');
+    console.log('Nombre Rol Seleccionado:', nombreRol);
+    console.log('Rol Maestro encontrado:', rolMaestro);
+    console.log('ID Final a enviar:', idRolReal);
+
+    this.userService.updatePermissions(this.usuario.ID_USUARIO, modulo.ID_MENU, accion, idRolReal).subscribe({
       next: () => Swal.fire({ title: 'Guardado', text: `Permisos guardados.`, icon: 'success', timer: 1000, showConfirmButton: false })
     });
   }

@@ -8,10 +8,11 @@
     <div class="form-content">
         <div class="field mb-3">
             <label class="section-label">Seleccionar Rol para Permisos</label>
-            <select class="form-control form-select" name="rolPermisos" [(ngModel)]="rolSeleccionadoPermisos" (ngModelChange)="cargarModulosPorRol($event)">
+            <select class="form-control form-select" name="rolPermisos" [(ngModel)]="rolSeleccionadoPermisos"
+                (ngModelChange)="cargarModulosPorRol($event)">
                 <option [ngValue]="null" disabled>-- Seleccione Rol --</option>
                 @for (rol of usuario.ROLES; track rol.ROL) {
-                    <option [ngValue]="rol">{{ rol.ROL }}</option>
+                <option [ngValue]="rol">{{ rol.ROL }}</option>
                 }
             </select>
         </div>
@@ -31,20 +32,26 @@
                     <tr>
                         <td class="align-middle fw-medium">{{ modulo.MENU }}</td>
                         <td class="align-middle text-center">
-                            <input class="form-check-input mt-2" type="checkbox" [(ngModel)]="modulo.lectura" style="width: 1.1em; height: 1.1em; cursor:pointer;" />
+                            <input class="form-check-input mt-2" type="checkbox" [(ngModel)]="modulo.lectura"
+                                style="width: 1.1em; height: 1.1em; cursor:pointer;" />
                         </td>
                         <td class="align-middle text-center">
-                            <input class="form-check-input mt-2" type="checkbox" [(ngModel)]="modulo.escritura" style="width: 1.1em; height: 1.1em; cursor:pointer;" />
+                            <input class="form-check-input mt-2" type="checkbox" [(ngModel)]="modulo.escritura"
+                                style="width: 1.1em; height: 1.1em; cursor:pointer;" />
                         </td>
                         <td class="align-middle text-center">
-                            <button class="btn btn-sm btn-outline-dark px-2 py-1 shadow-sm" (click)="enviarPermisoModulo(modulo)" title="Guardar permisos">
+                            <button class="btn btn-sm btn-outline-dark px-2 py-1 shadow-sm"
+                                (click)="enviarPermisoModulo(modulo)" title="Guardar permisos">
                                 <mat-icon style="font-size: 16px; width:16px; height:16px;">save</mat-icon>
                             </button>
                         </td>
                     </tr>
                     }
                     @if (modulos.length === 0) {
-                        <tr><td colspan="4" class="text-center py-4 text-muted">No hay módulos disponibles o asigne un rol.</td></tr>
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">No hay módulos disponibles o asigne un rol.
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>
@@ -52,6 +59,7 @@
     </div>
 
     <div class="actions-modal p-3 d-flex justify-content-end align-items-center bg-white border-top mt-0">
-        <button type="button" class="btn btn-light border py-2 px-4 shadow-sm" style="font-size: 0.9rem; font-weight: 500;" (click)="onCancelar()">Cerrar</button>
+        <button type="button" class="btn btn-light border py-2 px-4 shadow-sm"
+            style="font-size: 0.9rem; font-weight: 500;" (click)="onCancelar()">Cerrar</button>
     </div>
 </div>

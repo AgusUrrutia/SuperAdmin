@@ -11,6 +11,7 @@ import { ModalCrearComponent } from '../components/admin-user-forms/modal-crear/
 import { ModalEditarComponent } from '../components/admin-user-forms/modal-editar/modal-editar.component';
 import { ModalRolesComponent } from '../components/admin-user-forms/modal-roles/modal-roles.component';
 import { ModalPermisosComponent } from '../components/admin-user-forms/modal-permisos/modal-permisos.component';
+import { SpinnerGrandeComponent } from '../../../shared/components/spinner-grande/spinner-grande.component';
 
 // Definimos un tipo para las direcciones de ordenamiento
 type SortDirection = 'asc' | 'desc' | '';
@@ -18,16 +19,17 @@ type SortDirection = 'asc' | 'desc' | '';
 @Component({
   selector: 'app-admin-usuarios',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatMenuModule, MatIconModule, MatPaginatorModule, FormsModule], // Asegúrate de tener MatIconModule importado si no lo estabas usando antes
+  imports: [CommonModule, MatButtonModule, MatMenuModule, MatIconModule, MatPaginatorModule, FormsModule, SpinnerGrandeComponent], // Asegúrate de tener MatIconModule importado si no lo estabas usando antes
   templateUrl: './admin-usuarios.component.html',
   styleUrls: ['./admin-usuarios.component.scss']
 })
 export class AdminUsuariosComponent implements OnInit {
   @Input() userList: any[] = [];
   @Input() userSelected: any;
-  rol: string | null ="";
+  rol: string | null = "";
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  cargando: boolean = true;
   pageSize = 5;
   currentPage = 0;
   totalItems = 0;
@@ -45,22 +47,39 @@ export class AdminUsuariosComponent implements OnInit {
   constructor(
     private userService: UsuarioService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.cargando = true; // Reiniciamos el estado por si acaso
+
     // En SUPERADMIN, como es un panel global, ejecutaremos directamente getAllUsers
-    // para obtener a todos y saltarnos la restricción de localStorage anterior de EKB2B.
-    this.userService.getAllUsers().subscribe((res) => {
-      console.log('Todos los usuarios:', res);
-      const rawData = Array.isArray(res) ? res : res?.[0] || [];
-      this.userList = [...rawData]; 
-      this.applyFilters();
+    this.userService.getAllUsers().subscribe({
+      next: (res) => {
+        console.log('Todos los usuarios:', res);
+        const rawData = Array.isArray(res) ? res : res?.[0] || [];
+        this.userList = [...rawData];
+        this.applyFilters();
+
+        // Damos un pequeño respiro para que el DOM se entere del cambio e impacte el spinner si la red es lenta
+        setTimeout(() => {
+          this.cargando = false;
+        }, 500);
+      },
+      error: (err) => {
+        console.error('Error al obtener usuarios:', err);
+        this.cargando = false;
+      }
     });
 
-    this.userService.users$.subscribe((users) => {
-      console.log('Usuarios recibidos desde el observable:', users);
-      this.userList = users;
-      this.applyFilters();
+    this.userService.users$.subscribe({
+      next: (users) => {
+        if (users && users.length > 0) {
+          console.log('Usuarios recibidos desde el observable:', users);
+          this.userList = users;
+          this.applyFilters();
+          this.cargando = false;
+        }
+      }
     });
   }
 
@@ -99,7 +118,7 @@ export class AdminUsuariosComponent implements OnInit {
 
   applyFilters(): void {
     let filtered = [...this.userList];
-  
+
     // Filtro por búsqueda (ID, email, razón social, cliente GP)
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
@@ -111,12 +130,12 @@ export class AdminUsuariosComponent implements OnInit {
           user.GP_CUSTNMBR?.toLowerCase().includes(term)
       );
     }
-  
+
     // ✅ Filtro por estado (ACTIVO = "1", INACTIVO = "2")
     if (this.selectedEstado) {
       filtered = filtered.filter(user => user.ACTIVO === this.selectedEstado);
     }
-  
+
     this.filteredUserList = filtered;
     this.totalItems = filtered.length;
     this.currentPage = 0; // Resetear a primera página
@@ -174,16 +193,16 @@ export class AdminUsuariosComponent implements OnInit {
 
 
 
-  crearUsuario(){
+  crearUsuario() {
     this.userService.getAllRoles().subscribe((roles) => {
       console.log('Roles disponibles:', roles);
       const dialogRef = this.dialog.open(ModalCrearComponent, {
         width: '40vw',
         disableClose: true,
-        data: { 
+        data: {
           roles: roles,
           permisosHeredar: this.permisosHeredar
-         }
+        }
       });
     });
   }
