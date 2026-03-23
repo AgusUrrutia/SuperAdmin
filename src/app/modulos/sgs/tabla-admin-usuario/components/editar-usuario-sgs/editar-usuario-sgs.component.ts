@@ -21,6 +21,9 @@ export class EditarUsuarioSgsComponent implements OnInit {
     mailPersonal: string = '';
     gpCustnmbr: string = '';
     activo: string = '1';
+    aplicacionActual: any = null;
+    aplicacionesSeleccionadas: any[] = [];
+    aplicaciones: any[] = [];
     estaCargando: boolean = false;
 
     constructor(
@@ -38,12 +41,66 @@ export class EditarUsuarioSgsComponent implements OnInit {
             this.mailPersonal = this.data.mailPersonal || this.data.MAIL_PERSONAL || '';
             this.gpCustnmbr = this.data.gpCustnmbr || this.data.GP_CUSTNMBR || '';
             this.activo = (this.data.activo || this.data.ACTIVO || '1').toString();
+
+            // Extract initial application IDs
+            let appsIdsToMatch: any[] = [];
+            const apps = this.data.ID_APLICACION || this.data.APLICACIONES || this.data.id_aplicacion || [];
+            if (Array.isArray(apps)) {
+                appsIdsToMatch = apps.map(a => a.ID || a.id || a.ID_APLICACION || a);
+            } else if (typeof apps === 'string') {
+                appsIdsToMatch = apps.split(',').map(a => a.trim());
+            } else if (typeof apps === 'number') {
+                appsIdsToMatch = [apps];
+            }
+            this.cargarAplicaciones(appsIdsToMatch);
+        } else {
+            this.cargarAplicaciones([]);
         }
+    }
+
+    cargarAplicaciones(appsIdsToMatch: any[]): void {
+        this.usuarioAdminService.getAplicaciones().subscribe({
+            next: (res) => {
+                this.aplicaciones = res.data || res || [];
+                if (appsIdsToMatch.length > 0) {
+                    this.aplicacionesSeleccionadas = this.aplicaciones.filter(app => {
+                        const appId = this.obtenerId(app);
+                        return appsIdsToMatch.includes(appId) || appsIdsToMatch.includes(String(appId)) || appsIdsToMatch.includes(Number(appId));
+                    });
+                }
+            },
+            error: (err) => console.error('Error al cargar aplicaciones', err)
+        });
+    }
+
+    agregarAplicacion(): void {
+        if (!this.aplicacionActual) return;
+        
+        const idActual = this.obtenerId(this.aplicacionActual);
+        const yaExiste = this.aplicacionesSeleccionadas.find(a => this.obtenerId(a) === idActual);
+        
+        if (!yaExiste) {
+            this.aplicacionesSeleccionadas.push(this.aplicacionActual);
+        }
+        this.aplicacionActual = null;
+    }
+
+    eliminarAplicacion(app: any): void {
+        const idEliminar = this.obtenerId(app);
+        this.aplicacionesSeleccionadas = this.aplicacionesSeleccionadas.filter(a => this.obtenerId(a) !== idEliminar);
+    }
+
+    obtenerId(app: any): any {
+        return app?.ID || app?.id || app?.ID_APLICACION;
     }
 
     guardar(): void {
         if (!this.mail.trim()) {
             Swal.fire('Error', 'El email del usuario es requerido', 'error');
+            return;
+        }
+        if (!this.aplicacionesSeleccionadas || this.aplicacionesSeleccionadas.length === 0) {
+            Swal.fire('Error', 'Debe seleccionar al menos una aplicación', 'error');
             return;
         }
 
@@ -55,7 +112,8 @@ export class EditarUsuarioSgsComponent implements OnInit {
             APELLIDO: this.apellido,
             MAIL_PERSONAL: this.mailPersonal,
             GP_CUSTNMBR: this.gpCustnmbr,
-            ACTIVO: this.activo
+            ACTIVO: this.activo,
+            ID_APLICACION: this.aplicacionesSeleccionadas.map(a => this.obtenerId(a))
         };
 
         this.usuarioAdminService.updateUser(usuarioEditado).subscribe({

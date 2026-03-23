@@ -60,6 +60,26 @@ export class UsuarioAdminService {
         );
     }
 
+    private aplicacionesCache = new BehaviorSubject<any[] | null>(null);
+
+    getAplicaciones(): Observable<any> {
+        if (this.aplicacionesCache.value !== null) {
+            return of(this.aplicacionesCache.value);
+        }
+
+        const headers = this.makeHeaders();
+        return this.http.get<any>(`${this.url}/aplicaciones/get`, { headers }).pipe(
+            tap(res => {
+                this.aplicacionesCache.next(res.data ? res.data : res);
+            }),
+            catchError(error => {
+                console.error('Error al obtener las aplicaciones:', error);
+                this.showErrorAlert('Error al obtener las aplicaciones', this.extractErrorMessage(error));
+                return of([]);
+            })
+        );
+    }
+
     createUser(userData: any): Observable<any> {
         const headers = this.makeHeaders();
         return this.http.post<any>(`${this.url}/ek-usuarios/create`, userData, { headers }).pipe(

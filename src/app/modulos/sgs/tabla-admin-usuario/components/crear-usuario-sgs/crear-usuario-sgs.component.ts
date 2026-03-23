@@ -20,6 +20,9 @@ export class CrearUsuarioSgsComponent implements OnInit {
     mailPersonal: string = '';
     gpCustnmbr: string = '';
     activo: string = '1';
+    aplicacionActual: any = null;
+    aplicacionesSeleccionadas: any[] = [];
+    aplicaciones: any[] = [];
     estaCargando: boolean = false;
 
     constructor(
@@ -27,11 +30,47 @@ export class CrearUsuarioSgsComponent implements OnInit {
         public dialogRef: MatDialogRef<CrearUsuarioSgsComponent>
     ) { }
 
-    ngOnInit(): void { }
+    ngOnInit(): void {
+        this.cargarAplicaciones();
+    }
+
+    cargarAplicaciones(): void {
+        this.usuarioAdminService.getAplicaciones().subscribe({
+            next: (res) => {
+                this.aplicaciones = res.data || res || [];
+            },
+            error: (err) => console.error('Error al cargar aplicaciones', err)
+        });
+    }
+
+    agregarAplicacion(): void {
+        if (!this.aplicacionActual) return;
+        
+        const idActual = this.obtenerId(this.aplicacionActual);
+        const yaExiste = this.aplicacionesSeleccionadas.find(a => this.obtenerId(a) === idActual);
+        
+        if (!yaExiste) {
+            this.aplicacionesSeleccionadas.push(this.aplicacionActual);
+        }
+        this.aplicacionActual = null;
+    }
+
+    eliminarAplicacion(app: any): void {
+        const idEliminar = this.obtenerId(app);
+        this.aplicacionesSeleccionadas = this.aplicacionesSeleccionadas.filter(a => this.obtenerId(a) !== idEliminar);
+    }
+
+    obtenerId(app: any): any {
+        return app?.ID || app?.id || app?.ID_APLICACION;
+    }
 
     guardar(): void {
         if (!this.mail.trim()) {
             Swal.fire('Error', 'El email del usuario es requerido', 'error');
+            return;
+        }
+        if (!this.aplicacionesSeleccionadas || this.aplicacionesSeleccionadas.length === 0) {
+            Swal.fire('Error', 'Debe seleccionar al menos una aplicación', 'error');
             return;
         }
 
@@ -42,7 +81,8 @@ export class CrearUsuarioSgsComponent implements OnInit {
             APELLIDO: this.apellido,
             MAIL_PERSONAL: this.mailPersonal,
             GP_CUSTNMBR: this.gpCustnmbr,
-            ACTIVO: this.activo
+            ACTIVO: this.activo,
+            ID_APLICACION: this.aplicacionesSeleccionadas.map(a => this.obtenerId(a))
         };
 
         this.usuarioAdminService.createUser(nuevoUsuario).subscribe({

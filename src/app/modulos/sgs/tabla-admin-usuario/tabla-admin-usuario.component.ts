@@ -49,6 +49,9 @@ export class TablaAdminUsuarioComponent implements OnInit {
         });
 
         this.usuarioAdminService.reloadUsers();
+        
+        // Prefetch aplicaciones para el modal
+        this.usuarioAdminService.getAplicaciones().subscribe();
     }
 
     processUserData(res: any[]): void {
