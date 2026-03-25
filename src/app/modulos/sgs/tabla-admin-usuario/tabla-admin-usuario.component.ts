@@ -34,6 +34,8 @@ export class TablaAdminUsuarioComponent implements OnInit {
 
     cargando: boolean = true;
     filas: any[] = [];
+    rawUsers: any[] = [];
+    aplicaciones: any[] = [];
 
     constructor(
         private usuarioAdminService: UsuarioAdminService,
@@ -43,15 +45,21 @@ export class TablaAdminUsuarioComponent implements OnInit {
     ngOnInit(): void {
         this.usuarioAdminService.users$.subscribe((res) => {
             if (res !== null) {
-                this.processUserData(res);
+                this.rawUsers = res;
+                this.processUserData(this.rawUsers);
                 this.cargando = false;
             }
         });
 
         this.usuarioAdminService.reloadUsers();
         
-        // Prefetch aplicaciones para el modal
-        this.usuarioAdminService.getAplicaciones().subscribe();
+        // Prefetch aplicaciones para el modal y la visualización de la tabla
+        this.usuarioAdminService.getAplicaciones().subscribe(res => {
+            this.aplicaciones = res.data || res || [];
+            if (this.rawUsers.length > 0) {
+                this.processUserData(this.rawUsers);
+            }
+        });
     }
 
     processUserData(res: any[]): void {
@@ -59,12 +67,44 @@ export class TablaAdminUsuarioComponent implements OnInit {
             const nombreCompleto = [user.NOMBRE, user.APELLIDO].filter(Boolean).join(' ') ||
                 user.MAIL ||
                 user.ID_USUARIO;
+
+            let appsString = '-';
+            const appsIds = user.ID_APLICACION || user.APLICACIONES || user.id_aplicacion || [];
+            let appsIdsToMatch: any[] = [];
+            if (Array.isArray(appsIds)) {
+                appsIdsToMatch = appsIds.map((a: any) => a.ID || a.id || a.ID_APLICACION || a);
+            } else if (typeof appsIds === 'string') {
+                appsIdsToMatch = appsIds.split(',').map(a => a.trim());
+            } else if (typeof appsIds === 'number') {
+                appsIdsToMatch = [appsIds];
+            }
+
+            if (this.aplicaciones && this.aplicaciones.length > 0 && appsIdsToMatch.length > 0) {
+                const appNames = this.aplicaciones.filter(app => {
+                    const appId = app?.ID || app?.id || app?.ID_APLICACION;
+                    return appsIdsToMatch.includes(appId) || appsIdsToMatch.includes(String(appId)) || appsIdsToMatch.includes(Number(appId));
+                }).map(app => app.SISTEMA || app.nombre || app.NOMBRE);
+                
+                if (appNames.length > 0) {
+                    appsString = appNames.join(', ');
+                } else {
+                    appsString = appsIdsToMatch.join(', ');
+                }
+            } else if (appsIdsToMatch.length > 0) {
+                if (Array.isArray(appsIds) && typeof appsIds[0] === 'object') {
+                    const appNames = appsIds.map((a: any) => a.SISTEMA || a.nombre || a.NOMBRE || a.ID || a.id || a.ID_APLICACION);
+                    appsString = appNames.join(', ');
+                } else {
+                    appsString = appsIdsToMatch.join(', ');
+                }
+            }
+
             return {
                 ...user,
                 "ID Usuario": user.ID_USUARIO,
                 "Email/Usuario": user.MAIL || user.ID_USUARIO,
                 "Nombre": nombreCompleto,
-                "Email Personal": user.MAIL_PERSONAL || '-',
+                "Aplicaciones": appsString,
                 "GP Customer": user.GP_CUSTNMBR || '-',
                 "Estado": user.ACTIVO === '1' ? 'Activo' : 'Inactivo',
                 "Intentos": user.INTENTOS_FALLIDOS || 0

@@ -12,11 +12,12 @@
                 <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
                     <thead class="bg-light">
                         <tr>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">ID USUARIO</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">ID</th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold">EMAIL/USUARIO</th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold">NOMBRE</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">EMAIL PERSONAL</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">GP CUSTOMER</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold" style="white-space: nowrap;">GP CUSTNMBR
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold">APLICACIONES</th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold">ESTADO</th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold">INTENTOS</th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold">ACCIONES</th>
@@ -35,8 +36,17 @@
                                 <td class="py-3 px-4 border-bottom">
                                     <span class="fw-bold text-dark">{{ u['Nombre'] }}</span>
                                 </td>
-                                <td class="py-3 px-4 border-bottom text-muted">{{ u['Email Personal'] }}</td>
                                 <td class="py-3 px-4 border-bottom text-muted">{{ u['GP Customer'] }}</td>
+                                <td class="py-3 px-4 border-bottom text-muted" style="max-width: 250px;">
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <ng-container *ngIf="u['Aplicaciones'] && u['Aplicaciones'] !== '-'">
+                                            <span class="badge bg-secondary-subtle text-secondary border px-2 py-1"
+                                                *ngFor="let app of u['Aplicaciones'].split(', ')">{{ app }}</span>
+                                        </ng-container>
+                                        <span *ngIf="!u['Aplicaciones'] || u['Aplicaciones'] === '-'">-</span>
+                                    </div>
+                                </td>
+
                                 <td class="py-3 px-4 border-bottom">
                                     <span class="badge rounded-pill border fw-normal p-2 px-3"
                                         [ngClass]="u['Estado'] === 'Activo' ? 'bg-success-subtle text-success border-success' : 'bg-danger-subtle text-danger border-danger'">
