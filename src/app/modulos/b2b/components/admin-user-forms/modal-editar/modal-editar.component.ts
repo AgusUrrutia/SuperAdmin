@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
     CommonModule
   ],
   templateUrl: './modal-editar.component.html',
-  styleUrls: ['../modal-crear/modal-crear.component.scss']
+  styleUrls: ['./modal-editar.component.scss']
 })
 export class ModalEditarComponent {
   usuario: any = {

@@ -5,6 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { UsuarioService } from '../../../services/usuario.service';
+import { SpinnerGrandeComponent } from '../../../../../shared/components/spinner-grande/spinner-grande.component';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -14,16 +15,18 @@ import Swal from 'sweetalert2';
     CommonModule,
     FormsModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    SpinnerGrandeComponent
   ],
   templateUrl: './modal-permisos.component.html',
-  styleUrls: ['../modal-crear/modal-crear.component.scss'] // Reutilizando CSRF base SGS
+  styleUrls: ['./modal-permisos.component.scss']
 })
 export class ModalPermisosComponent implements OnInit {
   usuario: any;
   rolSeleccionadoPermisos: any = null;
   modulos: any[] = [];
   modulosIntegrados: any[] = [];
+  cargando: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<ModalPermisosComponent>,
@@ -59,6 +62,7 @@ export class ModalPermisosComponent implements OnInit {
       return;
     }
 
+    this.cargando = true;
     this.userService.getModulesByRole(rol.ROL).subscribe({
       next: (modules) => {
         const modulosBase = modules.map((m: any) => ({ ...m, lectura: false, escritura: false }));
@@ -70,11 +74,20 @@ export class ModalPermisosComponent implements OnInit {
               let tL = p.some((x) => x.ID_ACCION === "1");
               let tE = p.some((x) => x.ID_ACCION === "2");
               if (tE) { tL = true; tE = true; }
-              return { ...modulo, lectura: tL, escritura: tE };
+              return {
+                ...modulo,
+                lectura: tL,
+                escritura: tE,
+                originalLectura: tL,
+                originalEscritura: tE
+              };
             });
-          }
+            this.cargando = false;
+          },
+          error: () => this.cargando = false
         });
-      }
+      },
+      error: () => this.cargando = false
     });
   }
 
@@ -134,8 +147,24 @@ export class ModalPermisosComponent implements OnInit {
     console.log('Rol Maestro encontrado:', rolMaestro);
     console.log('ID Final a enviar:', idRolReal);
 
+    // ✅ Validación: Evitar duplicados si no hubo cambios reales
+    if (modulo.lectura === modulo.originalLectura && modulo.escritura === modulo.originalEscritura) {
+      Swal.fire({
+        title: 'Sin cambios',
+        text: 'Este permiso ya se encuentra guardado con los mismos valores.',
+        icon: 'info',
+        confirmButtonColor: '#222'
+      });
+      return;
+    }
+
     this.userService.updatePermissions(this.usuario.ID_USUARIO, modulo.ID_MENU, accion, idRolReal).subscribe({
-      next: () => Swal.fire({ title: 'Guardado', text: `Permisos guardados.`, icon: 'success', timer: 1000, showConfirmButton: false })
+      next: () => {
+        Swal.fire({ title: 'Guardado', text: `Permisos guardados.`, icon: 'success', timer: 1000, showConfirmButton: false });
+        // Actualizamos el estado original para que no vuelva a chillar hasta que cambie algo
+        modulo.originalLectura = modulo.lectura;
+        modulo.originalEscritura = modulo.escritura;
+      }
     });
   }
 
