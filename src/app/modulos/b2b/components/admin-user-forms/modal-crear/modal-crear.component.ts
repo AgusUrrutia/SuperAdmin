@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-modal-crear',
@@ -48,8 +49,14 @@ export class ModalCrearComponent {
   }
 
   crear(): void {
-    if (!this.nuevoUsuario.MAIL || 
-        !this.nuevoUsuario.GP_CUSTNMBR) {
+    if (!this.nuevoUsuario.MAIL || !this.nuevoUsuario.GP_CUSTNMBR) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos requeridos',
+        text: 'Por favor, complete todos los campos marcados con *',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#222'
+      });
       return;
     }
     console.log('Creando usuario:', this.nuevoUsuario);
