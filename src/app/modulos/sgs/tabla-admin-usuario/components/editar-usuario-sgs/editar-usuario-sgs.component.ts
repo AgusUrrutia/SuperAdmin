@@ -25,6 +25,8 @@ export class EditarUsuarioSgsComponent implements OnInit {
     aplicacionesSeleccionadas: any[] = [];
     aplicaciones: any[] = [];
     estaCargando: boolean = false;
+    estaModificandoApp: boolean = false;
+    huboCambiosEnApps: boolean = false;
 
     constructor(
         private usuarioAdminService: UsuarioAdminService,
@@ -80,14 +82,39 @@ export class EditarUsuarioSgsComponent implements OnInit {
         const yaExiste = this.aplicacionesSeleccionadas.find(a => this.obtenerId(a) === idActual);
         
         if (!yaExiste) {
-            this.aplicacionesSeleccionadas.push(this.aplicacionActual);
+            this.estaModificandoApp = true;
+            const appParaAgregar = this.aplicacionActual;
+            
+            this.usuarioAdminService.addAplicacionToUser({ ID_USUARIO: this.id, ID_SISTEMA: idActual }).subscribe({
+                next: () => {
+                    this.aplicacionesSeleccionadas.push(appParaAgregar);
+                    this.aplicacionActual = null;
+                    this.estaModificandoApp = false;
+                    this.huboCambiosEnApps = true;
+                },
+                error: () => {
+                    this.estaModificandoApp = false;
+                }
+            });
+        } else {
+            this.aplicacionActual = null;
         }
-        this.aplicacionActual = null;
     }
 
     eliminarAplicacion(app: any): void {
         const idEliminar = this.obtenerId(app);
-        this.aplicacionesSeleccionadas = this.aplicacionesSeleccionadas.filter(a => this.obtenerId(a) !== idEliminar);
+        this.estaModificandoApp = true;
+
+        this.usuarioAdminService.deleteAplicacionFromUser({ ID_USUARIO: this.id, ID_SISTEMA: idEliminar }).subscribe({
+            next: () => {
+                this.aplicacionesSeleccionadas = this.aplicacionesSeleccionadas.filter(a => this.obtenerId(a) !== idEliminar);
+                this.estaModificandoApp = false;
+                this.huboCambiosEnApps = true;
+            },
+            error: () => {
+                this.estaModificandoApp = false;
+            }
+        });
     }
 
     obtenerId(app: any): any {
@@ -135,6 +162,6 @@ export class EditarUsuarioSgsComponent implements OnInit {
     }
 
     cancelar(): void {
-        this.dialogRef.close(false);
+        this.dialogRef.close(this.huboCambiosEnApps);
     }
 }

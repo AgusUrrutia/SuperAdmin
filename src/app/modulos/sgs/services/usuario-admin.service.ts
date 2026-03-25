@@ -116,6 +116,28 @@ export class UsuarioAdminService {
         );
     }
 
+    addAplicacionToUser(payload: { ID_USUARIO: number | string, ID_SISTEMA: number | string }): Observable<any> {
+        const headers = this.makeHeaders();
+        return this.http.post<any>(`${this.url}/aplicaciones/add`, payload, { headers }).pipe(
+            catchError(error => {
+                console.error('Error al agregar aplicación al usuario:', error);
+                this.showErrorAlert('Error al agregar aplicación', this.extractErrorMessage(error));
+                throw error;
+            })
+        );
+    }
+
+    deleteAplicacionFromUser(payload: { ID_USUARIO: number | string, ID_SISTEMA: number | string }): Observable<any> {
+        const headers = this.makeHeaders();
+        return this.http.post<any>(`${this.url}/aplicaciones/delete`, payload, { headers }).pipe(
+            catchError(error => {
+                console.error('Error al quitar aplicación al usuario:', error);
+                this.showErrorAlert('Error al quitar aplicación', this.extractErrorMessage(error));
+                throw error;
+            })
+        );
+    }
+
     reloadUsers(estado: string = 'all', fetch: number = 100, offset: number = 0, buscar: string = ''): void {
         this.getUsers(estado, fetch, offset, buscar).subscribe(res => {
             if (res) {
