@@ -164,12 +164,12 @@ export class UsuarioService {
     const userGP = localStorage.getItem('userGp');
     const id_usuario = localStorage.getItem('id_usuario');
     let headers = this.makeHeaders();
-  
+
     return this.http.get<any>(`${this.url}/b2b/panel-admin/obtener-usuarios-cliente-y-permisos/${userGP}/${id_usuario}`, { headers }).pipe(
       map(res => {
         const rawUsers = res?.USUARIOS || [];
         const permisos = res?.PERMISOS || []; // Extraemos los permisos
-  
+
         // Agrupamos usuarios
         const grouped = rawUsers.reduce((acc: any, current: any) => {
           const id = current.ID_USUARIO;
@@ -186,7 +186,7 @@ export class UsuarioService {
           });
           return acc;
         }, {});
-  
+
         // Retornamos UN SOLO OBJETO con ambas listas
         return {
           usuarios: Object.values(grouped),

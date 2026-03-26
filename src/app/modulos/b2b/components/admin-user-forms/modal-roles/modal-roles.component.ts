@@ -16,7 +16,7 @@ import Swal from 'sweetalert2';
     MatIconModule
   ],
   templateUrl: './modal-roles.component.html',
-  styleUrls: ['../modal-crear/modal-crear.component.scss'] // Reutilizando CSS base SGS
+  styleUrls: ['./modal-roles.component.scss']
 })
 export class ModalRolesComponent implements OnInit {
   usuario: any;
@@ -42,7 +42,7 @@ export class ModalRolesComponent implements OnInit {
   }
 
   cargarRolesDelUsuario(): void {
-    this.rolesDisponibles = this.data.roles; 
+    this.rolesDisponibles = this.data.roles;
     this.loadingRoles = true;
     this.userService.getAllRolesByUser(this.usuario.ID_USUARIO).subscribe({
       next: (roles) => {
@@ -60,7 +60,7 @@ export class ModalRolesComponent implements OnInit {
 
   agregarRol(rolObj: any): void {
     if (!rolObj || this.usuario.ROLES.some((r: any) => r.ROL === rolObj.nombre)) return;
-    
+
     Swal.fire({ title: 'Agregando rol...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
     this.userService.addRoleToUser(this.usuario.ID_USUARIO, rolObj.valor, rolObj.nombre).subscribe({

@@ -28,6 +28,13 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @if (cargando) {
+                    <tr>
+                        <td colspan="4" class="text-center py-5 border-0">
+                            <app-spinner-grande minHeight="180px"></app-spinner-grande>
+                        </td>
+                    </tr>
+                    } @else {
                     @for (modulo of modulos; track modulo.ID_MENU) {
                     <tr>
                         <td class="align-middle fw-medium">{{ modulo.MENU }}</td>
@@ -53,13 +60,10 @@
                         </td>
                     </tr>
                     }
+                    }
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div class="actions-modal p-3 d-flex justify-content-end align-items-center bg-white border-top mt-0">
-        <button type="button" class="btn btn-light border py-2 px-4 shadow-sm"
-            style="font-size: 0.9rem; font-weight: 500;" (click)="onCancelar()">Cerrar</button>
-    </div>
 </div>
