@@ -5,6 +5,8 @@ import { SpinnerGrandeComponent } from '../../../shared/components/spinner-grand
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CrearUsuarioSgsComponent } from './components/crear-usuario-sgs/crear-usuario-sgs.component';
 import { EditarUsuarioSgsComponent } from './components/editar-usuario-sgs/editar-usuario-sgs.component';
+import { UsuarioService } from '../../B2B/services/usuario.service';
+import { ModalRolesComponent } from '../../B2B/components/admin-user-forms/modal-roles/modal-roles.component';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -36,9 +38,11 @@ export class TablaAdminUsuarioComponent implements OnInit {
     filas: any[] = [];
     rawUsers: any[] = [];
     aplicaciones: any[] = [];
+    userSelected: any;
 
     constructor(
         private usuarioAdminService: UsuarioAdminService,
+        private usuarioService: UsuarioService,
         private dialog: MatDialog
     ) { }
 
@@ -136,6 +140,26 @@ export class TablaAdminUsuarioComponent implements OnInit {
             if (result) {
                 this.usuarioAdminService.reloadUsers();
             }
+        });
+    }
+
+    gestionarRoles(usuario: any) {
+        this.usuarioService.getAllRoles().subscribe((roles) => {
+            this.userSelected = usuario;
+            const dialogRef = this.dialog.open(ModalRolesComponent, {
+                width: '600px',
+                disableClose: true,
+                data: {
+                    roles: roles,
+                    usuario: this.userSelected
+                }
+            });
+            
+            // Note: The B2B modal reloads users inside itself using its own service,
+            // but we might want to reload SGS users when the dialog closes if roles affect the view.
+            dialogRef.afterClosed().subscribe(() => {
+                this.usuarioAdminService.reloadUsers();
+            });
         });
     }
 
