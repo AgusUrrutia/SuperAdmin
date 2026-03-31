@@ -3,18 +3,64 @@ import { CommonModule } from '@angular/common';
 import { UsuarioAdminService } from '../services/usuario-admin.service';
 import { SpinnerGrandeComponent } from '../../../shared/components/spinner-grande/spinner-grande.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
 import { CrearUsuarioSgsComponent } from './components/crear-usuario-sgs/crear-usuario-sgs.component';
 import { EditarUsuarioSgsComponent } from './components/editar-usuario-sgs/editar-usuario-sgs.component';
 import { UsuarioService } from '../../b2b/services/usuario.service';
 import { ModalRolesComponent } from '../../b2b/components/admin-user-forms/modal-roles/modal-roles.component';
+import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-tabla-admin-usuario',
     standalone: true,
-    imports: [CommonModule, MatDialogModule, SpinnerGrandeComponent],
+    imports: [CommonModule, MatDialogModule, MatPaginatorModule, SpinnerGrandeComponent, FormsModule, MatIconModule],
     templateUrl: './tabla-admin-usuario.component.html',
     styles: [`
+    .cursor-pointer {
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s;
+      &:hover {
+        color: #222 !important;
+        background-color: rgba(0,0,0,0.03);
+      }
+      mat-icon {
+        font-size: 1.1rem;
+        width: 1.1rem;
+        height: 1.1rem;
+        color: #adb5bd;
+        transition: all 0.2s;
+      }
+      &.active-sort {
+        color: #222 !important;
+        mat-icon {
+          color: #222;
+        }
+      }
+    }
+    /* Estilos para estabilizar la tabla */
+    .table-fixed {
+      table-layout: fixed;
+      width: 100%;
+    }
+    .col-id { width: 90px; }
+    .col-email { width: 220px; }
+    .col-nombre { width: 220px; }
+    .col-gp { width: 130px; }
+    .col-apps { width: 140px; }
+    .col-estado { width: 120px; }
+    .col-intentos { width: 90px; }
+    .col-acciones { width: 260px; }
+    
+    .text-truncate {
+      overflow: hidden;
+      display: block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
     .btn-dark-custom {
       background-color: #222;
       color: white;
@@ -30,15 +76,31 @@ import Swal from 'sweetalert2';
     .btn-primary { background-color: #2b6cb0; border-color: #2b6cb0; }
     .btn-dark { background-color: #222; border-color: #222; }
     .btn-danger { background-color: #c53030; border-color: #c53030; }
+    td { min-height: 75px; vertical-align: middle; }
   `]
 })
 export class TablaAdminUsuarioComponent implements OnInit {
 
     cargando: boolean = true;
     filas: any[] = [];
+    filteredFilas: any[] = [];
+    displayedFilas: any[] = [];
     rawUsers: any[] = [];
     aplicaciones: any[] = [];
     userSelected: any;
+
+    // Filtros
+    searchTerm: string = '';
+    selectedEstado: string = '';
+
+    // Paginación
+    pageSize = 5;
+    currentPage = 0;
+    totalItems = 0;
+
+    // Ordenamiento
+    sortColumn: string = '';
+    sortDirection: 'asc' | 'desc' | '' = '';
 
     constructor(
         private usuarioAdminService: UsuarioAdminService,
@@ -114,6 +176,89 @@ export class TablaAdminUsuarioComponent implements OnInit {
                 "Intentos": user.INTENTOS_FALLIDOS || 0
             };
         });
+
+        this.applyFilters();
+    }
+
+    applyFilters(): void {
+        let filtered = [...this.filas];
+
+        if (this.searchTerm.trim()) {
+            const term = this.searchTerm.toLowerCase();
+            filtered = filtered.filter(f =>
+                String(f["ID Usuario"]).toLowerCase().includes(term) ||
+                String(f["Email/Usuario"]).toLowerCase().includes(term) ||
+                String(f["Nombre"]).toLowerCase().includes(term) ||
+                String(f["GP Customer"]).toLowerCase().includes(term)
+            );
+        }
+
+        if (this.selectedEstado) {
+            filtered = filtered.filter(f => f.ACTIVO === this.selectedEstado);
+        }
+
+        this.filteredFilas = filtered;
+        this.totalItems = filtered.length;
+        this.currentPage = 0;
+        this.updateDisplayedFilas();
+    }
+
+    onSort(column: string): void {
+        if (this.sortColumn === column) {
+            if (this.sortDirection === 'desc') {
+                this.sortDirection = 'asc';
+            } else if (this.sortDirection === 'asc') {
+                this.sortDirection = '';
+                this.sortColumn = '';
+            } else {
+                this.sortDirection = 'desc';
+            }
+        } else {
+            this.sortColumn = column;
+            this.sortDirection = 'desc';
+        }
+        this.updateDisplayedFilas();
+    }
+
+    getSortIcon(column: string): string {
+        if (this.sortColumn !== column) {
+            return 'unfold_more';
+        }
+        return this.sortDirection === 'asc' ? 'arrow_upward' : this.sortDirection === 'desc' ? 'arrow_downward' : 'unfold_more';
+    }
+
+    updateDisplayedFilas(): void {
+        let sortedList = [...this.filteredFilas];
+
+        if (this.sortColumn && this.sortDirection) {
+            sortedList.sort((a, b) => {
+                const aValue = a[this.sortColumn];
+                const bValue = b[this.sortColumn];
+
+                if (aValue == null && bValue == null) return 0;
+                if (aValue == null) return this.sortDirection === 'asc' ? -1 : 1;
+                if (bValue == null) return this.sortDirection === 'asc' ? 1 : -1;
+
+                let comparison = 0;
+                if (typeof aValue === 'string' && typeof bValue === 'string') {
+                    comparison = aValue.localeCompare(bValue, undefined, { numeric: true });
+                } else {
+                    comparison = aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+                }
+
+                return this.sortDirection === 'asc' ? comparison : -comparison;
+            });
+        }
+
+        const startIndex = this.currentPage * this.pageSize;
+        const endIndex = startIndex + this.pageSize;
+        this.displayedFilas = sortedList.slice(startIndex, endIndex);
+    }
+
+    onPageChange(event: PageEvent): void {
+        this.currentPage = event.pageIndex;
+        this.pageSize = event.pageSize;
+        this.updateDisplayedFilas();
     }
 
     crearUsuario(): void {
@@ -171,7 +316,7 @@ export class TablaAdminUsuarioComponent implements OnInit {
             showCancelButton: true,
             confirmButtonColor: '#222',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminar',
+            confirmButtonText: 'Eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {

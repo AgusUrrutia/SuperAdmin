@@ -6,14 +6,39 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CrearGrupoSgsComponent } from './components/crear-grupo-sgs/crear-grupo-sgs.component';
 import { EditarGrupoSgsComponent } from './components/editar-grupo-sgs/editar-grupo-sgs.component';
 import { ModalEditarGrupoSgsComponent } from './components/modal-editar-grupo-sgs/modal-editar-grupo-sgs.component';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-tabla-admin-grupo',
     standalone: true,
-    imports: [CommonModule, MatDialogModule, SpinnerGrandeComponent],
+    imports: [CommonModule, MatDialogModule, SpinnerGrandeComponent, MatPaginatorModule, MatIconModule, FormsModule],
     templateUrl: './tabla-admin-grupo.component.html',
     styles: [`
+    .cursor-pointer {
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s;
+      &:hover {
+        color: #222 !important;
+        background-color: rgba(0,0,0,0.03);
+      }
+      mat-icon {
+        font-size: 1.1rem;
+        width: 1.1rem;
+        height: 1.1rem;
+        color: #adb5bd;
+        transition: all 0.2s;
+      }
+      &.active-sort {
+        color: #222 !important;
+        mat-icon {
+          color: #222;
+        }
+      }
+    }
     .btn-dark-custom {
       background-color: #222;
       color: white;
@@ -29,14 +54,47 @@ import Swal from 'sweetalert2';
     .btn-primary { background-color: #2b6cb0; border-color: #2b6cb0; }
     .btn-dark { background-color: #222; border-color: #222; }
     .btn-danger { background-color: #c53030; border-color: #c53030; }
+
+    /* Estabilización de tabla */
+    .table-fixed {
+      table-layout: fixed;
+      width: 100%;
+    }
+    .col-id { width: 110px; }
+    .col-nombre { width: 150px; }
+    .col-cant { width: 180px; }
+    .col-acciones { width: 330px; }
+    
+    td { min-height: 75px; vertical-align: middle; }
+    .text-truncate {
+      overflow: hidden;
+      display: block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
   `]
 })
 export class TablaAdminGrupoComponent implements OnInit {
 
     cargando: boolean = true;
     filas: any[] = [];
+    filteredFilas: any[] = [];
+    displayedFilas: any[] = [];
     usuarios: any[] = [];
     formularios: any[] = [];
+
+    // Filtros
+    searchTerm: string = '';
+
+    // Paginación
+    pageSize = 5;
+    currentPage = 0;
+    totalItems = 0;
+
+    // Ordenamiento
+    sortColumn: string = '';
+    sortDirection: 'asc' | 'desc' | '' = '';
 
     constructor(
         private groupService: GroupService,
@@ -75,6 +133,83 @@ export class TablaAdminGrupoComponent implements OnInit {
                 FORMULARIOS_ID: detalle?.FORMULARIOS_ID || []
             };
         });
+
+        this.applyFilters();
+    }
+
+    applyFilters(): void {
+        let filtered = [...this.filas];
+
+        if (this.searchTerm.trim()) {
+            const term = this.searchTerm.toLowerCase();
+            filtered = filtered.filter(f =>
+                String(f["ID Grupo"]).toLowerCase().includes(term) ||
+                String(f["Nombre Grupo"]).toLowerCase().includes(term)
+            );
+        }
+
+        this.filteredFilas = filtered;
+        this.totalItems = filtered.length;
+        this.currentPage = 0;
+        this.updateDisplayedFilas();
+    }
+
+    onSort(column: string): void {
+        if (this.sortColumn === column) {
+            if (this.sortDirection === 'desc') {
+                this.sortDirection = 'asc';
+            } else if (this.sortDirection === 'asc') {
+                this.sortDirection = '';
+                this.sortColumn = '';
+            } else {
+                this.sortDirection = 'desc';
+            }
+        } else {
+            this.sortColumn = column;
+            this.sortDirection = 'desc';
+        }
+        this.updateDisplayedFilas();
+    }
+
+    getSortIcon(column: string): string {
+        if (this.sortColumn !== column) {
+            return 'unfold_more';
+        }
+        return this.sortDirection === 'asc' ? 'arrow_upward' : this.sortDirection === 'desc' ? 'arrow_downward' : 'unfold_more';
+    }
+
+    updateDisplayedFilas(): void {
+        let sortedList = [...this.filteredFilas];
+
+        if (this.sortColumn && this.sortDirection) {
+            sortedList.sort((a, b) => {
+                const aValue = a[this.sortColumn];
+                const bValue = b[this.sortColumn];
+
+                if (aValue == null && bValue == null) return 0;
+                if (aValue == null) return this.sortDirection === 'asc' ? -1 : 1;
+                if (bValue == null) return this.sortDirection === 'asc' ? 1 : -1;
+
+                let comparison = 0;
+                if (typeof aValue === 'string' && typeof bValue === 'string') {
+                    comparison = aValue.localeCompare(bValue, undefined, { numeric: true });
+                } else {
+                    comparison = aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+                }
+
+                return this.sortDirection === 'asc' ? comparison : -comparison;
+            });
+        }
+
+        const startIndex = this.currentPage * this.pageSize;
+        const endIndex = startIndex + this.pageSize;
+        this.displayedFilas = sortedList.slice(startIndex, endIndex);
+    }
+
+    onPageChange(event: PageEvent): void {
+        this.currentPage = event.pageIndex;
+        this.pageSize = event.pageSize;
+        this.updateDisplayedFilas();
     }
 
     crearGrupo(): void {
@@ -130,7 +265,7 @@ export class TablaAdminGrupoComponent implements OnInit {
             showCancelButton: true,
             confirmButtonColor: '#222',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminar',
+            confirmButtonText: 'Eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {

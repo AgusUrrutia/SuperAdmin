@@ -72,11 +72,37 @@
 .cursor-pointer {
   cursor: pointer;
   user-select: none;
-  
+  transition: background-color 0.2s;
   &:hover {
     color: #222 !important;
+    background-color: rgba(0,0,0,0.03);
+  }
+  mat-icon {
+    font-size: 1.1rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    color: #adb5bd;
+    transition: all 0.2s;
+  }
+  &.active-sort {
+    color: #222 !important;
+    mat-icon {
+      color: #222;
+    }
   }
 }
+
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.col-id-b2b { width: 160px; }
+.col-email-b2b { width: 200px; }
+.col-roles-b2b { width: 220px; }
+.col-estado-b2b { width: 110px; }
+.col-gp-b2b { width: 150px; }
+.col-acciones-b2b { width: 200px; }
 
 .table {
   th {
@@ -84,5 +110,6 @@
   }
   td {
     vertical-align: middle;
+    height: 85px;  /* Altura fija para mayor estabilidad */
   }
 }

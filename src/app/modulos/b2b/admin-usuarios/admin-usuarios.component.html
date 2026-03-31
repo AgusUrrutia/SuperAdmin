@@ -20,15 +20,40 @@
     <div class="card shadow-sm border-0 rounded-3">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                <table class="table table-hover align-middle mb-0 table-fixed" style="font-size: 0.9rem;">
                     <thead class="bg-light">
                         <tr>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">NOMBRE / ID</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">CORREO</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold col-roles">ROL</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">ESTADO</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold text-nowrap-th">CLIENTE GP</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">ACCIONES</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-id-b2b cursor-pointer text-nowrap-th"
+                                [class.active-sort]="sortColumn === 'NOMBRE'" (click)="onSort('NOMBRE')">
+                                <div class="d-flex align-items-center gap-1">
+                                    NOMBRE / ID <mat-icon>{{ getSortIcon('NOMBRE') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-email-b2b cursor-pointer text-nowrap-th"
+                                [class.active-sort]="sortColumn === 'MAIL'" (click)="onSort('MAIL')">
+                                <div class="d-flex align-items-center gap-1">
+                                    CORREO <mat-icon>{{ getSortIcon('MAIL') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-roles-b2b cursor-pointer text-nowrap-th"
+                                [class.active-sort]="sortColumn === 'ROLES'" (click)="onSort('ROLES')">
+                                <div class="d-flex align-items-center gap-1">
+                                    ROL <mat-icon>{{ getSortIcon('ROLES') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-estado-b2b cursor-pointer text-nowrap-th"
+                                [class.active-sort]="sortColumn === 'ACTIVO'" (click)="onSort('ACTIVO')">
+                                <div class="d-flex align-items-center gap-1">
+                                    ESTADO <mat-icon>{{ getSortIcon('ACTIVO') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-gp-b2b cursor-pointer text-nowrap-th"
+                                [class.active-sort]="sortColumn === 'GP_CUSTNMBR'" (click)="onSort('GP_CUSTNMBR')">
+                                <div class="d-flex align-items-center gap-1">
+                                    CLIENTE GP <mat-icon>{{ getSortIcon('GP_CUSTNMBR') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-acciones-b2b text-center">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>

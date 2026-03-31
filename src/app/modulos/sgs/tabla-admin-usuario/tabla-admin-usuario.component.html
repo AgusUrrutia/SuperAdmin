@@ -6,21 +6,66 @@
         </button>
     </div>
 
+    <!-- Filtros replicados de B2B para mantener consistencia -->
+    <div class="d-flex gap-3 mb-4">
+        <input type="text" class="form-control w-25 shadow-sm border-0" placeholder="Buscar por ID o Email..."
+            [(ngModel)]="searchTerm" (input)="applyFilters()">
+        <select class="form-select w-25 shadow-sm border-0" [(ngModel)]="selectedEstado" (change)="applyFilters()">
+            <option value="">Todos los Estados</option>
+            <option value="1">Activo</option>
+            <option value="0">Inactivo</option>
+        </select>
+    </div>
+
     <div class="card shadow-sm border-0 rounded-3">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                <table class="table table-hover align-middle mb-0 table-fixed" style="font-size: 0.9rem;">
                     <thead class="bg-light">
                         <tr>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">ID</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">EMAIL/USUARIO</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">NOMBRE</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold" style="white-space: nowrap;">GP CUSTNMBR
+                            <th class="py-3 ps-4 pe-2 border-0 text-muted fw-bold cursor-pointer col-id"
+                                [class.active-sort]="sortColumn === 'ID Usuario'" (click)="onSort('ID Usuario')">
+                                <div class="d-flex align-items-center gap-1">
+                                    ID <mat-icon>{{ getSortIcon('ID Usuario') }}</mat-icon>
+                                </div>
                             </th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">APLICACIONES</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">ESTADO</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">INTENTOS</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">ACCIONES</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer text-nowrap col-email"
+                                [class.active-sort]="sortColumn === 'Email/Usuario'" (click)="onSort('Email/Usuario')">
+                                <div class="d-flex align-items-center gap-1">
+                                    EMAIL/USUARIO <mat-icon>{{ getSortIcon('Email/Usuario') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer col-nombre"
+                                [class.active-sort]="sortColumn === 'Nombre'" (click)="onSort('Nombre')">
+                                <div class="d-flex align-items-center gap-1">
+                                    NOMBRE <mat-icon>{{ getSortIcon('Nombre') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer text-nowrap col-gp"
+                                [class.active-sort]="sortColumn === 'GP Customer'" (click)="onSort('GP Customer')">
+                                <div class="d-flex align-items-center gap-1">
+                                    GP CUSTNMBR <mat-icon>{{ getSortIcon('GP Customer') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer col-apps"
+                                [class.active-sort]="sortColumn === 'Aplicaciones'" (click)="onSort('Aplicaciones')">
+                                <div class="d-flex align-items-center gap-1">
+                                    APLICACIONES <mat-icon>{{ getSortIcon('Aplicaciones') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer col-estado"
+                                [class.active-sort]="sortColumn === 'Estado'" (click)="onSort('Estado')">
+                                <div class="d-flex align-items-center gap-1">
+                                    ESTADO <mat-icon>{{ getSortIcon('Estado') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer col-intentos"
+                                [class.active-sort]="sortColumn === 'Intentos'" (click)="onSort('Intentos')">
+                                <div class="d-flex align-items-center gap-1">
+                                    INTENTOS <mat-icon>{{ getSortIcon('Intentos') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-acciones">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -30,14 +75,21 @@
                             </td>
                         </tr>
                         <ng-container *ngIf="!cargando">
-                            <tr *ngFor="let u of filas">
-                                <td class="py-3 px-4 border-bottom text-muted">{{ u['ID Usuario'] }}</td>
-                                <td class="py-3 px-4 border-bottom text-muted">{{ u['Email/Usuario'] }}</td>
+                            <tr *ngFor="let u of displayedFilas">
+                                <td class="py-3 ps-4 pe-2 border-bottom text-muted">
+                                    {{ u['ID Usuario'] }}
+                                </td>
+                                <td class="py-3 px-4 border-bottom text-muted">
+                                    <div class="text-truncate" [title]="u['Email/Usuario']">{{ u['Email/Usuario'] }}
+                                    </div>
+                                </td>
                                 <td class="py-3 px-4 border-bottom">
                                     <span class="fw-bold text-dark">{{ u['Nombre'] }}</span>
                                 </td>
-                                <td class="py-3 px-4 border-bottom text-muted">{{ u['GP Customer'] }}</td>
-                                <td class="py-3 px-4 border-bottom text-muted" style="max-width: 250px;">
+                                <td class="py-3 px-4 border-bottom text-muted">
+                                    <div class="text-truncate" [title]="u['GP Customer']">{{ u['GP Customer'] }}</div>
+                                </td>
+                                <td class="py-3 px-4 border-bottom text-muted">
                                     <div class="d-flex flex-wrap gap-1">
                                         <ng-container *ngIf="u['Aplicaciones'] && u['Aplicaciones'] !== '-'">
                                             <span class="badge bg-secondary-subtle text-secondary border px-2 py-1"
@@ -56,11 +108,11 @@
                                 <td class="py-3 px-4 border-bottom text-muted">{{ u['Intentos'] }}</td>
                                 <td class="py-3 px-4 border-bottom">
                                     <div class="d-flex gap-2">
-                                        <button class="btn btn-primary btn-sm" style="width: 85px;"
+                                        <button class="btn btn-primary btn-sm" style="width: 80px;"
                                             (click)="editarUsuario(u)">Editar</button>
-                                        <button class="btn btn-dark btn-sm" style="width: 85px;"
+                                        <button class="btn btn-dark btn-sm" style="width: 80px;"
                                             (click)="gestionarRoles(u)">Rol</button>
-                                        <button class="btn btn-danger btn-sm" style="width: 85px;"
+                                        <button class="btn btn-danger btn-sm" style="width: 80px;"
                                             (click)="eliminarUsuario(u)">Eliminar</button>
                                     </div>
                                 </td>
@@ -71,6 +123,12 @@
                         </ng-container>
                     </tbody>
                 </table>
+            </div>
+
+            <div class="px-3 border-top bg-light">
+                <mat-paginator [length]="totalItems" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]"
+                    [pageIndex]="currentPage" (page)="onPageChange($event)" showFirstLastButtons>
+                </mat-paginator>
             </div>
         </div>
     </div>

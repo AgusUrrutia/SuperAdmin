@@ -164,7 +164,7 @@ export class ModalEditarGrupoSgsComponent implements OnInit {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#222',
-            confirmButtonText: 'Sí, eliminar',
+            confirmButtonText: 'Eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -186,7 +186,7 @@ export class ModalEditarGrupoSgsComponent implements OnInit {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#222',
-            confirmButtonText: 'Sí, eliminar',
+            confirmButtonText: 'Eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {

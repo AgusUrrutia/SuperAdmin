@@ -1,55 +1,110 @@
-<div class="container-fluid mt-4 px-4">
+<div class="container-fluid mt-4 px-4 pb-5">
+    <!-- Encabezado -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0" style="color: #222;">Administración de Grupos</h2>
-        <button class="btn-dark-custom" (click)="crearGrupo()">
-            + Crear Nuevo Grupo
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #222;">Administración de Grupos</h2>
+        </div>
+        <button class="btn-dark-custom shadow-sm" (click)="crearGrupo()">
+            <div class="d-flex align-items-center gap-2">
+                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">add</mat-icon>
+                <span>Crear Nuevo Grupo</span>
+            </div>
         </button>
     </div>
 
+    <div class="d-flex gap-3 mb-4">
+        <input type="text" class="form-control border-0 shadow-sm py-2 px-3" 
+            style="max-width: 380px; height: 45px;"
+            placeholder="Buscar por ID o Nombre..."
+            [(ngModel)]="searchTerm" (input)="applyFilters()">
+    </div>
+
+    <!-- Tabla -->
     <div class="card shadow-sm border-0 rounded-3">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                <table class="table table-hover align-middle mb-0 table-fixed" style="font-size: 0.9rem;">
                     <thead class="bg-light">
                         <tr>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">ID GRUPO</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">NOMBRE GRUPO</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">CANT. USUARIOS</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">CANT. FORMULARIOS</th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold">ACCIONES</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer col-id text-nowrap"
+                                [class.active-sort]="sortColumn === 'ID Grupo'"
+                                (click)="onSort('ID Grupo')">
+                                <div class="d-flex align-items-center gap-1">
+                                    ID GRUPO <mat-icon>{{ getSortIcon('ID Grupo') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer col-nombre text-nowrap"
+                                [class.active-sort]="sortColumn === 'Nombre Grupo'"
+                                (click)="onSort('Nombre Grupo')">
+                                <div class="d-flex align-items-center gap-1">
+                                    NOMBRE GRUPO <mat-icon>{{ getSortIcon('Nombre Grupo') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer col-cant text-nowrap"
+                                [class.active-sort]="sortColumn === 'Cant. Usuarios'"
+                                (click)="onSort('Cant. Usuarios')">
+                                <div class="d-flex align-items-center gap-1">
+                                    CANT. USUARIOS <mat-icon>{{ getSortIcon('Cant. Usuarios') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer col-cant text-nowrap"
+                                [class.active-sort]="sortColumn === 'Cant. Formularios'"
+                                (click)="onSort('Cant. Formularios')">
+                                <div class="d-flex align-items-center gap-1">
+                                    CANT. FORMULARIOS <mat-icon>{{ getSortIcon('Cant. Formularios') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-acciones text-center text-nowrap">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- Loading State -->
                         <tr *ngIf="cargando">
                             <td colspan="5" class="text-center py-5 border-0">
                                 <app-spinner-grande minHeight="200px"></app-spinner-grande>
                             </td>
                         </tr>
+
+                        <!-- Data State -->
                         <ng-container *ngIf="!cargando">
-                            <tr *ngFor="let g of filas">
-                                <td class="py-3 px-4 border-bottom text-muted">{{ g['ID Grupo'] }}</td>
+                            <tr *ngFor="let g of displayedFilas">
+                                <td class="py-3 px-4 border-bottom text-muted">
+                                    {{ g['ID Grupo'] }}
+                                </td>
                                 <td class="py-3 px-4 border-bottom">
                                     <span class="fw-bold text-dark">{{ g['Nombre Grupo'] }}</span>
                                 </td>
                                 <td class="py-3 px-4 border-bottom text-muted">{{ g['Cant. Usuarios'] }}</td>
                                 <td class="py-3 px-4 border-bottom text-muted">{{ g['Cant. Formularios'] }}</td>
                                 <td class="py-3 px-4 border-bottom">
-                                    <div class="d-flex gap-2">
-                                        <button class="btn btn-primary btn-sm" style="min-width: 85px;"
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-primary btn-sm" style="width: 100px;"
                                             (click)="editarGrupo(g)">Editar</button>
-                                        <button class="btn btn-primary btn-sm" style="min-width: 85px;"
-                                            (click)="cambiarNombreGrupo(g)">Cambiar nombre</button>
-                                        <button class="btn btn-danger btn-sm" style="min-width: 85px;"
+                                        <button class="btn btn-dark btn-sm" style="width: 100px;"
+                                            (click)="cambiarNombreGrupo(g)">Renombrar</button>
+                                        <button class="btn btn-danger btn-sm" style="width: 100px;"
                                             (click)="eliminarGrupo(g)">Eliminar</button>
                                     </div>
                                 </td>
                             </tr>
-                            <tr *ngIf="filas.length === 0">
-                                <td colspan="5" class="text-center py-4 text-muted">No hay grupos cargados</td>
+
+                            <!-- Empty State -->
+                            <tr *ngIf="displayedFilas.length === 0">
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <mat-icon style="font-size: 48px; width: 48px; height: 48px;" class="mb-2 opacity-25">group_off</mat-icon>
+                                    <p class="mb-0">No se encontraron grupos que coincidan con la búsqueda</p>
+                                </td>
                             </tr>
                         </ng-container>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Paginador -->
+            <div class="border-top" *ngIf="!cargando">
+                <mat-paginator [length]="totalItems" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="onPageChange($event)" aria-label="Seleccionar página" class="border-0">
+                </mat-paginator>
             </div>
         </div>
     </div>
