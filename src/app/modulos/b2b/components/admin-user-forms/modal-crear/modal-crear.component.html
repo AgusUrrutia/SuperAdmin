@@ -7,6 +7,23 @@
 
     <form #form="ngForm" (ngSubmit)="crear()">
         <div class="form-content">
+            <!-- Nombre -->
+            <div class="field full-width mb-3">
+                <label class="section-label">Nombre <span class="text-danger">*</span></label>
+                <input
+                    type="text"
+                    name="nombre"
+                    class="form-control"
+                    [(ngModel)]="nuevoUsuario.NOMBRE"
+                    required
+                    #nameCtrl="ngModel"
+                    placeholder="Ingrese el nombre completo"
+                />
+                @if (nameCtrl.invalid && (nameCtrl.dirty || nameCtrl.touched)) {
+                    <small class="text-danger mt-1">El nombre es requerido.</small>
+                }
+            </div>
+
             <!-- Email -->
             <div class="field full-width mb-3">
                 <label class="section-label">Email <span class="text-danger">*</span></label>

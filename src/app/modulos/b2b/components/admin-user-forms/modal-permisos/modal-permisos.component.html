@@ -11,7 +11,7 @@
             <select class="form-control form-select" name="rolPermisos" [(ngModel)]="rolSeleccionadoPermisos"
                 (ngModelChange)="cargarModulosPorRol($event)">
                 <option [ngValue]="null" disabled>-- Seleccione Rol --</option>
-                @for (rol of usuario.ROLES; track rol.ROL) {
+                @for (rol of getFilteredRoles(); track rol.ROL) {
                 <option [ngValue]="rol">{{ rol.ROL }}</option>
                 }
             </select>

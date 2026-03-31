@@ -49,16 +49,16 @@
                             <td class="py-3 px-4 border-bottom text-muted">{{ user.MAIL }}</td>
                             <td class="py-3 px-4 border-bottom col-roles">
                                 <div class="d-flex flex-wrap gap-1">
-                                    @if (user.ROLES && user.ROLES.length > 0) {
-                                    @for (rol of user.ROLES; track $index) {
-                                    <span class="badge badge-role"
-                                        [ngClass]="rol.ROL === 'SuperAdmin' ? 'bg-dark text-white' : 'bg-secondary text-white'">
-                                        {{ rol.ROL || rol }}
-                                    </span>
-                                    }
+                                    @if (splitRoles(user.ROLES).length > 0) {
+                                        @for (rolNom of splitRoles(user.ROLES); track $index) {
+                                            <span class="badge badge-role bg-secondary text-white">
+                                                {{ rolNom }}
+                                            </span>
+                                        }
                                     } @else {
-                                    <span class="badge bg-light text-secondary border fw-normal p-2 px-3">Sin
-                                        roles</span>
+                                        <span class="badge bg-light text-secondary border fw-normal p-2 px-3">
+                                            Sin roles
+                                        </span>
                                     }
                                 </div>
                             </td>
