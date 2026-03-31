@@ -31,6 +31,7 @@ import Swal from 'sweetalert2';
 export class ModalCrearComponent {
 
   nuevoUsuario: any= {
+    NOMBRE: '',
     MAIL: '',
     GP_CUSTNMBR: '' 
   };
@@ -49,7 +50,7 @@ export class ModalCrearComponent {
   }
 
   crear(): void {
-    if (!this.nuevoUsuario.MAIL || !this.nuevoUsuario.GP_CUSTNMBR) {
+    if (!this.nuevoUsuario.NOMBRE || !this.nuevoUsuario.MAIL || !this.nuevoUsuario.GP_CUSTNMBR) {
       Swal.fire({
         icon: 'warning',
         title: 'Campos requeridos',
@@ -64,6 +65,12 @@ export class ModalCrearComponent {
     this.userService.createUser(this.nuevoUsuario).subscribe({
       next: (response) => {
         console.log('Usuario creado con éxito:', response);
+        Swal.fire({
+          icon: 'success',
+          title: '¡Éxito!',
+          text: 'El usuario ha sido creado correctamente.',
+          confirmButtonColor: '#222'
+        });
         this.userService.reloadUsers();
         this.dialogRef.close(response);
       },

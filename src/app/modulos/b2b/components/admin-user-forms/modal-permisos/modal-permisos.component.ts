@@ -28,6 +28,13 @@ export class ModalPermisosComponent implements OnInit {
   modulosIntegrados: any[] = [];
   cargando: boolean = false;
 
+  // Roles que no se deben mostrar en la UI
+  rolesOcultos: string[] = [
+    'Distribuidores Administración',
+    'Grandes Cuentas Administración',
+    'Superadmin'
+  ];
+
   constructor(
     public dialogRef: MatDialogRef<ModalPermisosComponent>,
     private userService: UsuarioService,
@@ -41,10 +48,16 @@ export class ModalPermisosComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.usuario.ROLES && this.usuario.ROLES.length > 0) {
-      this.rolSeleccionadoPermisos = this.usuario.ROLES[0];
+    const rolesFiltrados = this.getFilteredRoles();
+    if (rolesFiltrados && rolesFiltrados.length > 0) {
+      this.rolSeleccionadoPermisos = rolesFiltrados[0];
       this.cargarModulosPorRol(this.rolSeleccionadoPermisos);
     }
+  }
+
+  getFilteredRoles(): any[] {
+    if (!this.usuario.ROLES) return [];
+    return this.usuario.ROLES.filter((rol: any) => !this.rolesOcultos.includes(rol.ROL));
   }
 
   cargarModulosPorRol(rol: any): void {

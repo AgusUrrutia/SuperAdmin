@@ -12,6 +12,7 @@ import { ModalEditarComponent } from '../components/admin-user-forms/modal-edita
 import { ModalRolesComponent } from '../components/admin-user-forms/modal-roles/modal-roles.component';
 import { ModalPermisosComponent } from '../components/admin-user-forms/modal-permisos/modal-permisos.component';
 import { SpinnerGrandeComponent } from '../../../shared/components/spinner-grande/spinner-grande.component';
+import Swal from 'sweetalert2';
 
 // Definimos un tipo para las direcciones de ordenamiento
 type SortDirection = 'asc' | 'desc' | '';
@@ -38,6 +39,14 @@ export class AdminUsuariosComponent implements OnInit {
   selectedEstado: string = '';
   filteredUserList: any[] = [];
   permisosHeredar: any[] = [];
+
+  // Roles que no se deben mostrar en la UI
+  rolesOcultos: string[] = [
+    'Distribuidores Administración',
+    'Grandes Cuentas Administración',
+    'Superadmin',
+    //'Operaciones' // Ejemplo para habilitar de nuevo (comentado)
+  ];
 
   // --- Nuevas propiedades para ordenamiento ---
   sortColumn: string = '';
@@ -257,26 +266,48 @@ export class AdminUsuariosComponent implements OnInit {
   }
 
   eliminarUsuario(usuario: any) {
-    console.log('Usuario a eliminar:', usuario);
-    this.userService.deleteUser(usuario.ID_USUARIO).subscribe({
-      next: (response) => {
-        console.log('Usuario eliminado con éxito:', response);
-        this.userList = this.userList.filter(u => u.ID_USUARIO !== usuario.ID_USUARIO);
-        this.userService.reloadUsers();
-        this.applyFilters(); // Reaplicar filtros para actualizar la vista
-      },
-      error: (error) => {
-        console.error('Error al eliminar el usuario:', error);
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `Vas a eliminar al usuario ${usuario.NOMBRE}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#222',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log('Usuario a eliminar:', usuario);
+        this.userService.deleteUser(usuario.ID_USUARIO).subscribe({
+          next: (response) => {
+            console.log('Usuario eliminado con éxito:', response);
+            this.userList = this.userList.filter(u => u.ID_USUARIO !== usuario.ID_USUARIO);
+            this.userService.reloadUsers();
+            this.applyFilters(); // Reaplicar filtros para actualizar la vista
+          },
+          error: (error) => {
+            console.error('Error al eliminar el usuario:', error);
+          }
+        });
       }
     });
   }
 
-
   // tengo que hacer uana funcion que mediante un usuario que tiene una propiedad en string separe a un array los roles ('Administrador, Reseller')
   // Por ejemplo:
-  splitRoles(rolesString: string): string[] {
-    if (!rolesString) return [];
-    return rolesString.split(',').map(role => role.trim());
+  splitRoles(rolesInput: any): string[] {
+    if (!rolesInput) return [];
+    
+    let rolesString = '';
+    if (Array.isArray(rolesInput)) {
+      rolesString = rolesInput.map(r => r.ROL || r).join(',');
+    } else {
+      rolesString = String(rolesInput);
+    }
+
+    return rolesString.split(',')
+      .map(role => role.trim())
+      .filter(role => role && !this.rolesOcultos.includes(role));
   }
 
 }
