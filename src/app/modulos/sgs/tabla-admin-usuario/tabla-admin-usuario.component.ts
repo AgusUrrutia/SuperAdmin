@@ -5,8 +5,8 @@ import { SpinnerGrandeComponent } from '../../../shared/components/spinner-grand
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CrearUsuarioSgsComponent } from './components/crear-usuario-sgs/crear-usuario-sgs.component';
 import { EditarUsuarioSgsComponent } from './components/editar-usuario-sgs/editar-usuario-sgs.component';
-import { UsuarioService } from '../../B2B/services/usuario.service';
-import { ModalRolesComponent } from '../../B2B/components/admin-user-forms/modal-roles/modal-roles.component';
+import { UsuarioService } from '../../b2b/services/usuario.service';
+import { ModalRolesComponent } from '../../b2b/components/admin-user-forms/modal-roles/modal-roles.component';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -56,7 +56,7 @@ export class TablaAdminUsuarioComponent implements OnInit {
         });
 
         this.usuarioAdminService.reloadUsers();
-        
+
         // Prefetch aplicaciones para el modal y la visualización de la tabla
         this.usuarioAdminService.getAplicaciones().subscribe(res => {
             this.aplicaciones = res.data || res || [];
@@ -88,7 +88,7 @@ export class TablaAdminUsuarioComponent implements OnInit {
                     const appId = app?.ID || app?.id || app?.ID_APLICACION;
                     return appsIdsToMatch.includes(appId) || appsIdsToMatch.includes(String(appId)) || appsIdsToMatch.includes(Number(appId));
                 }).map(app => app.SISTEMA || app.nombre || app.NOMBRE);
-                
+
                 if (appNames.length > 0) {
                     appsString = appNames.join(', ');
                 } else {
@@ -154,7 +154,7 @@ export class TablaAdminUsuarioComponent implements OnInit {
                     usuario: this.userSelected
                 }
             });
-            
+
             // Note: The B2B modal reloads users inside itself using its own service,
             // but we might want to reload SGS users when the dialog closes if roles affect the view.
             dialogRef.afterClosed().subscribe(() => {

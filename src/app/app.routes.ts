@@ -54,7 +54,7 @@ export const routes: Routes = [
     children: [
       {
         path: 'usuarios',
-        loadComponent: () => import('./modulos/B2B/admin-usuarios/admin-usuarios.component').then(m => m.AdminUsuariosComponent)
+        loadComponent: () => import('./modulos/b2b/admin-usuarios/admin-usuarios.component').then(m => m.AdminUsuariosComponent)
       },
       {
         path: '',
