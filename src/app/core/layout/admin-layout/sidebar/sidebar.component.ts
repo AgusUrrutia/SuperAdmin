@@ -24,4 +24,8 @@ export class SidebarComponent {
   isB2bActive(): boolean {
     return this.router.url.includes('/b2b');
   }
+
+  isAdActive(): boolean {
+    return this.router.url.includes('/ad');
+  }
 }

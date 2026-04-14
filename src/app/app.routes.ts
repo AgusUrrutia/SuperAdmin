@@ -68,6 +68,19 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./core/layout/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
     children: [
+      {
+        path: 'usuarios',
+        loadComponent: () => import('./modulos/ad/admin-usuarios-ad/admin-usuarios-ad.component').then(m => m.AdminUsuariosAdComponent)
+      },
+      {
+        path: 'historial',
+        loadComponent: () => import('./modulos/ad/historial-acciones-ad/historial-acciones-ad.component').then(m => m.HistorialAccionesAdComponent)
+      },
+      {
+        path: '',
+        redirectTo: 'usuarios',
+        pathMatch: 'full'
+      }
     ]
   }
 ];

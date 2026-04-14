@@ -1,0 +1,68 @@
+<div class="crear-container">
+    <div class="header-modal d-flex align-items-center mb-0">
+        <mat-icon class="me-2 header-icon">person_add</mat-icon>
+        <h2 class="title mb-0">Crear Nuevo Usuario AD</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="onCancelar()"></button>
+    </div>
+
+    <form #form="ngForm" (ngSubmit)="crear()" autocomplete="off">
+        <div class="form-content">
+            <!-- Nombre -->
+            <div class="field full-width mb-3">
+                <label class="section-label">Nombre <span class="text-danger">*</span></label>
+                <input type="text" name="nombre" class="form-control" [(ngModel)]="nuevoUsuario.nombre" required
+                    #nameCtrl="ngModel" placeholder="Ingrese el nombre" autocomplete="off" />
+                <small *ngIf="nameCtrl.invalid && (nameCtrl.dirty || nameCtrl.touched)" class="text-danger mt-1">El
+                    nombre es requerido.</small>
+            </div>
+
+            <!-- Apellido -->
+            <div class="field full-width mb-3">
+                <label class="section-label">Apellido <span class="text-danger">*</span></label>
+                <input type="text" name="apellido" class="form-control" [(ngModel)]="nuevoUsuario.apellido" required
+                    #apellidoCtrl="ngModel" placeholder="Ingrese el apellido" autocomplete="off" />
+                <small *ngIf="apellidoCtrl.invalid && (apellidoCtrl.dirty || apellidoCtrl.touched)"
+                    class="text-danger mt-1">El apellido es requerido.</small>
+            </div>
+
+            <!-- Correo -->
+            <div class="field full-width mb-3">
+                <label class="section-label">Correo electrónico <span class="text-danger">*</span></label>
+                <input type="email" name="correo" class="form-control" [(ngModel)]="nuevoUsuario.correo" required
+                    #correoCtrl="ngModel" placeholder="Ingrese el correo" autocomplete="new-password" />
+                <small *ngIf="correoCtrl.invalid && (correoCtrl.dirty || correoCtrl.touched)" class="text-danger mt-1">
+                    <ng-container *ngIf="correoCtrl.errors?.['required']">El correo es requerido.</ng-container>
+                </small>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="field full-width mb-3">
+                <label class="section-label">Contraseña <span class="text-danger">*</span></label>
+                <div class="position-relative">
+                    <input [type]="mostrarContrasena ? 'text' : 'password'" name="contrasena" class="form-control" [(ngModel)]="nuevoUsuario.contrasena" required
+                        #passCtrl="ngModel" placeholder="Ingrese la contraseña" autocomplete="new-password" style="padding-right: 40px;" />
+                    <mat-icon (click)="mostrarContrasena = !mostrarContrasena" 
+                              class="position-absolute text-muted" 
+                              style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; width: 20px; height: 20px;">
+                        {{ mostrarContrasena ? 'visibility_off' : 'visibility' }}
+                    </mat-icon>
+                </div>
+                <small *ngIf="passCtrl.invalid && (passCtrl.dirty || passCtrl.touched)" class="text-danger mt-1">La
+                    contraseña es requerida.</small>
+            </div>
+
+            <!-- Descripción -->
+            <div class="field full-width mb-3">
+                <label class="section-label">Descripción</label>
+                <input type="text" name="descripcion" class="form-control" [(ngModel)]="nuevoUsuario.descripcion"
+                    placeholder="Ej. Sincronizado desde SQL - Test 3" />
+            </div>
+        </div>
+    </form>
+
+    <div class="actions-modal p-3 d-flex justify-content-end align-items-center bg-white border-top">
+        <button [disabled]="form.invalid" (click)="crear()" class="btn-save">
+            Crear Usuario
+        </button>
+    </div>
+</div>

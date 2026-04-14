@@ -61,8 +61,26 @@
               </ul>
             </div>
           </li>
-          <li class="nav-item w-100"><a class="nav-link py-2 px-2 text-white-50 w-100 rounded-1 text-decoration-none"
-              href="#">AD</a></li>
+          <li class="nav-item w-100">
+            <button
+              class="nav-link py-2 px-2 text-white-50 w-100 text-start d-flex align-items-center justify-content-between rounded-1 border-0 bg-transparent"
+              type="button" data-bs-toggle="collapse" data-bs-target="#adCollapse" aria-expanded="false">
+              AD
+              <span class="dropdown-toggle"></span>
+            </button>
+            <div class="collapse w-100 mt-1 ps-2" [class.show]="isAdActive()" id="adCollapse">
+              <ul class="nav flex-column ps-3 py-1" style="font-size: 0.9rem;">
+                <li class="nav-item w-100">
+                  <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
+                    routerLink="/ad/usuarios" routerLinkActive="active">Usuarios</a>
+                </li>
+                <li class="nav-item w-100">
+                  <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
+                    routerLink="/ad/historial" routerLinkActive="active">Historial de Acciones</a>
+                </li>
+              </ul>
+            </div>
+          </li>
 
         </ul>
       </div>

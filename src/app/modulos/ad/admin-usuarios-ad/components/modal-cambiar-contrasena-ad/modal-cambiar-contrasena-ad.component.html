@@ -1,0 +1,50 @@
+<div class="crear-container">
+    <div class="header-modal d-flex align-items-center mb-0">
+        <mat-icon class="me-2 header-icon">lock_reset</mat-icon>
+        <h2 class="title mb-0">Cambiar Contraseña - {{ usuario?.nombre }}</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="onCancelar()"></button>
+    </div>
+
+    <form #form="ngForm" (ngSubmit)="cambiar()">
+        <div class="form-content">
+            <!-- Nueva Contraseña -->
+            <div class="field full-width mb-3">
+                <label class="section-label">Nueva Contraseña <span class="text-danger">*</span></label>
+                <div class="position-relative">
+                    <input [type]="mostrarNueva ? 'text' : 'password'" name="nueva" class="form-control" [(ngModel)]="contrasenaData.nueva" required
+                        #nuevaCtrl="ngModel" placeholder="Ingrese la nueva contraseña" autocomplete="new-password" style="padding-right: 40px;" />
+                    <mat-icon (click)="mostrarNueva = !mostrarNueva" 
+                              class="position-absolute text-muted" 
+                              style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; width: 20px; height: 20px;">
+                        {{ mostrarNueva ? 'visibility_off' : 'visibility' }}
+                    </mat-icon>
+                </div>
+                <small *ngIf="nuevaCtrl.invalid && (nuevaCtrl.dirty || nuevaCtrl.touched)" class="text-danger mt-1">La contraseña es requerida.</small>
+            </div>
+
+            <!-- Confirmar Contraseña -->
+            <div class="field full-width mb-3">
+                <label class="section-label">Confirmar Contraseña <span class="text-danger">*</span></label>
+                <div class="position-relative">
+                    <input [type]="mostrarConfirmar ? 'text' : 'password'" name="confirmar" class="form-control" [(ngModel)]="contrasenaData.confirmar" required
+                        #confirmarCtrl="ngModel" placeholder="Repita la nueva contraseña" autocomplete="new-password" style="padding-right: 40px;" />
+                    <mat-icon (click)="mostrarConfirmar = !mostrarConfirmar" 
+                              class="position-absolute text-muted" 
+                              style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; width: 20px; height: 20px;">
+                        {{ mostrarConfirmar ? 'visibility_off' : 'visibility' }}
+                    </mat-icon>
+                </div>
+                <small *ngIf="confirmarCtrl.invalid && (confirmarCtrl.dirty || confirmarCtrl.touched)" class="text-danger mt-1">La confirmación es requerida.</small>
+                <small *ngIf="contrasenaData.nueva && contrasenaData.confirmar && contrasenaData.nueva !== contrasenaData.confirmar" class="text-danger mt-1">
+                    Las contraseñas no coinciden.
+                </small>
+            </div>
+        </div>
+    </form>
+
+    <div class="actions-modal p-3 d-flex justify-content-end align-items-center bg-white border-top">
+        <button [disabled]="form.invalid || contrasenaData.nueva !== contrasenaData.confirmar" (click)="cambiar()" class="btn-save">
+            Actualizar
+        </button>
+    </div>
+</div>
