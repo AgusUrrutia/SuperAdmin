@@ -30,11 +30,15 @@ import Swal from 'sweetalert2';
 })
 export class ModalCrearComponent {
 
-  nuevoUsuario: any= {
+  nuevoUsuario: any = {
     NOMBRE: '',
     MAIL: '',
     GP_CUSTNMBR: '' 
   };
+
+  aplicacionActual: any = null;
+  aplicacionesSeleccionadas: any[] = [];
+  aplicaciones: any[] = [];
 
   // Recibimos los roles desde el componente que abre el modal
   constructor(
@@ -49,6 +53,40 @@ export class ModalCrearComponent {
     }
   }
 
+  ngOnInit(): void {
+    this.cargarAplicaciones();
+  }
+
+  cargarAplicaciones(): void {
+    this.userService.getAplicaciones().subscribe({
+      next: (res) => {
+        this.aplicaciones = res.data || res || [];
+      },
+      error: (err) => console.error('Error al cargar aplicaciones', err)
+    });
+  }
+
+  agregarAplicacion(): void {
+    if (!this.aplicacionActual) return;
+    
+    const idActual = this.obtenerId(this.aplicacionActual);
+    const yaExiste = this.aplicacionesSeleccionadas.find(a => this.obtenerId(a) === idActual);
+    
+    if (!yaExiste) {
+      this.aplicacionesSeleccionadas.push(this.aplicacionActual);
+    }
+    this.aplicacionActual = null;
+  }
+
+  eliminarAplicacion(app: any): void {
+    const idEliminar = this.obtenerId(app);
+    this.aplicacionesSeleccionadas = this.aplicacionesSeleccionadas.filter(a => this.obtenerId(a) !== idEliminar);
+  }
+
+  obtenerId(app: any): any {
+    return app?.ID || app?.id || app?.ID_APLICACION;
+  }
+
   crear(): void {
     if (!this.nuevoUsuario.NOMBRE || !this.nuevoUsuario.MAIL || !this.nuevoUsuario.GP_CUSTNMBR) {
       Swal.fire({
@@ -60,6 +98,20 @@ export class ModalCrearComponent {
       });
       return;
     }
+    
+    if (this.aplicacionesSeleccionadas.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Faltan aplicaciones',
+        text: 'Debe seleccionar al menos una aplicación para el usuario.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#222'
+      });
+      return;
+    }
+
+    this.nuevoUsuario.ID_APLICACION = this.aplicacionesSeleccionadas.map(a => String(this.obtenerId(a)));
+    
     console.log('Creando usuario:', this.nuevoUsuario);
     
     this.userService.createUser(this.nuevoUsuario).subscribe({

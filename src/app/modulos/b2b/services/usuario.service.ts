@@ -226,6 +226,16 @@ export class UsuarioService {
     );
   }
 
+  getAplicaciones(): Observable<any> {
+    let headers = this.makeHeaders();
+    return this.http.get<any>(`${this.url}/aplicaciones/get`, { headers }).pipe(
+      catchError((error) => {
+        console.error('Error al obtener las aplicaciones:', error);
+        return of({ data: [] });
+      })
+    );
+  }
+
   getPerfilesPermitidos(idUser: String): Observable<any> {
     let headers = this.makeHeaders();
     return this.http.get<any[]>(`${this.url}b2b/panel-admin/user-rol-perfiles/${idUser}`, { headers }).pipe(

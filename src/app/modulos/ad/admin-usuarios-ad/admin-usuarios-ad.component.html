@@ -102,9 +102,12 @@
                                                     <mat-icon
                                                         style="font-size: 18px; width: 18px; height: 18px;">article</mat-icon>
                                                 </div>
-                                                <div>
+                                                <div class="d-flex flex-column">
                                                     <p class="mb-0 fw-bold text-dark">{{ tarea.descripcion }}</p>
-                                                    <small class="text-muted">Creada {{ tarea.fecha }}</small>
+                                                    <small class="text-muted">Iniciada el: {{ tarea.fecha }}</small>
+                                                    <small class="text-secondary mt-1" style="max-width: 500px; white-space: normal;">
+                                                        Mensaje: {{ tarea.mensaje }}
+                                                    </small>
                                                 </div>
                                             </div>
                                             <div>

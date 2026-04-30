@@ -41,6 +41,12 @@
                                     ROL <mat-icon>{{ getSortIcon('ROLES') }}</mat-icon>
                                 </div>
                             </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-razonsocial-b2b cursor-pointer text-nowrap-th"
+                                [class.active-sort]="sortColumn === 'RAZONSOCIAL'" (click)="onSort('RAZONSOCIAL')">
+                                <div class="d-flex align-items-center gap-1">
+                                    RAZÓN SOCIAL <mat-icon>{{ getSortIcon('RAZONSOCIAL') }}</mat-icon>
+                                </div>
+                            </th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold col-estado-b2b cursor-pointer text-nowrap-th"
                                 [class.active-sort]="sortColumn === 'ACTIVO'" (click)="onSort('ACTIVO')">
                                 <div class="d-flex align-items-center gap-1">
@@ -75,18 +81,19 @@
                             <td class="py-3 px-4 border-bottom col-roles">
                                 <div class="d-flex flex-wrap gap-1">
                                     @if (splitRoles(user.ROLES).length > 0) {
-                                        @for (rolNom of splitRoles(user.ROLES); track $index) {
-                                            <span class="badge badge-role bg-secondary text-white">
-                                                {{ rolNom }}
-                                            </span>
-                                        }
+                                    @for (rolNom of splitRoles(user.ROLES); track $index) {
+                                    <span class="badge badge-role bg-secondary text-white">
+                                        {{ rolNom }}
+                                    </span>
+                                    }
                                     } @else {
-                                        <span class="badge bg-light text-secondary border fw-normal p-2 px-3">
-                                            Sin roles
-                                        </span>
+                                    <span class="badge bg-light text-secondary border fw-normal p-2 px-3">
+                                        Sin roles
+                                    </span>
                                     }
                                 </div>
                             </td>
+                            <td class="py-3 px-4 border-bottom text-muted">{{ user.RAZONSOCIAL || '-' }}</td>
                             <td class="py-3 px-4 border-bottom">
                                 <span class="badge rounded-pill border fw-normal p-2 px-3"
                                     [ngClass]="user.ACTIVO === '1' ? 'bg-success-subtle text-success border-success' : 'bg-danger-subtle text-danger border-danger'">

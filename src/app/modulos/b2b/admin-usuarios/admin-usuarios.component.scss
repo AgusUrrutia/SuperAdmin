@@ -113,6 +113,7 @@
 .table-fixed {
   table-layout: fixed;
   width: 100%;
+  min-width: 1300px;
 }
 
 .col-id-b2b {
@@ -125,6 +126,10 @@
 
 .col-roles-b2b {
   width: 220px;
+}
+
+.col-razonsocial-b2b {
+  width: 180px;
 }
 
 .col-estado-b2b {

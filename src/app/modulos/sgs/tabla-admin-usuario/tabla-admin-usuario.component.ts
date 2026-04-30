@@ -49,7 +49,7 @@ import Swal from 'sweetalert2';
     .col-email { width: 220px; }
     .col-nombre { width: 220px; }
     .col-gp { width: 130px; }
-    .col-apps { width: 140px; }
+    .col-apps { width: 140px; }   /*  */
     .col-estado { width: 120px; }
     .col-intentos { width: 90px; }
     .col-acciones { width: 260px; }
@@ -135,33 +135,39 @@ export class TablaAdminUsuarioComponent implements OnInit {
                 user.ID_USUARIO;
 
             let appsString = '-';
-            const appsIds = user.ID_APLICACION || user.APLICACIONES || user.id_aplicacion || [];
-            let appsIdsToMatch: any[] = [];
-            if (Array.isArray(appsIds)) {
-                appsIdsToMatch = appsIds.map((a: any) => a.ID || a.id || a.ID_APLICACION || a);
-            } else if (typeof appsIds === 'string') {
-                appsIdsToMatch = appsIds.split(',').map(a => a.trim());
-            } else if (typeof appsIds === 'number') {
-                appsIdsToMatch = [appsIds];
-            }
 
-            if (this.aplicaciones && this.aplicaciones.length > 0 && appsIdsToMatch.length > 0) {
-                const appNames = this.aplicaciones.filter(app => {
-                    const appId = app?.ID || app?.id || app?.ID_APLICACION;
-                    return appsIdsToMatch.includes(appId) || appsIdsToMatch.includes(String(appId)) || appsIdsToMatch.includes(Number(appId));
-                }).map(app => app.SISTEMA || app.nombre || app.NOMBRE);
-
-                if (appNames.length > 0) {
-                    appsString = appNames.join(', ');
-                } else {
-                    appsString = appsIdsToMatch.join(', ');
+            if (user.sistemas && Array.isArray(user.sistemas) && user.sistemas.length > 0) {
+                // Si el backend envía directamente un array de strings ["SGS", "B2B"]
+                appsString = user.sistemas.join(', ');
+            } else {
+                const appsIds = user.ID_APLICACION || user.APLICACIONES || user.id_aplicacion || [];
+                let appsIdsToMatch: any[] = [];
+                if (Array.isArray(appsIds)) {
+                    appsIdsToMatch = appsIds.map((a: any) => a.ID || a.id || a.ID_APLICACION || a);
+                } else if (typeof appsIds === 'string') {
+                    appsIdsToMatch = appsIds.split(',').map(a => a.trim());
+                } else if (typeof appsIds === 'number') {
+                    appsIdsToMatch = [appsIds];
                 }
-            } else if (appsIdsToMatch.length > 0) {
-                if (Array.isArray(appsIds) && typeof appsIds[0] === 'object') {
-                    const appNames = appsIds.map((a: any) => a.SISTEMA || a.nombre || a.NOMBRE || a.ID || a.id || a.ID_APLICACION);
-                    appsString = appNames.join(', ');
-                } else {
-                    appsString = appsIdsToMatch.join(', ');
+
+                if (this.aplicaciones && this.aplicaciones.length > 0 && appsIdsToMatch.length > 0) {
+                    const appNames = this.aplicaciones.filter(app => {
+                        const appId = app?.ID || app?.id || app?.ID_APLICACION;
+                        return appsIdsToMatch.includes(appId) || appsIdsToMatch.includes(String(appId)) || appsIdsToMatch.includes(Number(appId));
+                    }).map(app => app.SISTEMA || app.nombre || app.NOMBRE);
+
+                    if (appNames.length > 0) {
+                        appsString = appNames.join(', ');
+                    } else {
+                        appsString = appsIdsToMatch.join(', ');
+                    }
+                } else if (appsIdsToMatch.length > 0) {
+                    if (Array.isArray(appsIds) && typeof appsIds[0] === 'object') {
+                        const appNames = appsIds.map((a: any) => a.SISTEMA || a.nombre || a.NOMBRE || a.ID || a.id || a.ID_APLICACION);
+                        appsString = appNames.join(', ');
+                    } else {
+                        appsString = appsIdsToMatch.join(', ');
+                    }
                 }
             }
 
@@ -170,7 +176,7 @@ export class TablaAdminUsuarioComponent implements OnInit {
                 "ID Usuario": user.ID_USUARIO,
                 "Email/Usuario": user.MAIL || user.ID_USUARIO,
                 "Nombre": nombreCompleto,
-                "Aplicaciones": appsString,
+                "Aplicaciones": appsString,   /*  */
                 "GP Customer": user.GP_CUSTNMBR || '-',
                 "Estado": user.ACTIVO === '1' ? 'Activo' : 'Inactivo',
                 "Intentos": user.INTENTOS_FALLIDOS || 0

@@ -161,6 +161,9 @@ export class HistorialAccionesAdComponent implements OnInit {
         if (payload && payload.UPN) {
           return payload.UPN;
         }
+        if (payload && payload.SamAccountName) {
+          return payload.SamAccountName;
+        }
       } catch (e) {
       }
     }
@@ -174,6 +177,12 @@ export class HistorialAccionesAdComponent implements OnInit {
       const userMatch = item.ResultMessage.match(/Usuario \[([^\]]+)\]/);
       if (userMatch && userMatch[1]) {
         return userMatch[1];
+      }
+
+      // Fallback genérico para atrapar cualquier texto entre corchetes, por ejemplo en: "OK: Password de [test.dev.14] reseteada."
+      const bracketMatch = item.ResultMessage.match(/\[([^\]]+)\]/);
+      if (bracketMatch && bracketMatch[1]) {
+        return bracketMatch[1];
       }
     }
 

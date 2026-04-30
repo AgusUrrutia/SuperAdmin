@@ -46,6 +46,12 @@ export class EditarUsuarioSgsComponent implements OnInit {
 
             // Extract initial application IDs
             let appsIdsToMatch: any[] = [];
+            let sysNamesToMatch: string[] = [];
+
+            if (this.data.sistemas && Array.isArray(this.data.sistemas)) {
+                sysNamesToMatch = this.data.sistemas;
+            }
+
             const apps = this.data.ID_APLICACION || this.data.APLICACIONES || this.data.id_aplicacion || [];
             if (Array.isArray(apps)) {
                 appsIdsToMatch = apps.map(a => a.ID || a.id || a.ID_APLICACION || a);
@@ -54,20 +60,24 @@ export class EditarUsuarioSgsComponent implements OnInit {
             } else if (typeof apps === 'number') {
                 appsIdsToMatch = [apps];
             }
-            this.cargarAplicaciones(appsIdsToMatch);
+            this.cargarAplicaciones(appsIdsToMatch, sysNamesToMatch);
         } else {
-            this.cargarAplicaciones([]);
+            this.cargarAplicaciones([], []);
         }
     }
 
-    cargarAplicaciones(appsIdsToMatch: any[]): void {
+    cargarAplicaciones(appsIdsToMatch: any[], sysNamesToMatch: string[] = []): void {
         this.usuarioAdminService.getAplicaciones().subscribe({
             next: (res) => {
                 this.aplicaciones = res.data || res || [];
-                if (appsIdsToMatch.length > 0) {
+                if (appsIdsToMatch.length > 0 || sysNamesToMatch.length > 0) {
                     this.aplicacionesSeleccionadas = this.aplicaciones.filter(app => {
                         const appId = this.obtenerId(app);
-                        return appsIdsToMatch.includes(appId) || appsIdsToMatch.includes(String(appId)) || appsIdsToMatch.includes(Number(appId));
+                        const appName = app?.SISTEMA || app?.nombre || app?.NOMBRE;
+                        return appsIdsToMatch.includes(appId) ||
+                            appsIdsToMatch.includes(String(appId)) ||
+                            appsIdsToMatch.includes(Number(appId)) ||
+                            (appName && sysNamesToMatch.includes(appName));
                     });
                 }
             },
@@ -77,14 +87,14 @@ export class EditarUsuarioSgsComponent implements OnInit {
 
     agregarAplicacion(): void {
         if (!this.aplicacionActual) return;
-        
+
         const idActual = this.obtenerId(this.aplicacionActual);
         const yaExiste = this.aplicacionesSeleccionadas.find(a => this.obtenerId(a) === idActual);
-        
+
         if (!yaExiste) {
             this.estaModificandoApp = true;
             const appParaAgregar = this.aplicacionActual;
-            
+
             this.usuarioAdminService.addAplicacionToUser({ ID_USUARIO: this.id, ID_SISTEMA: idActual }).subscribe({
                 next: () => {
                     this.aplicacionesSeleccionadas.push(appParaAgregar);

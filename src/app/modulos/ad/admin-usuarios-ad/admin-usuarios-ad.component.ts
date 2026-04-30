@@ -61,7 +61,13 @@ export class AdminUsuariosAdComponent implements OnInit {
             correo: u.MAIL,
             estado: u.ACTIVO === '1' ? 'Activo' : 'Inactivo',
             expanded: false,
-            tareas: u.Acciones || [] // Asumimos que viene un array de acciones en el JSON
+            tareas: (u.Acciones || []).map((acc: any) => ({
+              ...acc,
+              descripcion: this.translateActionType(acc.ActionType),
+              mensaje: acc.ResultMessage || '---',
+              estado: this.translateStatus(acc.Status),
+              fecha: this.formatDate(acc.StartedAt)
+            }))
           }));
         } else {
           console.error('El servidor devolvió un error de autenticación u otro formato:', response);
@@ -78,6 +84,31 @@ export class AdminUsuariosAdComponent implements OnInit {
         this.cargando = false;
       }
     });
+  }
+
+  private translateActionType(type: string): string {
+    if (!type) return 'Acción desconocida';
+    const t = type.toUpperCase();
+    if (t === 'CREATE') return 'Creación de usuario';
+    if (t === 'RESET_PASSWORD') return 'Cambio de contraseña';
+    if (t === 'UPDATE' || t === 'UPDATE_PASSWORD') return 'Cambiar contraseña';
+    if (t === 'DELETE' || t === 'DISABLE') return 'Desactivar cuenta';
+    return type;
+  }
+
+  private translateStatus(status: string): string {
+    if (!status) return 'Pendiente';
+    const s = status.toUpperCase();
+    if (s === 'OK' || s === 'SUCCESS') return 'Exitoso';
+    if (s === 'PENDING') return 'Pendiente';
+    if (s === 'FAILED' || s === 'ERROR') return 'Error';
+    return status;
+  }
+
+  private formatDate(dateStr: string): string {
+    if (!dateStr) return '---';
+    const date = new Date(dateStr);
+    return date.toLocaleString();
   }
 
   updateDisplayedUsers(): void {
@@ -237,9 +268,12 @@ export class AdminUsuariosAdComponent implements OnInit {
         const samAccountName = usuario.correo ? usuario.correo.split('@')[0] : '';
 
         const payload = {
-          SamAccountName: samAccountName,
-          Password: password,
-          Unlock: true
+          "JSON": {
+            SamAccountName: samAccountName,
+            Password: password,
+            Unlock: true
+          },
+          "ID_USUARIO": idUsuario
         };
 
         this.adUserService.cambiarContrasena(idUsuario, payload).subscribe({
