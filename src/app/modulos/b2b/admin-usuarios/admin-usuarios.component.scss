@@ -113,35 +113,39 @@
 .table-fixed {
   table-layout: fixed;
   width: 100%;
-  min-width: 1300px;
+  min-width: 1100px;
 }
 
 .col-id-b2b {
-  width: 160px;
+  width: 140px;
 }
 
 .col-email-b2b {
-  width: 200px;
+  width: 170px;
 }
 
 .col-roles-b2b {
-  width: 220px;
-}
-
-.col-razonsocial-b2b {
   width: 180px;
 }
 
+.col-razonsocial-b2b {
+  width: 160px;
+}
+
+.col-apps-b2b {
+  width: 120px;
+}
+
 .col-estado-b2b {
-  width: 110px;
+  width: 100px;
 }
 
 .col-gp-b2b {
-  width: 150px;
+  width: 120px;
 }
 
 .col-acciones-b2b {
-  width: 200px;
+  width: 190px;
 }
 
 .table {

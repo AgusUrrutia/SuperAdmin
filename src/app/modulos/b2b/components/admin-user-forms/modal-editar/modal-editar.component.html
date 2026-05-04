@@ -34,6 +34,33 @@
                     <input type="text" name="gpCustnmbr" class="form-control" [(ngModel)]="usuario.GP_CUSTNMBR" required />
                 </div>
             </div>
+
+            <div class="row mb-3">
+                <div class="col-12 field">
+                    <label class="section-label">Aplicaciones <span class="text-danger">*</span></label>
+                    <div class="d-flex gap-2">
+                        <select name="aplicacionActual" class="form-control form-select" [(ngModel)]="aplicacionActual" [disabled]="!aplicaciones.length || estaModificandoApp">
+                            <option [ngValue]="null" disabled selected>-- Seleccione una aplicación --</option>
+                            <option *ngFor="let app of aplicaciones" [ngValue]="app">{{ app.SISTEMA || app.nombre || app.NOMBRE }}</option>
+                        </select>
+                        <button type="button" class="btn btn-dark btn-sm px-3" (click)="agregarAplicacion()" [disabled]="estaModificandoApp">
+                            <mat-icon *ngIf="!estaModificandoApp" style="font-size: 18px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">add</mat-icon>
+                            <span *ngIf="estaModificandoApp" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        </button>
+                    </div>
+
+                    <div *ngIf="aplicacionesSeleccionadas.length > 0" class="badges-container d-flex flex-wrap gap-2 mt-2">
+                        <span *ngFor="let appSel of aplicacionesSeleccionadas" class="badge border bg-light text-dark d-flex align-items-center px-3 py-2" [ngClass]="{'opacity-50': estaModificandoApp}" style="font-size: 0.85rem; border-radius: 20px; font-weight: normal;">
+                            {{ appSel.SISTEMA || appSel.nombre || appSel.NOMBRE }}
+                            <mat-icon class="ms-2 text-danger" style="cursor: pointer; font-size: 18px; width: 18px; height: 18px;" 
+                                (click)="!estaModificandoApp && eliminarAplicacion(appSel)">close</mat-icon>
+                        </span>
+                    </div>
+                    <div *ngIf="aplicacionesSeleccionadas.length === 0" class="mt-2 text-muted" style="font-size: 0.85rem;">
+                        No ha añadido aplicaciones.
+                    </div>
+                </div>
+            </div>
             <div class="row mb-3">
                 <div class="col-6 field">
                     <label class="section-label">Teléfono</label>

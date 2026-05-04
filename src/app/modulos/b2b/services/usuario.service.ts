@@ -236,6 +236,26 @@ export class UsuarioService {
     );
   }
 
+  addAplicacionToUser(payload: { ID_USUARIO: number | string, ID_SISTEMA: number | string }): Observable<any> {
+    const headers = this.makeHeaders();
+    return this.http.post<any>(`${this.url}/aplicaciones/add`, payload, { headers }).pipe(
+      catchError(error => {
+        console.error('Error al agregar aplicación al usuario:', error);
+        return of(null);
+      })
+    );
+  }
+
+  deleteAplicacionFromUser(payload: { ID_USUARIO: number | string, ID_SISTEMA: number | string }): Observable<any> {
+    const headers = this.makeHeaders();
+    return this.http.post<any>(`${this.url}/aplicaciones/delete`, payload, { headers }).pipe(
+      catchError(error => {
+        console.error('Error al quitar aplicación al usuario:', error);
+        return of(null);
+      })
+    );
+  }
+
   getPerfilesPermitidos(idUser: String): Observable<any> {
     let headers = this.makeHeaders();
     return this.http.get<any[]>(`${this.url}b2b/panel-admin/user-rol-perfiles/${idUser}`, { headers }).pipe(

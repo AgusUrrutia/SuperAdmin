@@ -8,7 +8,7 @@
 
     <!-- Filtros añadidos para B2B manteniendo estética limpia de SUPERADMIN -->
     <div class="d-flex gap-3 mb-4">
-        <input type="text" class="form-control w-25 shadow-sm border-0" placeholder="Buscar por ID o Email..."
+        <input type="text" class="form-control w-25 shadow-sm border-0" placeholder="Buscar por ID, Email o Nombre..."
             [(ngModel)]="searchTerm" (input)="applyFilters()">
         <select class="form-select w-25 shadow-sm border-0" [(ngModel)]="selectedEstado" (change)="applyFilters()">
             <option value="">Todos los Estados</option>
@@ -45,6 +45,11 @@
                                 [class.active-sort]="sortColumn === 'RAZONSOCIAL'" (click)="onSort('RAZONSOCIAL')">
                                 <div class="d-flex align-items-center gap-1">
                                     RAZÓN SOCIAL <mat-icon>{{ getSortIcon('RAZONSOCIAL') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-apps-b2b text-nowrap-th">
+                                <div class="d-flex align-items-center gap-1">
+                                    APLICACIONES
                                 </div>
                             </th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold col-estado-b2b cursor-pointer text-nowrap-th"
@@ -94,6 +99,19 @@
                                 </div>
                             </td>
                             <td class="py-3 px-4 border-bottom text-muted">{{ user.RAZONSOCIAL || '-' }}</td>
+                            <td class="py-3 px-4 border-bottom col-apps">
+                                <div class="d-flex flex-wrap gap-1">
+                                    @if (user.SISTEMAS && user.SISTEMAS.length > 0) {
+                                        @for (app of user.SISTEMAS; track app.ID) {
+                                            <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">
+                                                {{ app.SISTEMA || app.nombre || app.NOMBRE }}
+                                            </span>
+                                        }
+                                    } @else {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </div>
+                            </td>
                             <td class="py-3 px-4 border-bottom">
                                 <span class="badge rounded-pill border fw-normal p-2 px-3"
                                     [ngClass]="user.ACTIVO === '1' ? 'bg-success-subtle text-success border-success' : 'bg-danger-subtle text-danger border-danger'">

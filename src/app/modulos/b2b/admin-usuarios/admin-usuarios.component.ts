@@ -128,13 +128,15 @@ export class AdminUsuariosComponent implements OnInit {
   applyFilters(): void {
     let filtered = [...this.userList];
 
-    // Filtro por búsqueda (ID, email, razón social, cliente GP)
+    // Filtro por búsqueda (ID, email, nombre, razón social, cliente GP)
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
       filtered = filtered.filter(
         user =>
-          user.ID_USUARIO.toString().includes(term) ||
+          user.ID_USUARIO?.toString().includes(term) ||
           user.MAIL?.toLowerCase().includes(term) ||
+          user.NOMBRE?.toLowerCase().includes(term) ||
+          user.APELLIDO?.toLowerCase().includes(term) ||
           user.RAZONSOCIAL?.toLowerCase().includes(term) ||
           user.GP_CUSTNMBR?.toLowerCase().includes(term)
       );

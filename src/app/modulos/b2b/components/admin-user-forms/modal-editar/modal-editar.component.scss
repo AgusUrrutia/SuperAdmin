@@ -2,6 +2,9 @@
     padding: 20px;
     background-color: #fcfcfc;
     font-family: 'Segoe UI', Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
 
     .header-modal {
         margin-bottom: 20px;
@@ -29,6 +32,21 @@
                 opacity: 1;
                 filter: none;
             }
+        }
+    }
+
+    form {
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 5px;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
     }
 
@@ -87,11 +105,12 @@
 
         @media (max-width: 576px) {
             flex-direction: column;
-            
+
             div {
                 width: 100%;
-                
-                .btn-status, .btn-save {
+
+                .btn-status,
+                .btn-save {
                     width: 100% !important;
                     min-width: 100%;
                 }
@@ -118,7 +137,10 @@
 
             &.btn-success {
                 background-color: #2f855a;
-                &:hover { background-color: #276749; }
+
+                &:hover {
+                    background-color: #276749;
+                }
             }
         }
 
