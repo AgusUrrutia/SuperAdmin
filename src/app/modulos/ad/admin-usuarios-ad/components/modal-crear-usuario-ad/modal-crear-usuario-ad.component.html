@@ -8,7 +8,7 @@
     <form #form="ngForm" (ngSubmit)="crear()" autocomplete="off">
         <div class="form-content">
             <!-- Nombre -->
-            <div class="field full-width mb-3">
+            <div class="field full-width">
                 <label class="section-label">Nombre <span class="text-danger">*</span></label>
                 <input type="text" name="nombre" class="form-control" [(ngModel)]="nuevoUsuario.nombre" required
                     #nameCtrl="ngModel" placeholder="Ingrese el nombre" autocomplete="off" />
@@ -17,7 +17,7 @@
             </div>
 
             <!-- Apellido -->
-            <div class="field full-width mb-3">
+            <div class="field full-width">
                 <label class="section-label">Apellido <span class="text-danger">*</span></label>
                 <input type="text" name="apellido" class="form-control" [(ngModel)]="nuevoUsuario.apellido" required
                     #apellidoCtrl="ngModel" placeholder="Ingrese el apellido" autocomplete="off" />
@@ -25,8 +25,18 @@
                     class="text-danger mt-1">El apellido es requerido.</small>
             </div>
 
+            <!-- Correo Corporativo -->
+            <div class="field full-width">
+                <label class="section-label">Correo corporativo</label>
+                <input type="email" class="form-control" [value]="correoCorporativo" disabled
+                    placeholder="Generado automáticamente" />
+                <small *ngIf="tieneEnie" class="text-muted mt-1 d-block" style="font-size: 0.65rem;">
+                    * Los caracteres 'ñ' se convierten a 'n' automáticamente en el correo corporativo.
+                </small>
+            </div>
+
             <!-- Correo -->
-            <div class="field full-width mb-3">
+            <div class="field full-width">
                 <label class="section-label">Correo electrónico <span class="text-danger">*</span></label>
                 <input type="email" name="correo" class="form-control" [(ngModel)]="nuevoUsuario.correo" required
                     #correoCtrl="ngModel" placeholder="Ingrese el correo" autocomplete="new-password" />
@@ -36,14 +46,14 @@
             </div>
 
             <!-- Contraseña -->
-            <div class="field full-width mb-3">
+            <div class="field full-width">
                 <label class="section-label">Contraseña <span class="text-danger">*</span></label>
                 <div class="position-relative">
-                    <input [type]="mostrarContrasena ? 'text' : 'password'" name="contrasena" class="form-control" [(ngModel)]="nuevoUsuario.contrasena" required
-                        #passCtrl="ngModel" placeholder="Ingrese la contraseña" autocomplete="new-password" style="padding-right: 40px;" />
-                    <mat-icon (click)="mostrarContrasena = !mostrarContrasena" 
-                              class="position-absolute text-muted" 
-                              style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; width: 20px; height: 20px;">
+                    <input [type]="mostrarContrasena ? 'text' : 'password'" name="contrasena" class="form-control"
+                        [(ngModel)]="nuevoUsuario.contrasena" required #passCtrl="ngModel"
+                        placeholder="Ingrese la contraseña" autocomplete="new-password" style="padding-right: 40px;" />
+                    <mat-icon (click)="mostrarContrasena = !mostrarContrasena" class="position-absolute text-muted"
+                        style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; width: 20px; height: 20px;">
                         {{ mostrarContrasena ? 'visibility_off' : 'visibility' }}
                     </mat-icon>
                 </div>
@@ -52,7 +62,7 @@
             </div>
 
             <!-- Descripción -->
-            <div class="field full-width mb-3">
+            <div class="field full-width">
                 <label class="section-label">Descripción</label>
                 <input type="text" name="descripcion" class="form-control" [(ngModel)]="nuevoUsuario.descripcion"
                     placeholder="Ej. Sincronizado desde SQL - Test 3" />

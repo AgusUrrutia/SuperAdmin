@@ -28,14 +28,35 @@ export class ModalCrearUsuarioAdComponent {
 
   constructor(public dialogRef: MatDialogRef<ModalCrearUsuarioAdComponent>) { }
 
+  get correoCorporativo(): string {
+    const cleanString = (str: string) => str ? str.trim().toLowerCase().replace(/ñ/g, 'n') : '';
+
+    const nombre = cleanString(this.nuevoUsuario.nombre).substring(0, 2);
+    const apellido = cleanString(this.nuevoUsuario.apellido).replace(/\s+/g, '');
+    
+    if (nombre || apellido) {
+      return `${nombre}${apellido}@ranko.com.ar`;
+    }
+    return '';
+  }
+
+  get tieneEnie(): boolean {
+    const nombreCompleto = (this.nuevoUsuario.nombre || '') + (this.nuevoUsuario.apellido || '');
+    return nombreCompleto.toLowerCase().includes('ñ');
+  }
+
   crear(): void {
     if (!this.nuevoUsuario.nombre || !this.nuevoUsuario.apellido || !this.nuevoUsuario.correo || !this.nuevoUsuario.contrasena) {
       return; // Basic validation block, the UI has required checks
     }
 
     // Simular creación
-    console.log('Creando usuario AD:', this.nuevoUsuario);
-    this.dialogRef.close(this.nuevoUsuario);
+    const resultado = {
+      ...this.nuevoUsuario,
+      correoCorporativo: this.correoCorporativo
+    };
+    console.log('Creando usuario AD:', resultado);
+    this.dialogRef.close(resultado);
   }
 
   onCancelar(): void {

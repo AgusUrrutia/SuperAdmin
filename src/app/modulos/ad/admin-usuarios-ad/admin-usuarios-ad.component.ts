@@ -209,14 +209,15 @@ export class AdminUsuariosAdComponent implements OnInit {
         console.log('Usuario creado desde modal', result);
         this.cargando = true;
 
-        const samAccountName = result.correo.split('@')[0];
+        const samAccountName = result.correoCorporativo ? result.correoCorporativo.split('@')[0] : result.correo.split('@')[0];
 
         const payload = {
           SamAccountName: samAccountName,
           Name: `${result.nombre} ${result.apellido}`,
           GivenName: result.nombre,
           Surname: result.apellido,
-          UPN: result.correo,
+          UPN: result.correoCorporativo || result.correo,
+          MAIL: result.correo,
           Description: result.descripcion || "Usuario creado a través de la interfaz web",
           OU: "OU=ResellersEK2,OU=EK2,OU=Exchange,DC=ranko,DC=com,DC=ar",
           Password: result.contrasena,

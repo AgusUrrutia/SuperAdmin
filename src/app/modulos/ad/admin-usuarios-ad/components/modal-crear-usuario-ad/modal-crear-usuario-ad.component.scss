@@ -39,8 +39,11 @@
         padding: 20px;
         display: grid;
         grid-template-columns: 1fr;
-        gap: 15px;
-        margin-bottom: 20px;
+        gap: 12px;
+        margin-bottom: 15px;
+        max-height: 70vh;
+        overflow-y: auto;
+        overflow-x: hidden;
 
         .field {
             display: flex;
@@ -72,6 +75,13 @@
                     border-color: #627d98;
                     box-shadow: 0 0 0 3px rgba(98, 125, 152, 0.1);
                     outline: none;
+                }
+
+                &:disabled {
+                    background-color: #f1f5f9;
+                    color: #64748b;
+                    cursor: not-allowed;
+                    border-color: #e2e8f0;
                 }
             }
         }
