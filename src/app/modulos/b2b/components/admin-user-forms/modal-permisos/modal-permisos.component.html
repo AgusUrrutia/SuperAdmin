@@ -1,7 +1,12 @@
 <div class="crear-container">
     <div class="header-modal d-flex align-items-center mb-0">
         <mat-icon class="me-2 header-icon">front_hand</mat-icon>
-        <h2 class="title mb-0">Gestión de Permisos y Módulos</h2>
+        <div class="d-flex flex-column">
+            <h2 class="title mb-0">Gestión de Permisos y Módulos</h2>
+            <span class="text-muted" style="font-size: 0.8rem;">
+                Cuenta: <strong>{{ usuario.GP_CUSTNMBR || '—' }}</strong> · {{ usuario.NOMBRE?.trim() }} {{ usuario.APELLIDO?.trim() }} (ID: {{ usuario.ID_USUARIO }})
+            </span>
+        </div>
         <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="onCancelar()"></button>
     </div>
 

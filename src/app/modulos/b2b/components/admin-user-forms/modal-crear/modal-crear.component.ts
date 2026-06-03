@@ -46,12 +46,10 @@ export class ModalCrearComponent {
     private userService: UsuarioService,
     @Inject(MAT_DIALOG_DATA) public data: { 
       roles: any, 
-      permisosHeredar: any[]
+      permisosHeredar: any[],
+      existingMails?: string[] // <-- nuevo
     }
-  ) {
-    if (data?.roles) {
-    }
-  }
+  ) {}
 
   ngOnInit(): void {
     this.cargarAplicaciones();
@@ -94,6 +92,20 @@ export class ModalCrearComponent {
         title: 'Campos requeridos',
         text: 'Por favor, complete todos los campos marcados con *',
         confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#222'
+      });
+      return;
+    }
+
+    // Validación de correo duplicado
+    const mail = (this.nuevoUsuario.MAIL || '').toLowerCase().trim();
+    const existing = this.data.existingMails ?? [];
+    if (existing.includes(mail)) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Email duplicado',
+        text: 'Ya existe un usuario con ese email. Si deseas agregar otra cuenta, usa la opción "Editar" en la tabla y crea una nueva instancia desde el modal de edición.',
+        confirmButtonText: 'Entendido',
         confirmButtonColor: '#222'
       });
       return;

@@ -64,19 +64,21 @@
                                     CLIENTE GP <mat-icon>{{ getSortIcon('GP_CUSTNMBR') }}</mat-icon>
                                 </div>
                             </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-instancias-b2b text-nowrap-th">
+                                INSTANCIAS</th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold col-acciones-b2b text-center">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (cargando) {
                         <tr>
-                            <td colspan="6" class="text-center py-5 border-0">
+                            <td colspan="9" class="text-center py-5 border-0">
                                 <app-spinner-grande minHeight="200px"></app-spinner-grande>
                             </td>
                         </tr>
                         } @else {
                         @if (displayedUsers.length > 0) {
-                        @for (user of displayedUsers; track user.ID_USUARIO) {
+                        @for (user of displayedUsers; track user.MAIL) {
                         <tr>
                             <td class="py-3 px-4 border-bottom">
                                 <span class="fw-bold text-dark">{{ user.NOMBRE ? ((user.NOMBRE?.trim() || "") + " " +
@@ -85,8 +87,8 @@
                             <td class="py-3 px-4 border-bottom text-muted">{{ user.MAIL }}</td>
                             <td class="py-3 px-4 border-bottom col-roles">
                                 <div class="d-flex flex-wrap gap-1">
-                                    @if (splitRoles(user.ROLES).length > 0) {
-                                    @for (rolNom of splitRoles(user.ROLES); track $index) {
+                                    @if (getGroupedRoles(user).length > 0) {
+                                    @for (rolNom of getGroupedRoles(user); track $index) {
                                     <span class="badge badge-role bg-secondary text-white">
                                         {{ rolNom }}
                                     </span>
@@ -101,14 +103,15 @@
                             <td class="py-3 px-4 border-bottom text-muted">{{ user.RAZONSOCIAL || '-' }}</td>
                             <td class="py-3 px-4 border-bottom col-apps">
                                 <div class="d-flex flex-wrap gap-1">
-                                    @if (user.SISTEMAS && user.SISTEMAS.length > 0) {
-                                        @for (app of user.SISTEMAS; track app.ID) {
-                                            <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">
-                                                {{ app.SISTEMA || app.nombre || app.NOMBRE }}
-                                            </span>
-                                        }
+                                    @if (getGroupedSistemas(user).length > 0) {
+                                    @for (app of getGroupedSistemas(user); track app.ID || app.id || app.ID_APLICACION)
+                                    {
+                                    <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">
+                                        {{ app.SISTEMA || app.nombre || app.NOMBRE }}
+                                    </span>
+                                    }
                                     } @else {
-                                        <span class="text-muted">-</span>
+                                    <span class="text-muted">-</span>
                                     }
                                 </div>
                             </td>
@@ -119,6 +122,13 @@
                                 </span>
                             </td>
                             <td class="py-3 px-4 border-bottom text-muted">{{ user.GP_CUSTNMBR?.trim() || '-' }}</td>
+                            <td class="py-3 px-4 border-bottom">
+                                <span
+                                    class="badge rounded-pill border fw-normal p-2 px-3 bg-info-subtle text-info border-info-subtle">
+                                    {{ user.instancias.length }} {{ user.instancias.length === 1 ? 'cuenta' : 'cuentas'
+                                    }}
+                                </span>
+                            </td>
                             <td class="py-3 px-4 border-bottom">
                                 <div class="actions-grid">
                                     <button class="btn btn-primary btn-sm" (click)="editarUsuario(user)">Editar</button>
@@ -133,7 +143,7 @@
                         }
                         } @else {
                         <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">No hay usuarios disponibles</td>
+                            <td colspan="9" class="text-center py-5 text-muted">No hay usuarios disponibles</td>
                         </tr>
                         }
                         }

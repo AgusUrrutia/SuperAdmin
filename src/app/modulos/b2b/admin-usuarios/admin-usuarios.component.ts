@@ -40,6 +40,9 @@ export class AdminUsuariosComponent implements OnInit {
   filteredUserList: any[] = [];
   permisosHeredar: any[] = [];
 
+  // Usuarios agrupados por mail
+  groupedUserList: any[] = [];
+
   // Roles que no se deben mostrar en la UI
   rolesOcultos: string[] = [
     'Distribuidores Administración',
@@ -67,6 +70,7 @@ export class AdminUsuariosComponent implements OnInit {
         console.log('Todos los usuarios:', res);
         const rawData = Array.isArray(res) ? res : res?.[0] || [];
         this.userList = [...rawData];
+        this.buildGroupedList();
         this.applyFilters();
 
         // Damos un pequeño respiro para que el DOM se entere del cambio e impacte el spinner si la red es lenta
@@ -85,6 +89,7 @@ export class AdminUsuariosComponent implements OnInit {
         if (users && users.length > 0) {
           console.log('Usuarios recibidos desde el observable:', users);
           this.userList = users;
+          this.buildGroupedList();
           this.applyFilters();
           this.cargando = false;
         }
@@ -125,26 +130,74 @@ export class AdminUsuariosComponent implements OnInit {
   }
 
 
+  buildGroupedList(): void {
+    const map = new Map<string, any>();
+    for (const user of this.userList) {
+      const mail = (user.MAIL || '').toLowerCase().trim();
+      if (!map.has(mail)) {
+        map.set(mail, {
+          ...user,           // propiedades representativas del grupo
+          instancias: [user] // todas las instancias con ese mail
+        });
+      } else {
+        map.get(mail).instancias.push(user);
+      }
+    }
+    this.groupedUserList = Array.from(map.values());
+  }
+
+  getGroupedRoles(group: any): string[] {
+    if (!group.instancias) return [];
+    const allRoles = new Set<string>();
+    for (const inst of group.instancias) {
+      const roles = this.splitRoles(inst.ROLES);
+      for (const r of roles) {
+        allRoles.add(r);
+      }
+    }
+    return Array.from(allRoles);
+  }
+
+  getGroupedSistemas(group: any): any[] {
+    if (!group.instancias) return [];
+    const uniqueApps = new Map<string, any>();
+    for (const inst of group.instancias) {
+      if (inst.SISTEMAS && Array.isArray(inst.SISTEMAS)) {
+        for (const app of inst.SISTEMAS) {
+          const id = app.ID || app.id || app.ID_APLICACION;
+          if (id && !uniqueApps.has(String(id))) {
+            uniqueApps.set(String(id), app);
+          }
+        }
+      }
+    }
+    return Array.from(uniqueApps.values());
+  }
+
+  get existingMails(): string[] {
+    return this.userList.map(u => (u.MAIL || '').toLowerCase().trim()).filter(Boolean);
+  }
+
   applyFilters(): void {
-    let filtered = [...this.userList];
+    let filtered = [...this.groupedUserList];
 
     // Filtro por búsqueda (ID, email, nombre, razón social, cliente GP)
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
       filtered = filtered.filter(
-        user =>
-          user.ID_USUARIO?.toString().includes(term) ||
-          user.MAIL?.toLowerCase().includes(term) ||
-          user.NOMBRE?.toLowerCase().includes(term) ||
-          user.APELLIDO?.toLowerCase().includes(term) ||
-          user.RAZONSOCIAL?.toLowerCase().includes(term) ||
-          user.GP_CUSTNMBR?.toLowerCase().includes(term)
+        group =>
+          group.ID_USUARIO?.toString().includes(term) ||
+          group.MAIL?.toLowerCase().includes(term) ||
+          group.NOMBRE?.toLowerCase().includes(term) ||
+          group.APELLIDO?.toLowerCase().includes(term) ||
+          group.RAZONSOCIAL?.toLowerCase().includes(term) ||
+          group.GP_CUSTNMBR?.toLowerCase().includes(term)
       );
     }
 
-    // ✅ Filtro por estado (ACTIVO = "1", INACTIVO = "2")
+    // ✅ Filtro por estado (ACTIVO = "1", INACTIVO = "0")
     if (this.selectedEstado) {
-      filtered = filtered.filter(user => user.ACTIVO === this.selectedEstado);
+      filtered = filtered.filter(group => group.ACTIVO === this.selectedEstado);
     }
 
     this.filteredUserList = filtered;
@@ -212,65 +265,190 @@ export class AdminUsuariosComponent implements OnInit {
         disableClose: true,
         data: {
           roles: roles,
-          permisosHeredar: this.permisosHeredar
+          permisosHeredar: this.permisosHeredar,
+          existingMails: this.existingMails // <-- nuevo: para validar duplicados
         }
       });
     });
   }
-  editarUsuario(usuario: any) {
-    // Aseguramos que los roles sean un array
+
+  editarUsuario(group: any) {
     this.userService.getAllRoles().subscribe((roles) => {
-      this.userSelected = usuario;
-      console.log('Usuario seleccionado para editar:', this.userSelected);
-      // Aquí podrías abrir un modal o hacer algo con el usuario seleccionado
+      this.userSelected = group;
+      console.log('Grupo seleccionado para editar:', this.userSelected);
       const dialogRef = this.dialog.open(ModalEditarComponent, {
-        width: '600px',
+        width: '90vw',
         disableClose: true,
         data: {
           roles: roles,
           usuario: this.userSelected,
+          instancias: group.instancias, // <-- nuevo: todas las instancias del grupo
           permisosHeredar: this.permisosHeredar
         }
       });
       dialogRef.afterClosed().subscribe(() => {
         this.userService.reloadUsers();
       });
-    })
+    });
   }
 
-  gestionarRoles(usuario: any) {
+  gestionarRoles(group: any) {
+    const list = group.instancias || [group];
+    if (list.length <= 1) {
+      this.abrirModalRoles(list[0]);
+    } else {
+      const inputOptions: { [key: string]: string } = {};
+      list.forEach((inst: any) => {
+        inputOptions[inst.ID_USUARIO] = `${inst.GP_CUSTNMBR || 'Sin cliente'} - ${inst.NOMBRE} ${inst.APELLIDO} (ID: ${inst.ID_USUARIO})`;
+      });
+      Swal.fire({
+        title: 'Seleccionar cuenta',
+        text: 'Este correo tiene múltiples cuentas. Selecciona cuál deseas gestionar:',
+        input: 'select',
+        inputOptions: inputOptions,
+        inputPlaceholder: 'Seleccione una cuenta',
+        showCancelButton: true,
+        confirmButtonColor: '#222',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Gestionar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value) {
+              resolve();
+            } else {
+              resolve('Debes seleccionar una cuenta');
+            }
+          });
+        }
+      }).then((result) => {
+        if (result.isConfirmed && result.value) {
+          const selectedUser = list.find((inst: any) => String(inst.ID_USUARIO) === String(result.value));
+          if (selectedUser) {
+            this.abrirModalRoles(selectedUser);
+          }
+        }
+      });
+    }
+  }
+
+  private abrirModalRoles(usuario: any) {
     this.userService.getAllRoles().subscribe((roles) => {
-      this.userSelected = usuario;
       const dialogRef = this.dialog.open(ModalRolesComponent, {
         width: '600px',
         disableClose: true,
         data: {
           roles: roles,
-          usuario: this.userSelected
+          usuario: usuario
         }
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.userService.reloadUsers();
       });
     });
   }
 
-  gestionarPermisos(usuario: any) {
+  gestionarPermisos(group: any) {
+    const list = group.instancias || [group];
+    if (list.length <= 1) {
+      this.abrirModalPermisos(list[0]);
+    } else {
+      const inputOptions: { [key: string]: string } = {};
+      list.forEach((inst: any) => {
+        inputOptions[inst.ID_USUARIO] = `${inst.GP_CUSTNMBR || 'Sin cliente'} - ${inst.NOMBRE} ${inst.APELLIDO} (ID: ${inst.ID_USUARIO})`;
+      });
+      Swal.fire({
+        title: 'Seleccionar cuenta',
+        text: 'Este correo tiene múltiples cuentas. Selecciona de cuál deseas gestionar los permisos:',
+        input: 'select',
+        inputOptions: inputOptions,
+        inputPlaceholder: 'Seleccione una cuenta',
+        showCancelButton: true,
+        confirmButtonColor: '#222',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Gestionar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value) {
+              resolve();
+            } else {
+              resolve('Debes seleccionar una cuenta');
+            }
+          });
+        }
+      }).then((result) => {
+        if (result.isConfirmed && result.value) {
+          const selectedUser = list.find((inst: any) => String(inst.ID_USUARIO) === String(result.value));
+          if (selectedUser) {
+            this.abrirModalPermisos(selectedUser);
+          }
+        }
+      });
+    }
+  }
+
+  private abrirModalPermisos(usuario: any) {
     this.userService.getAllRoles().subscribe((roles) => {
-      this.userSelected = usuario;
       const dialogRef = this.dialog.open(ModalPermisosComponent, {
         width: '800px',
         disableClose: true,
         data: {
           roles: roles,
-          usuario: this.userSelected,
+          usuario: usuario,
           permisosHeredar: this.permisosHeredar
         }
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        this.userService.reloadUsers();
       });
     });
   }
 
-  eliminarUsuario(usuario: any) {
+  eliminarUsuario(group: any) {
+    const list = group.instancias || [group];
+    if (list.length <= 1) {
+      this.confirmarEliminar(list[0]);
+    } else {
+      const inputOptions: { [key: string]: string } = {};
+      list.forEach((inst: any) => {
+        inputOptions[inst.ID_USUARIO] = `${inst.GP_CUSTNMBR || 'Sin cliente'} - ${inst.NOMBRE} ${inst.APELLIDO} (ID: ${inst.ID_USUARIO})`;
+      });
+      Swal.fire({
+        title: 'Seleccionar cuenta a eliminar',
+        text: 'Este correo tiene múltiples cuentas. Selecciona cuál deseas eliminar:',
+        input: 'select',
+        inputOptions: inputOptions,
+        inputPlaceholder: 'Seleccione una cuenta',
+        showCancelButton: true,
+        confirmButtonColor: '#c53030',
+        cancelButtonColor: '#222',
+        confirmButtonText: 'Eliminar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value) {
+              resolve();
+            } else {
+              resolve('Debes seleccionar una cuenta');
+            }
+          });
+        }
+      }).then((result) => {
+        if (result.isConfirmed && result.value) {
+          const selectedUser = list.find((inst: any) => String(inst.ID_USUARIO) === String(result.value));
+          if (selectedUser) {
+            this.confirmarEliminar(selectedUser);
+          }
+        }
+      });
+    }
+  }
+
+  private confirmarEliminar(usuario: any) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Vas a eliminar al usuario ${usuario.NOMBRE}`,
+      text: `Vas a eliminar la cuenta GP ${usuario.GP_CUSTNMBR || '—'} de ${usuario.NOMBRE}`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#222',
@@ -284,8 +462,9 @@ export class AdminUsuariosComponent implements OnInit {
           next: (response) => {
             console.log('Usuario eliminado con éxito:', response);
             this.userList = this.userList.filter(u => u.ID_USUARIO !== usuario.ID_USUARIO);
+            this.buildGroupedList();
+            this.applyFilters();
             this.userService.reloadUsers();
-            this.applyFilters(); // Reaplicar filtros para actualizar la vista
           },
           error: (error) => {
             console.error('Error al eliminar el usuario:', error);

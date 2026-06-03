@@ -113,7 +113,7 @@
 .table-fixed {
   table-layout: fixed;
   width: 100%;
-  min-width: 1100px;
+  min-width: 1220px;
 }
 
 .col-id-b2b {
@@ -144,8 +144,18 @@
   width: 120px;
 }
 
+.col-instancias-b2b {
+  width: 120px;
+}
+
 .col-acciones-b2b {
   width: 190px;
+}
+
+.bg-info-subtle {
+  background-color: #cff4fc !important;
+  color: #0091b1 !important;
+  border: 1px solid #0091b1 !important;
 }
 
 .table {
