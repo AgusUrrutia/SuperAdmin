@@ -10,8 +10,9 @@
             <!-- Nombre -->
             <div class="field full-width">
                 <label class="section-label">Nombre <span class="text-danger">*</span></label>
-                <input type="text" name="nombre" class="form-control" [(ngModel)]="nuevoUsuario.nombre" required
-                    #nameCtrl="ngModel" placeholder="Ingrese el nombre" autocomplete="off" />
+                <input type="text" name="nombre" class="form-control" [ngModel]="nuevoUsuario.nombre"
+                    (ngModelChange)="nuevoUsuario.nombre = $event.toUpperCase()" required #nameCtrl="ngModel"
+                    placeholder="Ingrese el nombre" autocomplete="off" />
                 <small *ngIf="nameCtrl.invalid && (nameCtrl.dirty || nameCtrl.touched)" class="text-danger mt-1">El
                     nombre es requerido.</small>
             </div>
@@ -19,15 +20,16 @@
             <!-- Apellido -->
             <div class="field full-width">
                 <label class="section-label">Apellido <span class="text-danger">*</span></label>
-                <input type="text" name="apellido" class="form-control" [(ngModel)]="nuevoUsuario.apellido" required
-                    #apellidoCtrl="ngModel" placeholder="Ingrese el apellido" autocomplete="off" />
+                <input type="text" name="apellido" class="form-control" [ngModel]="nuevoUsuario.apellido"
+                    (ngModelChange)="nuevoUsuario.apellido = $event.toUpperCase()" required #apellidoCtrl="ngModel"
+                    placeholder="Ingrese el apellido" autocomplete="off" />
                 <small *ngIf="apellidoCtrl.invalid && (apellidoCtrl.dirty || apellidoCtrl.touched)"
                     class="text-danger mt-1">El apellido es requerido.</small>
             </div>
 
             <!-- Correo Corporativo -->
             <div class="field full-width">
-                <label class="section-label">Correo corporativo</label>
+                <label class="section-label">Correo Ranko EK</label>
                 <input type="email" class="form-control" [value]="correoCorporativo" disabled
                     placeholder="Generado automáticamente" />
                 <small *ngIf="tieneEnie" class="text-muted mt-1 d-block" style="font-size: 0.65rem;">
@@ -64,8 +66,9 @@
             <!-- Descripción -->
             <div class="field full-width">
                 <label class="section-label">Descripción</label>
-                <input type="text" name="descripcion" class="form-control" [(ngModel)]="nuevoUsuario.descripcion"
-                    placeholder="Ej. Sincronizado desde SQL - Test 3" />
+                <input type="text" name="descripcion" class="form-control" [ngModel]="nuevoUsuario.descripcion"
+                    (ngModelChange)="nuevoUsuario.descripcion = $event.toUpperCase()"
+                    placeholder="Ej: DR0435 - 'Razón Social'" />
             </div>
         </div>
     </form>
