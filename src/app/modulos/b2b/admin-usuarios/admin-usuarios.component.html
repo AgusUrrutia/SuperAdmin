@@ -47,11 +47,6 @@
                                     RAZÓN SOCIAL <mat-icon>{{ getSortIcon('RAZONSOCIAL') }}</mat-icon>
                                 </div>
                             </th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold col-apps-b2b text-nowrap-th">
-                                <div class="d-flex align-items-center gap-1">
-                                    APLICACIONES
-                                </div>
-                            </th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold col-estado-b2b cursor-pointer text-nowrap-th"
                                 [class.active-sort]="sortColumn === 'ACTIVO'" (click)="onSort('ACTIVO')">
                                 <div class="d-flex align-items-center gap-1">
@@ -66,6 +61,11 @@
                             </th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold col-instancias-b2b text-nowrap-th">
                                 INSTANCIAS</th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-apps-b2b text-nowrap-th">
+                                <div class="d-flex align-items-center gap-1">
+                                    APLICACIONES
+                                </div>
+                            </th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold col-acciones-b2b text-center">ACCIONES</th>
                         </tr>
                     </thead>
@@ -101,20 +101,6 @@
                                 </div>
                             </td>
                             <td class="py-3 px-4 border-bottom text-muted">{{ user.RAZONSOCIAL || '-' }}</td>
-                            <td class="py-3 px-4 border-bottom col-apps">
-                                <div class="d-flex flex-wrap gap-1">
-                                    @if (getGroupedSistemas(user).length > 0) {
-                                    @for (app of getGroupedSistemas(user); track app.ID || app.id || app.ID_APLICACION)
-                                    {
-                                    <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">
-                                        {{ app.SISTEMA || app.nombre || app.NOMBRE }}
-                                    </span>
-                                    }
-                                    } @else {
-                                    <span class="text-muted">-</span>
-                                    }
-                                </div>
-                            </td>
                             <td class="py-3 px-4 border-bottom">
                                 <span class="badge rounded-pill border fw-normal p-2 px-3"
                                     [ngClass]="user.ACTIVO === '1' ? 'bg-success-subtle text-success border-success' : 'bg-danger-subtle text-danger border-danger'">
@@ -128,6 +114,20 @@
                                     {{ user.instancias.length }} {{ user.instancias.length === 1 ? 'cuenta' : 'cuentas'
                                     }}
                                 </span>
+                            </td>
+                            <td class="py-3 px-4 border-bottom col-apps">
+                                <div class="d-flex flex-wrap gap-1">
+                                    @if (getGroupedSistemas(user).length > 0) {
+                                    @for (app of getGroupedSistemas(user); track app.ID || app.id || app.ID_APLICACION)
+                                    {
+                                    <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">
+                                        {{ app.SISTEMA || app.nombre || app.NOMBRE }}
+                                    </span>
+                                    }
+                                    } @else {
+                                    <span class="text-muted">-</span>
+                                    }
+                                </div>
                             </td>
                             <td class="py-3 px-4 border-bottom">
                                 <div class="actions-grid">

@@ -111,18 +111,9 @@ export class ModalCrearComponent {
       return;
     }
     
-    if (this.aplicacionesSeleccionadas.length === 0) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Faltan aplicaciones',
-        text: 'Debe seleccionar al menos una aplicación para el usuario.',
-        confirmButtonText: 'Aceptar',
-        confirmButtonColor: '#222'
-      });
-      return;
-    }
-
-    this.nuevoUsuario.ID_APLICACION = this.aplicacionesSeleccionadas.map(a => String(this.obtenerId(a)));
+    // B2B (ID 2) se asigna por defecto — el selector de aplicaciones está oculto en el HTML
+    this.nuevoUsuario.ID_APLICACION = ['2'];
+    this.nuevoUsuario.GP_CUSTNMBR = (this.nuevoUsuario.GP_CUSTNMBR || '').toUpperCase();
     
     console.log('Creando usuario:', this.nuevoUsuario);
     

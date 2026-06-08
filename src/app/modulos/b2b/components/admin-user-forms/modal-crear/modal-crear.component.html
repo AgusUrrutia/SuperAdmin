@@ -52,15 +52,18 @@
                     name="gpCustnmbr"
                     class="form-control"
                     [(ngModel)]="nuevoUsuario.GP_CUSTNMBR"
+                    (input)="nuevoUsuario.GP_CUSTNMBR = nuevoUsuario.GP_CUSTNMBR.toUpperCase()"
                     required
                     #gpCtrl="ngModel"
                     placeholder="Ej: DA0030"
+                    style="text-transform: uppercase;"
                 />
                 @if (gpCtrl.invalid && (gpCtrl.dirty || gpCtrl.touched)) {
                     <small class="text-danger mt-1">El código de cliente es requerido.</small>
                 }
             </div>
-            <!-- Aplicaciones -->
+            <!-- Aplicaciones: oculto — se envía B2B (ID 2) por defecto desde el TS -->
+            <!--
             <div class="field full-width mb-3">
                 <label class="section-label">Aplicaciones <span class="text-danger">*</span></label>
                 <div class="d-flex gap-2">
@@ -83,6 +86,7 @@
                     No ha añadido aplicaciones.
                 </div>
             </div>
+            -->
         </div>
     </form>
 
