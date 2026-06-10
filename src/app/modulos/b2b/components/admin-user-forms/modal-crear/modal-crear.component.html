@@ -14,7 +14,8 @@
                     type="text"
                     name="nombre"
                     class="form-control"
-                    [(ngModel)]="nuevoUsuario.NOMBRE"
+                    [ngModel]="nuevoUsuario.NOMBRE"
+                    (ngModelChange)="nuevoUsuario.NOMBRE = $event.toUpperCase()"
                     required
                     #nameCtrl="ngModel"
                     placeholder="Ingrese el nombre completo"

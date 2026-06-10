@@ -47,7 +47,9 @@ export class HistorialAccionesAdComponent implements OnInit {
         const dataArray = Array.isArray(response) ? response : (response.data && Array.isArray(response.data)) ? response.data : null;
 
         if (dataArray) {
-          this.historialGeneral = dataArray.map((item: any) => {
+          this.historialGeneral = [...dataArray]
+            .sort((a: any, b: any) => new Date(b.StartedAt).getTime() - new Date(a.StartedAt).getTime())
+            .map((item: any) => {
             return {
               usuario: this.extractUsuario(item),
               descripcion: this.translateActionType(item.ActionType),

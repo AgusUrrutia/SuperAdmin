@@ -17,16 +17,16 @@
 
         <div class="field">
             <label class="section-label">Nombre</label>
-            <input type="text" [(ngModel)]="nombre" class="form-control" placeholder="Ingrese nombre">
+            <input type="text" [ngModel]="nombre" (ngModelChange)="nombre = $event.toUpperCase()" class="form-control" placeholder="Ingrese nombre">
         </div>
         <div class="field">
             <label class="section-label">Apellido</label>
-            <input type="text" [(ngModel)]="apellido" class="form-control" placeholder="Ingrese apellido">
+            <input type="text" [ngModel]="apellido" (ngModelChange)="apellido = $event.toUpperCase()" class="form-control" placeholder="Ingrese apellido">
         </div>
 
         <div class="field">
             <label class="section-label">GP Customer (GP_CUSTNMBR)</label>
-            <input type="text" [(ngModel)]="gpCustnmbr" class="form-control" placeholder="Ingrese código GP">
+            <input type="text" [ngModel]="gpCustnmbr" (ngModelChange)="gpCustnmbr = $event.toUpperCase()" class="form-control" placeholder="Ingrese código GP">
         </div>
         
         <div class="field mb-3">

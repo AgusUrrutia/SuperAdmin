@@ -21,29 +21,29 @@
     <!-- Tabla -->
     <div class="card shadow-sm border-0 rounded-3 bg-white">
         <div class="card-body p-0">
-            <div class="table-responsive p-0">
+            <div class="table-responsive p-0 table-body-fixed">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th class="py-3 px-4 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap" style="cursor: pointer;" (click)="onSort('descripcion')">
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap" style="cursor: pointer;" (click)="onSort('descripcion')">
                                 <div class="d-flex align-items-center gap-1">ACCIÓN <mat-icon>{{ getSortIcon('descripcion') }}</mat-icon></div>
                             </th>
-                            <th class="py-3 px-4 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap" style="cursor: pointer;" (click)="onSort('usuario')">
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap" style="cursor: pointer;" (click)="onSort('usuario')">
                                 <div class="d-flex align-items-center gap-1">USUARIO <mat-icon>{{ getSortIcon('usuario') }}</mat-icon></div>
                             </th>
-                            <th class="py-3 px-4 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap" style="cursor: pointer;" (click)="onSort('mensaje')">
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap" style="cursor: pointer;" (click)="onSort('mensaje')">
                                 <div class="d-flex align-items-center gap-1">MENSAJE <mat-icon>{{ getSortIcon('mensaje') }}</mat-icon></div>
                             </th>
-                            <th class="py-3 px-4 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap" style="cursor: pointer;" (click)="onSort('bloqueadaPor')">
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer" style="cursor: pointer;" (click)="onSort('bloqueadaPor')">
                                 <div class="d-flex align-items-center gap-1">BLOQUEADA POR <mat-icon>{{ getSortIcon('bloqueadaPor') }}</mat-icon></div>
                             </th>
-                            <th class="py-3 px-4 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap" style="cursor: pointer;" (click)="onSort('estado')">
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap" style="cursor: pointer;" (click)="onSort('estado')">
                                 <div class="d-flex align-items-center gap-1">ESTADO <mat-icon>{{ getSortIcon('estado') }}</mat-icon></div>
                             </th>
-                            <th class="py-3 px-4 border-bottom-0 text-muted fw-bold cursor-pointer text-end text-nowrap" style="cursor: pointer;" (click)="onSort('fechaInicio')">
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer text-end" style="cursor: pointer;" (click)="onSort('fechaInicio')">
                                 <div class="d-flex align-items-center justify-content-end gap-1">FECHA INICIO <mat-icon>{{ getSortIcon('fechaInicio') }}</mat-icon></div>
                             </th>
-                            <th class="py-3 px-4 border-bottom-0 text-muted fw-bold cursor-pointer text-end text-nowrap" style="cursor: pointer;" (click)="onSort('fechaFin')">
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer text-end" style="cursor: pointer;" (click)="onSort('fechaFin')">
                                 <div class="d-flex align-items-center justify-content-end gap-1">FECHA FIN <mat-icon>{{ getSortIcon('fechaFin') }}</mat-icon></div>
                             </th>
                         </tr>
@@ -60,12 +60,12 @@
                             <td colspan="7" class="text-center py-4 text-muted border-0">No existen registros para los filtros actuales.</td>
                         </tr>
                         <tr *ngFor="let item of displayedItems">
-                            <td class="py-3 px-4">{{ item.descripcion }}</td>
-                            <td class="py-3 px-4 fw-medium text-dark">{{ item.usuario }}</td>
-                            <td class="py-3 px-4 text-muted" style="max-width: 300px; white-space: normal;">{{ item.mensaje }}</td>
-                            <td class="py-3 px-4 text-muted">{{ item.bloqueadaPor }}</td>
+                            <td class="py-2 px-3">{{ item.descripcion }}</td>
+                            <td class="py-2 px-3 fw-medium text-dark" style="max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" [title]="item.usuario">{{ item.usuario }}</td>
+                            <td class="py-2 px-3 text-muted" style="max-width: 200px; white-space: normal;">{{ item.mensaje }}</td>
+                            <td class="py-2 px-3 text-muted">{{ item.bloqueadaPor }}</td>
 
-                            <td class="py-3 px-4">
+                            <td class="py-2 px-3">
                                 <span
                                     class="badge rounded-pill px-3 py-2 fw-medium d-inline-flex align-items-center gap-1 border"
                                     [ngStyle]="{
@@ -79,8 +79,8 @@
                                     {{ item.estado }}
                                 </span>
                             </td>
-                            <td class="py-3 px-4 text-muted text-end">{{ item.fechaInicio }}</td>
-                            <td class="py-3 px-4 text-muted text-end">{{ item.fechaFin }}</td>
+                            <td class="py-2 px-3 text-muted text-end">{{ item.fechaInicio }}</td>
+                            <td class="py-2 px-3 text-muted text-end">{{ item.fechaFin }}</td>
                         </tr>
                     </tbody>
                 </table>
