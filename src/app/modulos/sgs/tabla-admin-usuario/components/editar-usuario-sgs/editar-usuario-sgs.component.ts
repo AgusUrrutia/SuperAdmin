@@ -171,6 +171,32 @@ export class EditarUsuarioSgsComponent implements OnInit {
         });
     }
 
+    toggleActivo(): void {
+        const nuevoEstado = this.activo === '1' ? '0' : '1';
+        const payload = {
+            ID_USUARIO: this.id,
+            MAIL: this.mail,
+            NOMBRE: this.nombre,
+            APELLIDO: this.apellido,
+            MAIL_PERSONAL: this.mailPersonal,
+            GP_CUSTNMBR: this.gpCustnmbr,
+            ACTIVO: nuevoEstado,
+            ID_APLICACION: this.aplicacionesSeleccionadas.map(a => this.obtenerId(a))
+        };
+
+        this.usuarioAdminService.updateUser(payload).subscribe({
+            next: () => {
+                this.activo = nuevoEstado;
+                const titulo = nuevoEstado === '0' ? 'Usuario deshabilitado' : 'Usuario habilitado';
+                const texto = nuevoEstado === '0'
+                    ? 'La cuenta ha sido deshabilitada con éxito.'
+                    : 'La cuenta ha sido habilitada con éxito.';
+                Swal.fire({ title: titulo, text: texto, icon: 'success', confirmButtonColor: '#222' });
+            },
+            error: () => {}
+        });
+    }
+
     cancelar(): void {
         this.dialogRef.close(this.huboCambiosEnApps);
     }

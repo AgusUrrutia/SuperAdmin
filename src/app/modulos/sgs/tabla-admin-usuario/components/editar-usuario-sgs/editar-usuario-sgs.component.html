@@ -54,16 +54,16 @@
             </div>
         </div>
 
-        <div class="field">
-            <label class="section-label">Estado</label>
-            <select [(ngModel)]="activo" class="form-control">
-                <option value="1">Activo</option>
-                <option value="0">Inactivo</option>
-            </select>
-        </div>
     </div>
 
-    <div class="actions-modal p-3 d-flex justify-content-end align-items-center bg-white border-top">
+    <div class="actions-modal p-3 d-flex justify-content-between align-items-center bg-white border-top">
+        <div>
+            @if(activo === '1') {
+            <button type="button" class="btn-status" (click)="toggleActivo()">Deshabilitar Cuenta</button>
+            } @else {
+            <button type="button" class="btn-status btn-success" (click)="toggleActivo()">Habilitar Cuenta</button>
+            }
+        </div>
         <button (click)="guardar()" class="btn-save" [disabled]="estaCargando">
             <span *ngIf="!estaCargando">Guardar Cambios</span>
             <span *ngIf="estaCargando">Procesando...</span>

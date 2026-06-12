@@ -145,19 +145,19 @@ export class ModalEditarComponent {
       next: () => {
         const nuevoEstado = this.usuario.ACTIVO === '1' ? '0' : '1';
         this.usuario.ACTIVO = nuevoEstado;
-        
+
         // Actualizar en la lista local de instancias
         const idx = this.instancias.findIndex(i => i.ID_USUARIO === this.usuario.ID_USUARIO);
         if (idx !== -1) {
           this.instancias[idx] = { ...this.instancias[idx], ACTIVO: nuevoEstado };
         }
 
-        if(nuevoEstado === "0"){
-          Swal.fire('Usuario deshabilitado', 'La cuenta ha sido deshabilitada con éxito.', 'success');
+        if (nuevoEstado === "0") {
+          Swal.fire({ title: 'Usuario deshabilitado', text: 'La cuenta ha sido deshabilitada con éxito.', icon: 'success', confirmButtonColor: '#222' });
         } else {
-          Swal.fire('Usuario habilitado', 'La cuenta ha sido habilitada con éxito.', 'success');
+          Swal.fire({ title: 'Usuario habilitado', text: 'La cuenta ha sido habilitada con éxito.', icon: 'success', confirmButtonColor: '#222' });
         }
-        
+
         this.userService.reloadUsers();
         this.huboCambiosEnApps = true;
       },
@@ -173,7 +173,7 @@ export class ModalEditarComponent {
       Swal.fire('Campos incompletos', 'Por favor completa todos los campos requeridos.', 'warning');
       return;
     }
-    
+
     if (this.aplicacionesSeleccionadas.length === 0) {
       Swal.fire('Error', 'Debe seleccionar al menos una aplicación.', 'error');
       return;
@@ -191,7 +191,7 @@ export class ModalEditarComponent {
       next: (response) => {
         Swal.close();
         console.log('Usuario actualizado con éxito:', response);
-        
+
         // Actualizar la instancia activa en la lista local
         const idx = this.instancias.findIndex(i => i.ID_USUARIO === this.usuario.ID_USUARIO);
         if (idx !== -1) {
@@ -238,30 +238,30 @@ export class ModalEditarComponent {
       return;
     }
     Swal.fire({ title: 'Creando instancia...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-    
+
     // Configurar la nueva instancia
     this.nuevaInstancia.ID_APLICACION = [];
 
     this.userService.createUser(this.nuevaInstancia).subscribe({
       next: (response) => {
         Swal.close();
-        Swal.fire({ 
-          title: '¡Instancia creada!', 
-          text: 'La cuenta ha sido vinculada con éxito. Ahora puedes asignarle aplicaciones.', 
-          icon: 'success', 
-          timer: 2000, 
-          showConfirmButton: false 
+        Swal.fire({
+          title: '¡Instancia creada!',
+          text: 'La cuenta ha sido vinculada con éxito. Ahora puedes asignarle aplicaciones.',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
         });
         this.modoCrearInstancia = false;
         this.userService.reloadUsers();
         this.huboCambiosEnApps = true;
 
         if (response) {
-          const nueva = { 
-            ...this.nuevaInstancia, 
+          const nueva = {
+            ...this.nuevaInstancia,
             ID_USUARIO: response.ID_USUARIO || response.id || response.data?.ID_USUARIO,
-            ACTIVO: '1', 
-            SISTEMAS: [] 
+            ACTIVO: '1',
+            SISTEMAS: []
           };
           this.instancias.push(nueva);
           this.seleccionarInstancia(nueva);
