@@ -132,7 +132,7 @@ export class TablaAdminGrupoComponent implements OnInit {
                 USUARIOS_ID: detalle?.USUARIOS_ID || [],
                 FORMULARIOS_ID: detalle?.FORMULARIOS_ID || []
             };
-        });
+        }).sort((a: any, b: any) => b["ID Grupo"] - a["ID Grupo"]);
 
         this.applyFilters();
     }

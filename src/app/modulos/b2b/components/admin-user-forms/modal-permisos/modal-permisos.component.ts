@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { UsuarioService } from '../../../services/usuario.service';
 import { SpinnerGrandeComponent } from '../../../../../shared/components/spinner-grande/spinner-grande.component';
+import { forkJoin, of, switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -27,8 +28,8 @@ export class ModalPermisosComponent implements OnInit {
   modulos: any[] = [];
   modulosIntegrados: any[] = [];
   cargando: boolean = false;
+  guardando: boolean = false;
 
-  // Roles que no se deben mostrar en la UI
   rolesOcultos: string[] = [
     'Distribuidores Administración',
     'Grandes Cuentas Administración',
@@ -62,7 +63,6 @@ export class ModalPermisosComponent implements OnInit {
 
   cargarModulosPorRol(rol: any): void {
     if (!rol) return;
-    const esAdministrador = true; // Simulating localstorage rol for permissions mapping as per previous logic
 
     if (this.data.permisosHeredar?.length > 0) {
       this.userService.getIntegratedModules(this.usuario.ID_USUARIO).subscribe({
@@ -123,62 +123,78 @@ export class ModalPermisosComponent implements OnInit {
     this.modulos = Array.from(modulosAgrupados.values());
   }
 
-  enviarPermisoModulo(modulo: any): void {
-    let accion: any = 0;
-    if (modulo.lectura && modulo.escritura) accion = 2;
-    else if (modulo.lectura) accion = 1;
-    else if (modulo.escritura) accion = 2;
+  guardarTodosLosPermisos(): void {
+    if (!this.rolSeleccionadoPermisos) return;
 
-    if (!modulo.lectura && !modulo.escritura) {
-      this.userService.quitarPermiso(this.usuario.ID_USUARIO, modulo.ID_MENU).subscribe({
-        next: () => {
-          Swal.fire({ title: 'Permiso removido', text: `Permiso removido.`, icon: 'success', timer: 1000, showConfirmButton: false });
-          this.cargarModulosPorRol(this.rolSeleccionadoPermisos);
-        }
-      });
-      return;
-    }
-
-    // 1. Buscamos el nombre del rol que tenemos seleccionado
-    const nombreRol = this.rolSeleccionadoPermisos.ROL;
-
-    // 2. Buscamos en la lista maestra de roles (data.roles) que vino del backend (getAllRoles).
-    // Usamos 'nombre' o 'ROL' para comparar, y el campo 'valor' o 'ID_ROLES' para extraer el ID.
-    const rolMaestro = (this.data.roles || []).find(r =>
-      (r.nombre?.toLowerCase() === nombreRol?.toLowerCase()) ||
-      (r.ROL?.toLowerCase() === nombreRol?.toLowerCase())
+    const sinCambios = this.modulos.every(m =>
+      m.lectura === m.originalLectura && m.escritura === m.originalEscritura
     );
-
-    // 3. Priorizamos el ID del rol maestro, de lo contrario usamos el que ya tenía el usuario.
-    const idRolReal = rolMaestro ? (rolMaestro.valor || rolMaestro.ID_ROLES) :
-      (this.rolSeleccionadoPermisos.ID_ROLES ||
-        this.rolSeleccionadoPermisos.ID_ROL ||
-        this.rolSeleccionadoPermisos.id_rol);
-
-    console.log('--- Resumen de Roles ---');
-    console.log('Nombre Rol Seleccionado:', nombreRol);
-    console.log('Rol Maestro encontrado:', rolMaestro);
-    console.log('ID Final a enviar:', idRolReal);
-
-    // ✅ Validación: Evitar duplicados si no hubo cambios reales
-    if (modulo.lectura === modulo.originalLectura && modulo.escritura === modulo.originalEscritura) {
+    if (sinCambios) {
       Swal.fire({
         title: 'Sin cambios',
-        text: 'Este permiso ya se encuentra guardado con los mismos valores.',
+        text: 'No se realizaron cambios en los permisos.',
         icon: 'info',
         confirmButtonColor: '#222'
       });
       return;
     }
 
-    this.userService.updatePermissions(this.usuario.ID_USUARIO, modulo.ID_MENU, accion, idRolReal).subscribe({
-      next: () => {
-        Swal.fire({ title: 'Guardado', text: `Permisos guardados.`, icon: 'success', timer: 1000, showConfirmButton: false });
-        // Actualizamos el estado original para que no vuelva a chillar hasta que cambie algo
-        modulo.originalLectura = modulo.lectura;
-        modulo.originalEscritura = modulo.escritura;
+    const nombreRol = this.rolSeleccionadoPermisos.ROL;
+    const rolMaestro = (this.data.roles || []).find((r: any) =>
+      (r.nombre?.toLowerCase() === nombreRol?.toLowerCase()) ||
+      (r.ROL?.toLowerCase() === nombreRol?.toLowerCase())
+    );
+    const idRolReal = rolMaestro
+      ? (rolMaestro.valor || rolMaestro.ID_ROLES)
+      : (this.rolSeleccionadoPermisos.ID_ROLES || this.rolSeleccionadoPermisos.ID_ROL || this.rolSeleccionadoPermisos.id_rol);
+
+    // Solo módulos que realmente cambiaron
+    const modulosCambiados = this.modulos.filter(m =>
+      m.lectura !== m.originalLectura || m.escritura !== m.originalEscritura
+    );
+
+    // Módulos que tenían permisos y cambiaron (ya sea de nivel o para quitarlos):
+    // hay que removerlos primero para evitar duplicate key en el INSERT
+    const aRemover = modulosCambiados.filter(m => m.originalLectura || m.originalEscritura);
+
+    // Módulos que ahora tienen al menos un permiso activo → se van a re-insertar
+    const permisos = modulosCambiados
+      .filter(m => m.lectura || m.escritura)
+      .map(m => ({
+        ID_USUARIO: this.usuario.ID_USUARIO,
+        ID_MENU: m.ID_MENU,
+        ID_ROL: idRolReal,
+        ID_ACCION: m.escritura ? 2 : 1
+      }));
+
+    this.guardando = true;
+
+    const removerYLuegoPersistir = () => {
+      if (permisos.length === 0) {
+        Swal.fire({ title: 'Guardado', text: 'Permisos actualizados.', icon: 'success', timer: 1500, showConfirmButton: false });
+        this.guardando = false;
+        this.cargarModulosPorRol(this.rolSeleccionadoPermisos);
+        return;
       }
-    });
+      this.userService.savePermisosLote(permisos).subscribe({
+        next: (res) => {
+          if (res === null) { this.guardando = false; return; }
+          Swal.fire({ title: 'Guardado', text: 'Permisos guardados correctamente.', icon: 'success', timer: 1500, showConfirmButton: false });
+          this.guardando = false;
+          this.cargarModulosPorRol(this.rolSeleccionadoPermisos);
+        },
+        error: () => { this.guardando = false; }
+      });
+    };
+
+    if (aRemover.length > 0) {
+      forkJoin(aRemover.map(m => this.userService.quitarPermiso(this.usuario.ID_USUARIO, m.ID_MENU))).subscribe({
+        next: () => removerYLuegoPersistir(),
+        error: () => { this.guardando = false; }
+      });
+    } else {
+      removerYLuegoPersistir();
+    }
   }
 
   onCancelar(): void { this.dialogRef.close(); }

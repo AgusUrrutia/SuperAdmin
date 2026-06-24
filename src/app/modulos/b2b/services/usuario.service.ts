@@ -478,34 +478,25 @@ export class UsuarioService {
     );
   }
 
-  updatePermissions(userId: string, menuId: string, accionId: any, rolId: string): Observable<any> {
+  savePermisosLote(permisos: Array<{ ID_USUARIO: string, ID_MENU: string, ID_ROL: string, ID_ACCION: number }>): Observable<any> {
     const headers = this.makeHeaders();
-    //     el body tiene que ser 
-    //     'ID_USUARIO'
-    // 'ID_MENU'
-    // 'ID_ACCION'
-    // 'ID_ROL'
-
-    return this.http.post<any>(`${this.url}/b2b/panel-admin/guardar-acceso-permiso`,
-      {
-        ID_USUARIO: userId,
-        ID_MENU: menuId,
-        ID_ACCION: accionId,
-        ID_ROL: rolId
-      },
-      { headers }).pipe(
-        catchError((error) => {
-          console.error('Error al actualizar los permisos del usuario:', error);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error al actualizar los permisos',
-            text: 'Por favor, intente más tarde.',
-            confirmButtonText: 'Aceptar',
-            confirmButtonColor: '#222'
-          });
-          return of(null);
-        })
-      );
+    return this.http.post<any>(
+      `${this.url}/b2b/panel-admin/guardar-acceso-permiso`,
+      { permisos },
+      { headers }
+    ).pipe(
+      catchError((error) => {
+        console.error('Error al guardar los permisos:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al guardar los permisos',
+          text: 'Por favor, intente más tarde.',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#222'
+        });
+        return of(null);
+      })
+    );
   }
 
 

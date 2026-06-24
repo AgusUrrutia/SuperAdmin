@@ -90,7 +90,7 @@ export class AdminUsuariosComponent implements OnInit {
           console.log('Usuarios recibidos desde el observable:', users);
           this.userList = users;
           this.buildGroupedList();
-          this.applyFilters();
+          this.applyFilters(true); // preservar página y filtros activos al recargar
           this.cargando = false;
         }
       }
@@ -178,7 +178,7 @@ export class AdminUsuariosComponent implements OnInit {
     return this.userList.map(u => (u.MAIL || '').toLowerCase().trim()).filter(Boolean);
   }
 
-  applyFilters(): void {
+  applyFilters(preservePage: boolean = false): void {
     let filtered = [...this.groupedUserList];
 
     // Filtro por búsqueda (ID, email, nombre, razón social, cliente GP)
@@ -195,14 +195,24 @@ export class AdminUsuariosComponent implements OnInit {
       );
     }
 
-    // ✅ Filtro por estado (ACTIVO = "1", INACTIVO = "0")
+    // Filtro por estado (ACTIVO = "1", INACTIVO = "0")
     if (this.selectedEstado) {
       filtered = filtered.filter(group => group.ACTIVO === this.selectedEstado);
     }
 
     this.filteredUserList = filtered;
     this.totalItems = filtered.length;
-    this.currentPage = 0; // Resetear a primera página
+
+    if (!preservePage) {
+      this.currentPage = 0;
+    } else {
+      // Si la página actual ya no existe (ej: se eliminó el último item de esa página), ajustar
+      const maxPage = Math.max(0, Math.ceil(this.totalItems / this.pageSize) - 1);
+      if (this.currentPage > maxPage) {
+        this.currentPage = maxPage;
+      }
+    }
+
     this.updateDisplayedUsers();
   }
 
@@ -312,6 +322,7 @@ export class AdminUsuariosComponent implements OnInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Gestionar',
         cancelButtonText: 'Cancelar',
+        reverseButtons: true,
         inputValidator: (value) => {
           return new Promise((resolve) => {
             if (value) {
@@ -368,6 +379,7 @@ export class AdminUsuariosComponent implements OnInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Gestionar',
         cancelButtonText: 'Cancelar',
+        reverseButtons: true,
         inputValidator: (value) => {
           return new Promise((resolve) => {
             if (value) {
@@ -425,6 +437,7 @@ export class AdminUsuariosComponent implements OnInit {
         cancelButtonColor: '#222',
         confirmButtonText: 'Eliminar',
         cancelButtonText: 'Cancelar',
+        reverseButtons: true,
         inputValidator: (value) => {
           return new Promise((resolve) => {
             if (value) {

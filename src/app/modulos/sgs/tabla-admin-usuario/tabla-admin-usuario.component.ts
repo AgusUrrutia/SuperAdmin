@@ -111,6 +111,8 @@ export class TablaAdminUsuarioComponent implements OnInit {
     ngOnInit(): void {
         this.usuarioAdminService.users$.subscribe((res) => {
             if (res !== null) {
+                const isReload = this.rawUsers.length > 0;
+                this._preservePageOnNextLoad = isReload;
                 this.rawUsers = res;
                 this.processUserData(this.rawUsers);
                 this.cargando = false;
@@ -183,10 +185,13 @@ export class TablaAdminUsuarioComponent implements OnInit {
             };
         });
 
-        this.applyFilters();
+        this.applyFilters(this._preservePageOnNextLoad);
+        this._preservePageOnNextLoad = false;
     }
 
-    applyFilters(): void {
+    private _preservePageOnNextLoad: boolean = false;
+
+    applyFilters(preservePage: boolean = false): void {
         let filtered = [...this.filas];
 
         if (this.searchTerm.trim()) {
@@ -205,7 +210,16 @@ export class TablaAdminUsuarioComponent implements OnInit {
 
         this.filteredFilas = filtered;
         this.totalItems = filtered.length;
-        this.currentPage = 0;
+
+        if (!preservePage) {
+            this.currentPage = 0;
+        } else {
+            const maxPage = Math.max(0, Math.ceil(this.totalItems / this.pageSize) - 1);
+            if (this.currentPage > maxPage) {
+                this.currentPage = maxPage;
+            }
+        }
+
         this.updateDisplayedFilas();
     }
 

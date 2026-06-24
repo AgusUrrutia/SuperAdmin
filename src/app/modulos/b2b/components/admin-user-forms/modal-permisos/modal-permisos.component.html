@@ -29,13 +29,12 @@
                         <th class="fw-semibold">MÓDULO / MENÚ</th>
                         <th class="fw-semibold text-center mt-2">LECTURA</th>
                         <th class="fw-semibold text-center mt-2">ESCRITURA</th>
-                        <th class="fw-semibold text-center">ACCIÓN</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (cargando) {
                     <tr>
-                        <td colspan="4" class="text-center py-5 border-0">
+                        <td colspan="3" class="text-center py-5 border-0">
                             <app-spinner-grande minHeight="180px"></app-spinner-grande>
                         </td>
                     </tr>
@@ -51,17 +50,11 @@
                             <input class="form-check-input mt-2" type="checkbox" [(ngModel)]="modulo.escritura"
                                 style="width: 1.1em; height: 1.1em; cursor:pointer;" />
                         </td>
-                        <td class="align-middle text-center">
-                            <button class="btn btn-sm btn-outline-dark px-2 py-1 shadow-sm"
-                                (click)="enviarPermisoModulo(modulo)" title="Guardar permisos">
-                                <mat-icon style="font-size: 16px; width:16px; height:16px;">save</mat-icon>
-                            </button>
-                        </td>
                     </tr>
                     }
                     @if (modulos.length === 0) {
                     <tr>
-                        <td colspan="4" class="text-center py-4 text-muted">No hay módulos disponibles o asigne un rol.
+                        <td colspan="3" class="text-center py-4 text-muted">No hay módulos disponibles o asigne un rol.
                         </td>
                     </tr>
                     }
@@ -69,6 +62,20 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 pt-2 border-top mt-1">
+        <button type="button" class="btn btn-sm px-4 btn-cancelar"
+            (click)="onCancelar()" [disabled]="guardando">
+            Cancelar
+        </button>
+        <button type="button" class="btn btn-dark btn-sm px-4"
+            (click)="guardarTodosLosPermisos()" [disabled]="guardando || cargando">
+            @if (guardando) {
+            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+            }
+            {{ guardando ? 'Guardando...' : 'Guardar' }}
+        </button>
     </div>
 
 </div>

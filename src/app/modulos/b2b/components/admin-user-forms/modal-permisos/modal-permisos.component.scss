@@ -77,6 +77,27 @@
         }
     }
 
+    .btn-cancelar {
+        background-color: #c53030;
+        color: #ffffff;
+        border: none;
+        pointer-events: auto;
+
+        &:hover, &:focus {
+            background-color: #a82828;
+            color: #ffffff;
+            border: none;
+            box-shadow: none;
+        }
+
+        &:active, &:disabled {
+            background-color: #c53030;
+            color: #ffffff;
+            border: none;
+            box-shadow: none;
+        }
+    }
+
     // Estilos específicos para la tabla interna y evitar overflow
     .table-responsive {
         min-height: 400px; // Altura fija mínima para evitar saltos al cargar
