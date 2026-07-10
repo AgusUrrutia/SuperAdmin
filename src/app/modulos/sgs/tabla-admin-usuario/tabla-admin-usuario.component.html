@@ -6,9 +6,8 @@
         </button>
     </div>
 
-    <!-- Filtros replicados de B2B para mantener consistencia -->
     <div class="d-flex gap-3 mb-4">
-        <input type="text" class="form-control w-25 shadow-sm border-0" placeholder="Buscar por ID o Email..."
+        <input type="text" class="form-control w-25 shadow-sm border-0" placeholder="Buscar por email, nombre o GP..."
             [(ngModel)]="searchTerm" (input)="applyFilters()">
         <select class="form-select w-25 shadow-sm border-0" [(ngModel)]="selectedEstado" (change)="applyFilters()">
             <option value="">Todos los Estados</option>
@@ -23,104 +22,101 @@
                 <table class="table table-hover align-middle mb-0 table-fixed" style="font-size: 0.9rem;">
                     <thead class="bg-light">
                         <tr>
-                            <th class="py-3 ps-4 pe-2 border-0 text-muted fw-bold cursor-pointer col-id"
-                                [class.active-sort]="sortColumn === 'ID Usuario'" (click)="onSort('ID Usuario')">
-                                <div class="d-flex align-items-center gap-1">
-                                    ID <mat-icon>{{ getSortIcon('ID Usuario') }}</mat-icon>
-                                </div>
-                            </th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer text-nowrap col-email"
-                                [class.active-sort]="sortColumn === 'Email/Usuario'" (click)="onSort('Email/Usuario')">
+                                [class.active-sort]="sortColumn === 'MAIL'" (click)="onSort('MAIL')">
                                 <div class="d-flex align-items-center gap-1">
-                                    EMAIL/USUARIO <mat-icon>{{ getSortIcon('Email/Usuario') }}</mat-icon>
+                                    EMAIL/USUARIO <mat-icon>{{ getSortIcon('MAIL') }}</mat-icon>
                                 </div>
                             </th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer col-nombre"
-                                [class.active-sort]="sortColumn === 'Nombre'" (click)="onSort('Nombre')">
+                                [class.active-sort]="sortColumn === 'NOMBRE'" (click)="onSort('NOMBRE')">
                                 <div class="d-flex align-items-center gap-1">
-                                    NOMBRE <mat-icon>{{ getSortIcon('Nombre') }}</mat-icon>
+                                    NOMBRE <mat-icon>{{ getSortIcon('NOMBRE') }}</mat-icon>
                                 </div>
                             </th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer text-nowrap col-gp"
-                                [class.active-sort]="sortColumn === 'GP Customer'" (click)="onSort('GP Customer')">
+                                [class.active-sort]="sortColumn === 'GP_CUSTNMBR'" (click)="onSort('GP_CUSTNMBR')">
                                 <div class="d-flex align-items-center gap-1">
-                                    GP CUSTNMBR <mat-icon>{{ getSortIcon('GP Customer') }}</mat-icon>
+                                    GP CUSTNMBR <mat-icon>{{ getSortIcon('GP_CUSTNMBR') }}</mat-icon>
                                 </div>
                             </th>
-                            <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer col-apps"
-                                [class.active-sort]="sortColumn === 'Aplicaciones'" (click)="onSort('Aplicaciones')">
-                                <div class="d-flex align-items-center gap-1">
-                                    APLICACIONES <mat-icon>{{ getSortIcon('Aplicaciones') }}</mat-icon>
-                                </div>
-                            </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-apps">APLICACIONES</th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer col-estado"
-                                [class.active-sort]="sortColumn === 'Estado'" (click)="onSort('Estado')">
+                                [class.active-sort]="sortColumn === 'ACTIVO'" (click)="onSort('ACTIVO')">
                                 <div class="d-flex align-items-center gap-1">
-                                    ESTADO <mat-icon>{{ getSortIcon('Estado') }}</mat-icon>
+                                    ESTADO <mat-icon>{{ getSortIcon('ACTIVO') }}</mat-icon>
                                 </div>
                             </th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold cursor-pointer col-intentos"
-                                [class.active-sort]="sortColumn === 'Intentos'" (click)="onSort('Intentos')">
+                                [class.active-sort]="sortColumn === 'INTENTOS_FALLIDOS'" (click)="onSort('INTENTOS_FALLIDOS')">
                                 <div class="d-flex align-items-center gap-1">
-                                    INTENTOS <mat-icon>{{ getSortIcon('Intentos') }}</mat-icon>
+                                    INTENTOS <mat-icon>{{ getSortIcon('INTENTOS_FALLIDOS') }}</mat-icon>
                                 </div>
                             </th>
+                            <th class="py-3 px-4 border-0 text-muted fw-bold col-cuentas text-nowrap">CUENTAS</th>
                             <th class="py-3 px-4 border-0 text-muted fw-bold col-acciones">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngIf="cargando">
+                        @if (cargando) {
+                        <tr>
                             <td colspan="8" class="text-center py-5 border-0">
                                 <app-spinner-grande minHeight="200px"></app-spinner-grande>
                             </td>
                         </tr>
-                        <ng-container *ngIf="!cargando">
-                            <tr *ngFor="let u of displayedFilas">
-                                <td class="py-3 ps-4 pe-2 border-bottom text-muted">
-                                    {{ u['ID Usuario'] }}
-                                </td>
-                                <td class="py-3 px-4 border-bottom text-muted">
-                                    <div class="text-truncate" [title]="u['Email/Usuario']">{{ u['Email/Usuario'] }}
-                                    </div>
-                                </td>
-                                <td class="py-3 px-4 border-bottom">
-                                    <span class="fw-bold text-dark">{{ u['Nombre'] }}</span>
-                                </td>
-                                <td class="py-3 px-4 border-bottom text-muted">
-                                    <div class="text-truncate" [title]="u['GP Customer']">{{ u['GP Customer'] }}</div>
-                                </td>
-                                <td class="py-3 px-4 border-bottom text-muted">
-                                    <div class="d-flex flex-wrap gap-1">
-                                        <ng-container *ngIf="u['Aplicaciones'] && u['Aplicaciones'] !== '-'">
-                                            <span class="badge bg-secondary-subtle text-secondary border px-2 py-1"
-                                                *ngFor="let app of u['Aplicaciones'].split(', ')">{{ app }}</span>
-                                        </ng-container>
-                                        <span *ngIf="!u['Aplicaciones'] || u['Aplicaciones'] === '-'">-</span>
-                                    </div>
-                                </td>
-
-                                <td class="py-3 px-4 border-bottom">
-                                    <span class="badge rounded-pill border fw-normal p-2 px-3"
-                                        [ngClass]="u['Estado'] === 'Activo' ? 'bg-success-subtle text-success border-success' : 'bg-danger-subtle text-danger border-danger'">
-                                        {{ u['Estado'] }}
-                                    </span>
-                                </td>
-                                <td class="py-3 px-4 border-bottom text-muted">{{ u['Intentos'] }}</td>
-                                <td class="py-3 px-4 border-bottom">
-                                    <div class="d-flex gap-2">
-                                        <button class="btn btn-primary btn-sm" style="width: 80px;"
-                                            (click)="editarUsuario(u)">Editar</button>
-                                        <button class="btn btn-dark btn-sm" style="width: 80px;"
-                                            (click)="gestionarRoles(u)">Rol</button>
-                                        <button class="btn btn-danger btn-sm" style="width: 80px;"
-                                            (click)="eliminarUsuario(u)">Eliminar</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr *ngIf="filas.length === 0">
-                                <td colspan="8" class="text-center py-4 text-muted">No hay usuarios cargados</td>
-                            </tr>
-                        </ng-container>
+                        } @else {
+                        @for (group of displayedUsers; track group.MAIL) {
+                        <tr>
+                            <td class="py-3 px-4 border-bottom text-muted">
+                                <div class="text-truncate" [title]="group.MAIL">{{ group.MAIL }}</div>
+                            </td>
+                            <td class="py-3 px-4 border-bottom">
+                                <span class="fw-bold text-dark">{{ group.NOMBRE }} {{ group.APELLIDO }}</span>
+                            </td>
+                            <td class="py-3 px-4 border-bottom text-muted">
+                                <div class="text-truncate" [title]="group.GP_CUSTNMBR">{{ group.GP_CUSTNMBR || '—' }}</div>
+                            </td>
+                            <td class="py-3 px-4 border-bottom text-muted">
+                                <div class="d-flex flex-wrap gap-1">
+                                    @for (app of getGroupedSistemas(group); track app) {
+                                    <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">{{ app }}</span>
+                                    }
+                                    @if (getGroupedSistemas(group).length === 0) {
+                                    <span>-</span>
+                                    }
+                                </div>
+                            </td>
+                            <td class="py-3 px-4 border-bottom">
+                                <span class="badge rounded-pill border fw-normal p-2 px-3"
+                                    [ngClass]="group.ACTIVO === '1' ? 'bg-success-subtle text-success border-success' : 'bg-danger-subtle text-danger border-danger'">
+                                    {{ group.ACTIVO === '1' ? 'Activo' : 'Inactivo' }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4 border-bottom text-muted">{{ group.INTENTOS_FALLIDOS ?? '—' }}</td>
+                            <td class="py-3 px-4 border-bottom">
+                                <span class="badge rounded-pill border fw-normal p-2 px-3 bg-info-subtle text-info border-info-subtle"
+                                    style="border-color: #0dcaf0 !important;">
+                                    {{ group.instancias?.length || 1 }} {{ (group.instancias?.length || 1) === 1 ? 'cuenta' : 'cuentas' }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4 border-bottom">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary btn-sm" style="width: 80px;"
+                                        (click)="editarUsuario(group)">Editar</button>
+                                    <button class="btn btn-dark btn-sm" style="width: 80px;"
+                                        (click)="gestionarRoles(group)">Rol</button>
+                                    <button class="btn btn-danger btn-sm" style="width: 80px;"
+                                        (click)="eliminarUsuario(group)">Eliminar</button>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                        @if (groupedUserList.length === 0) {
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">No hay usuarios cargados</td>
+                        </tr>
+                        }
+                        }
                     </tbody>
                 </table>
             </div>

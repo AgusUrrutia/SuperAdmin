@@ -1,72 +1,235 @@
-<div class="crear-container">
+<div class="crear-container" style="max-width: 100%; width: 100%;">
     <div class="header-modal d-flex align-items-center mb-0">
-        <mat-icon class="me-2 header-icon">edit</mat-icon>
-        <h2 class="title mb-0">Editar Usuario SGS</h2>
-        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="cancelar()"></button>
+        <mat-icon class="me-2 header-icon">manage_accounts</mat-icon>
+        <h2 class="title mb-0">Editar Usuario — {{ instanciaSeleccionada?.MAIL }}</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="onCancelar()"></button>
     </div>
 
-    <div class="form-content">
-        <div class="field">
-            <label class="section-label">Email / Usuario</label>
-            <input type="text" [(ngModel)]="mail" class="form-control" placeholder="Ingrese email">
-        </div>
-        <div class="field">
-            <label class="section-label">Mail Personal *</label>
-            <input type="email" [(ngModel)]="mailPersonal" class="form-control" placeholder="Ingrese mail personal">
-        </div>
+    <!-- Layout flexbox: Sidebar + Panel Principal -->
+    <div class="modal-body-layout d-flex mt-3" style="gap: 20px; height: 78vh; overflow: hidden;">
 
-        <div class="field">
-            <label class="section-label">Nombre</label>
-            <input type="text" [(ngModel)]="nombre" class="form-control" placeholder="Ingrese nombre">
-        </div>
-        <div class="field">
-            <label class="section-label">Apellido</label>
-            <input type="text" [(ngModel)]="apellido" class="form-control" placeholder="Ingrese apellido">
-        </div>
-
-        <div class="field">
-            <label class="section-label">GP Customer (GP_CUSTNMBR)</label>
-            <input type="text" [(ngModel)]="gpCustnmbr" class="form-control" placeholder="Ingrese código GP">
-        </div>
-        
-        <div class="field mb-3">
-            <label class="section-label">Aplicaciones *</label>
-            <div class="d-flex gap-2">
-                <select class="form-control form-select" [(ngModel)]="aplicacionActual" [disabled]="!aplicaciones.length || estaModificandoApp">
-                    <option [ngValue]="null" disabled selected>-- Seleccione una aplicación --</option>
-                    <option *ngFor="let app of aplicaciones" [ngValue]="app">{{ app.SISTEMA || app.nombre || app.NOMBRE }}</option>
-                </select>
-                <button type="button" class="btn btn-dark-custom btn-sm px-3" (click)="agregarAplicacion()" [disabled]="estaModificandoApp">
-                    <mat-icon *ngIf="!estaModificandoApp" style="font-size: 18px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">add</mat-icon>
-                    <span *ngIf="estaModificandoApp" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <!-- SIDEBAR DE CUENTAS -->
+        <aside class="instances-sidebar d-flex flex-column"
+            style="width: 250px; border-right: 1px solid #dae1e7; padding-right: 15px; flex-shrink: 0;">
+            <div class="sidebar-header d-flex justify-content-between align-items-center mb-3">
+                <span class="sidebar-title fw-bold text-muted"
+                    style="font-size: 0.8rem; letter-spacing: 0.5px; text-transform: uppercase;">
+                    Cuentas ({{ instancias.length }})
+                </span>
+                <button type="button"
+                    class="btn btn-outline-dark btn-sm d-flex align-items-center justify-content-center"
+                    style="width: 28px; height: 28px; padding: 0; border-radius: 50%;" (click)="abrirCrearInstancia()"
+                    title="Agregar nueva cuenta con este mail">
+                    <mat-icon
+                        style="font-size: 18px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">add</mat-icon>
                 </button>
             </div>
 
-            <div *ngIf="aplicacionesSeleccionadas.length > 0" class="badges-container d-flex flex-wrap gap-2 mt-2">
-                <span *ngFor="let appSel of aplicacionesSeleccionadas" class="badge border bg-light text-dark d-flex align-items-center px-3 py-2" [ngClass]="{'opacity-50': estaModificandoApp}" style="font-size: 0.85rem; border-radius: 20px;">
-                    {{ appSel.SISTEMA || appSel.nombre || appSel.NOMBRE }}
-                    <mat-icon class="ms-2 text-danger" style="cursor: pointer; font-size: 18px; width: 18px; height: 18px;" 
-                        (click)="!estaModificandoApp && eliminarAplicacion(appSel)">close</mat-icon>
-                </span>
+            <div class="instances-list flex-grow-1 overflow-y-auto"
+                style="gap: 10px; display: flex; flex-direction: column; padding-right: 4px;">
+                @for (inst of instancias; track inst.ID_USUARIO) {
+                <div class="instance-card p-3 rounded-3 cursor-pointer transition-all d-flex justify-content-between align-items-center"
+                    [ngStyle]="{
+                        'border': (instanciaSeleccionada?.ID_USUARIO === inst.ID_USUARIO && !modoCrearInstancia) ? '1px solid #000' : '1px solid #dae1e7',
+                        'background-color': (instanciaSeleccionada?.ID_USUARIO === inst.ID_USUARIO && !modoCrearInstancia) ? '#f1f3f5' : '#ffffff',
+                        'box-shadow': (instanciaSeleccionada?.ID_USUARIO === inst.ID_USUARIO && !modoCrearInstancia) ? '0 2px 8px rgba(0,0,0,0.12)' : 'none'
+                    }" (click)="seleccionarInstancia(inst)">
+                    <div class="instance-info d-flex flex-column gap-1">
+                        <span class="instance-gp fw-bold text-dark" style="font-size: 0.9rem;">
+                            {{ inst.GP_CUSTNMBR || '—' }}
+                        </span>
+                        <span class="instance-name text-muted"
+                            style="font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">
+                            {{ inst.NOMBRE?.trim() }} {{ inst.APELLIDO?.trim() }}
+                        </span>
+                        <span class="instance-id text-muted" style="font-size: 0.75rem;">
+                            ID: {{ inst.ID_USUARIO }}
+                        </span>
+                    </div>
+                    <div class="instance-status">
+                        <span [ngStyle]="{
+                            'display': 'inline-block',
+                            'width': '8px',
+                            'height': '8px',
+                            'border-radius': '50%',
+                            'background-color': inst.ACTIVO === '1' ? '#2f855a' : '#c53030'
+                        }"></span>
+                    </div>
+                </div>
+                }
             </div>
-            <div *ngIf="aplicacionesSeleccionadas.length === 0" class="mt-2 text-muted" style="font-size: 0.85rem;">
-                No ha añadido aplicaciones.
-            </div>
-        </div>
+        </aside>
 
+        <!-- PANEL PRINCIPAL -->
+        <section class="main-panel flex-grow-1 overflow-y-auto" style="padding-right: 5px;">
+
+            <!-- PANEL: NUEVA INSTANCIA -->
+            @if (modoCrearInstancia) {
+            <div class="new-instance-panel p-4 border rounded-3 bg-white">
+                <h4 class="mb-2 fw-bold text-dark d-flex align-items-center" style="font-size: 1rem;">
+                    <mat-icon class="me-2 text-dark"
+                        style="font-size: 20px; width:20px; height:20px;">add_circle_outline</mat-icon>
+                    Nueva cuenta para {{ nuevaInstancia.MAIL }}
+                </h4>
+                <p class="text-muted mb-4" style="font-size: 0.85rem;">Se creará una cuenta vinculada al mismo email y nombre.</p>
+
+                <div class="row mb-3">
+                    <div class="col-6 field">
+                        <label class="section-label"
+                            style="color: #555; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Nombre</label>
+                        <input type="text" [(ngModel)]="nuevaInstancia.NOMBRE" class="form-control" />
+                    </div>
+                    <div class="col-6 field">
+                        <label class="section-label"
+                            style="color: #555; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Apellido</label>
+                        <input type="text" [(ngModel)]="nuevaInstancia.APELLIDO" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12 field">
+                        <label class="section-label"
+                            style="color: #555; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Email (heredado)</label>
+                        <input type="text" [(ngModel)]="nuevaInstancia.MAIL" class="form-control bg-light text-muted" readonly />
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-12 field">
+                        <label class="section-label"
+                            style="color: #555; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Código
+                            Cliente GP <span class="text-danger">*</span></label>
+                        <input type="text" [(ngModel)]="nuevaInstancia.GP_CUSTNMBR" class="form-control"
+                            placeholder="Ej: SG0030" required />
+                    </div>
+                </div>
+
+                <div class="new-instance-actions d-flex justify-content-end gap-2">
+                    <button type="button" class="btn-cancelar" (click)="cancelarCrearInstancia()">Cancelar</button>
+                    <button type="button" class="btn btn-dark btn-sm px-4" (click)="crearInstancia()"
+                        [disabled]="!nuevaInstancia.GP_CUSTNMBR">
+                        Crear cuenta
+                    </button>
+                </div>
+            </div>
+            }
+
+            <!-- PANEL: FORMULARIO DE EDICIÓN -->
+            @if (!modoCrearInstancia) {
+            <form #form="ngForm" (ngSubmit)="guardar()">
+                <div class="form-content border-0 p-0 m-0" style="display: grid; gap: 15px;">
+                    <h5 class="mb-2 text-muted"
+                        style="font-size: 0.95rem; font-weight: 600; border-bottom: 1px solid #f1f3f5; padding-bottom: 8px;">
+                        Datos Personales</h5>
+
+                    <div class="row mb-3">
+                        <div class="col-6 field">
+                            <label class="section-label"
+                                style="color: #555; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Nombre
+                                <span class="text-danger">*</span></label>
+                            <input type="text" name="nombre" class="form-control" [(ngModel)]="usuario.NOMBRE" required />
+                        </div>
+                        <div class="col-6 field">
+                            <label class="section-label"
+                                style="color: #555; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Apellido
+                                <span class="text-danger">*</span></label>
+                            <input type="text" name="apellido" class="form-control" [(ngModel)]="usuario.APELLIDO" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6 field">
+                            <label class="section-label"
+                                style="color: #555; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Email / Usuario</label>
+                            <input type="text" name="mail" class="form-control bg-light text-muted"
+                                [(ngModel)]="usuario.MAIL" readonly />
+                        </div>
+                        <div class="col-6 field">
+                            <label class="section-label"
+                                style="color: #555; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Email Personal</label>
+                            <input type="email" name="mailPersonal" class="form-control"
+                                [(ngModel)]="usuario.MAIL_PERSONAL" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 field">
+                            <label class="section-label"
+                                style="color: #555; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Código
+                                Cliente GP <span class="text-danger">*</span></label>
+                            <input type="text" name="gpCustnmbr" class="form-control" [(ngModel)]="usuario.GP_CUSTNMBR"
+                                required />
+                        </div>
+                    </div>
+
+                    <h5 class="mb-2 mt-3 text-muted"
+                        style="font-size: 0.95rem; font-weight: 600; border-bottom: 1px solid #f1f3f5; padding-bottom: 8px;">
+                        Aplicaciones</h5>
+
+                    <div class="row mb-3">
+                        <div class="col-12 field">
+                            <label class="section-label"
+                                style="color: #555; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Asignar
+                                Aplicación</label>
+                            <div class="d-flex gap-2">
+                                <select name="aplicacionActual" class="form-control form-select"
+                                    [(ngModel)]="aplicacionActual"
+                                    [disabled]="!aplicaciones.length || estaModificandoApp">
+                                    <option [ngValue]="null" disabled selected>-- Seleccione una aplicación --</option>
+                                    <option *ngFor="let app of aplicaciones" [ngValue]="app">{{ app.SISTEMA || app.nombre || app.NOMBRE }}</option>
+                                </select>
+                                <button type="button"
+                                    class="btn btn-dark btn-sm px-3 d-flex align-items-center justify-content-center"
+                                    (click)="agregarAplicacion()" [disabled]="estaModificandoApp">
+                                    <mat-icon *ngIf="!estaModificandoApp"
+                                        style="font-size: 18px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">add</mat-icon>
+                                    <span *ngIf="estaModificandoApp" class="spinner-border spinner-border-sm"
+                                        role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+
+                            <div *ngIf="aplicacionesSeleccionadas.length > 0"
+                                class="badges-container d-flex flex-wrap gap-2 mt-3">
+                                <span *ngFor="let appSel of aplicacionesSeleccionadas"
+                                    class="badge border bg-light text-dark d-flex align-items-center px-3 py-2"
+                                    [ngClass]="{'opacity-50': estaModificandoApp}"
+                                    style="font-size: 0.85rem; border-radius: 20px; font-weight: normal; gap: 4px;">
+                                    {{ appSel.SISTEMA || appSel.nombre || appSel.NOMBRE }}
+                                    <mat-icon class="text-danger"
+                                        style="cursor: pointer; font-size: 16px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;"
+                                        (click)="!estaModificandoApp && eliminarAplicacion(appSel)">close</mat-icon>
+                                </span>
+                            </div>
+                            <div *ngIf="aplicacionesSeleccionadas.length === 0" class="mt-2 text-muted"
+                                style="font-size: 0.85rem;">
+                                No ha añadido aplicaciones.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            }
+
+        </section>
     </div>
 
-    <div class="actions-modal p-3 d-flex justify-content-between align-items-center bg-white border-top">
+    <!-- ACCIONES DEL MODAL -->
+    <div class="actions-modal p-3 d-flex justify-content-between align-items-center bg-white border-top mt-3"
+        style="border-radius: 0 0 10px 10px;">
         <div>
-            @if(activo === '1') {
-            <button type="button" class="btn-status" (click)="toggleActivo()">Deshabilitar Cuenta</button>
-            } @else {
-            <button type="button" class="btn-status btn-success" (click)="toggleActivo()">Habilitar Cuenta</button>
+            @if (!modoCrearInstancia) {
+                @if (usuario.ACTIVO === '1') {
+                <button type="button" class="btn-status" (click)="toggleActivo()">Deshabilitar Cuenta</button>
+                } @else {
+                <button type="button" class="btn-status btn-success" (click)="toggleActivo()">Habilitar Cuenta</button>
+                }
             }
         </div>
-        <button (click)="guardar()" class="btn-save" [disabled]="estaCargando">
-            <span *ngIf="!estaCargando">Guardar Cambios</span>
-            <span *ngIf="estaCargando">Procesando...</span>
-        </button>
+        <div>
+            @if (!modoCrearInstancia) {
+            <button (click)="guardar()" class="btn-save"
+                [disabled]="!usuario.NOMBRE || !usuario.GP_CUSTNMBR">Guardar Cambios</button>
+            }
+        </div>
     </div>
 </div>

@@ -2,6 +2,9 @@
     padding: 20px;
     background-color: #fcfcfc;
     font-family: 'Segoe UI', Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
 
     .header-modal {
         margin-bottom: 20px;
@@ -38,7 +41,7 @@
         border-radius: 10px;
         padding: 20px;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 15px;
         margin-bottom: 20px;
 
@@ -84,10 +87,25 @@
 
     .actions-modal {
         border-top: 1px solid #dae1e7;
-        padding-top: 15px !important;
+        padding: 15px !important;
         margin-top: 10px;
         display: flex;
         justify-content: space-between;
+        gap: 10px;
+
+        @media (max-width: 576px) {
+            flex-direction: column;
+
+            div {
+                width: 100%;
+
+                .btn-status,
+                .btn-save {
+                    width: 100% !important;
+                    min-width: 100%;
+                }
+            }
+        }
 
         .btn-status {
             background-color: #c53030;
@@ -127,6 +145,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            min-width: 180px;
 
             &:hover:not(:disabled) {
                 background-color: #444;
@@ -140,10 +159,130 @@
             }
         }
     }
-}
 
-@media (max-width: 600px) {
-    .form-content {
-        grid-template-columns: 1fr !important;
+    /* ── Barra lateral de instancias ── */
+    .modal-body-layout {
+        display: flex;
+        gap: 20px;
+        overflow: hidden;
+    }
+
+    .instances-sidebar {
+        width: 250px;
+        border-right: 1px solid #dae1e7;
+        padding-right: 15px;
+        flex-shrink: 0;
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+
+            .sidebar-title {
+                font-size: 0.8rem;
+                font-weight: 700;
+                color: #555;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+            }
+        }
+
+        .instances-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            padding-right: 4px;
+
+            &::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 4px;
+            }
+
+            .instance-card {
+                background: #ffffff;
+                border-radius: 8px;
+                padding: 12px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                &:hover {
+                    border-color: #cbd5e1 !important;
+                    background-color: #f8fafc !important;
+                }
+
+                .instance-info {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 2px;
+
+                    .instance-gp {
+                        font-weight: 700;
+                        color: #222;
+                        font-size: 0.9rem;
+                    }
+
+                    .instance-name {
+                        font-size: 0.8rem;
+                        color: #627d98;
+                    }
+
+                    .instance-id {
+                        font-size: 0.75rem;
+                        color: #9fb3c8;
+                    }
+                }
+            }
+        }
+    }
+
+    .main-panel {
+        flex-grow: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 5px;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    }
+
+    .new-instance-panel {
+        background-color: #ffffff;
+        border: 1px solid #dae1e7;
+        border-radius: 10px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        .new-instance-actions {
+            margin-top: 10px;
+
+            .btn-cancelar {
+                background-color: #c53030;
+                color: #fff;
+                border: none;
+                padding: 0 16px;
+                border-radius: 4px;
+                height: 32px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                cursor: pointer;
+            }
+        }
     }
 }
