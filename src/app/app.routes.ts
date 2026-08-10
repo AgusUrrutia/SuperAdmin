@@ -82,5 +82,25 @@ export const routes: Routes = [
         pathMatch: 'full'
       }
     ]
+  },
+  {
+    path: 'logs',
+    canActivate: [authGuard],
+    loadComponent: () => import('./core/layout/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
+    children: [
+      {
+        path: 'errores',
+        loadComponent: () => import('./modulos/logs/tabla-logs-errores/tabla-logs-errores.component').then(m => m.TablaLogsErroresComponent)
+      },
+      {
+        path: 'accesos',
+        loadComponent: () => import('./modulos/logs/tabla-logs-accesos/tabla-logs-accesos.component').then(m => m.TablaLogsAccesosComponent)
+      },
+      {
+        path: '',
+        redirectTo: 'errores',
+        pathMatch: 'full'
+      }
+    ]
   }
 ];

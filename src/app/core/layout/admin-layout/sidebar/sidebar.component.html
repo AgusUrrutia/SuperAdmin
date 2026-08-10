@@ -81,6 +81,26 @@
               </ul>
             </div>
           </li>
+          <li class="nav-item w-100">
+            <button
+              class="nav-link py-2 px-2 text-white-50 w-100 text-start d-flex align-items-center justify-content-between rounded-1 border-0 bg-transparent"
+              type="button" data-bs-toggle="collapse" data-bs-target="#logsCollapse" aria-expanded="false">
+              LOGS
+              <span class="dropdown-toggle"></span>
+            </button>
+            <div class="collapse w-100 mt-1 ps-2" [class.show]="isLogsActive()" id="logsCollapse">
+              <ul class="nav flex-column ps-3 py-1" style="font-size: 0.9rem;">
+                <li class="nav-item w-100">
+                  <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
+                    routerLink="/logs/errores" routerLinkActive="active">Errores</a>
+                </li>
+                <li class="nav-item w-100">
+                  <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
+                    routerLink="/logs/accesos" routerLinkActive="active">Logs</a>
+                </li>
+              </ul>
+            </div>
+          </li>
 
         </ul>
       </div>

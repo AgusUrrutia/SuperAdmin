@@ -17,15 +17,23 @@ export class SidebarComponent {
     this.closeSidebar.emit();
   }
 
+  private isSectionActive(section: string): boolean {
+    return this.router.url === `/${section}` || this.router.url.startsWith(`/${section}/`);
+  }
+
   isSgsActive(): boolean {
-    return this.router.url.includes('/sgs');
+    return this.isSectionActive('sgs');
   }
 
   isB2bActive(): boolean {
-    return this.router.url.includes('/b2b');
+    return this.isSectionActive('b2b');
   }
 
   isAdActive(): boolean {
-    return this.router.url.includes('/ad');
+    return this.isSectionActive('ad');
+  }
+
+  isLogsActive(): boolean {
+    return this.isSectionActive('logs');
   }
 }

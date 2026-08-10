@@ -1,0 +1,45 @@
+<div class="detalle-modal-container">
+    <!-- Header -->
+    <div class="header-modal d-flex align-items-center mb-0">
+        <mat-icon class="me-2 header-icon">login</mat-icon>
+        <h2 class="title mb-0">Detalle del Acceso</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="cerrar()"></button>
+    </div>
+
+    <div class="modal-body-content">
+        <div class="fields-grid">
+            <div class="field">
+                <span class="field-label">Usuario</span>
+                <span class="field-value">{{ acceso.usuario }}</span>
+            </div>
+            <div class="field">
+                <span class="field-label">Aplicación</span>
+                <span class="field-value">{{ acceso.aplicacion || '-' }}</span>
+            </div>
+            <div class="field">
+                <span class="field-label">Fecha</span>
+                <span class="field-value">{{ formatFecha(acceso.timestamp) }}</span>
+            </div>
+            <div class="field">
+                <span class="field-label">Método</span>
+                <span class="field-value"><code>{{ acceso.metodo }}</code></span>
+            </div>
+            <div class="field">
+                <span class="field-label">IP</span>
+                <span class="field-value">{{ acceso.ip }}</span>
+            </div>
+            <div class="field field-full">
+                <span class="field-label">URI</span>
+                <span class="field-value text-break">{{ acceso.uri }}</span>
+            </div>
+            <div class="field field-full">
+                <span class="field-label">User Agent</span>
+                <span class="field-value text-break">{{ acceso.userAgent }}</span>
+            </div>
+            <div class="field field-full">
+                <span class="field-label">Body</span>
+                <pre class="message-box">{{ bodyFormateado }}</pre>
+            </div>
+        </div>
+    </div>
+</div>

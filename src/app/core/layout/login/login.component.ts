@@ -50,6 +50,19 @@ export class LoginComponent implements AfterViewInit {
       this.usuarioSrv.login(this.username, this.password).subscribe(
         (response: any) => {
           Swal.close();
+
+          const roles: string[] = response.roles || [];
+          if (!roles.includes('Superadmin')) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Permisos denegados',
+              text: 'No cuenta con los permisos necesarios para acceder a esta aplicación.',
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#222'
+            });
+            return;
+          }
+
           localStorage.setItem('token', response.token);
           const user = {
             token: response.token,

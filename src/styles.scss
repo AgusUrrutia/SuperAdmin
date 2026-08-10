@@ -18,4 +18,16 @@ body {
       height: inherit !important;
     }
   }
+}
+
+/* Variante usada solo por los modales de detalle de Sistema de Logs: el contenido es
+   variable en alto (mensajes/JSON cortos o largos) y necesita ajustarse al contenido
+   real en vez de heredar una altura ambiente, para que no quede un margen blanco de más. */
+.logs-detalle-modal-panel {
+  .mat-mdc-dialog-container {
+    .mdc-dialog__surface {
+      min-height: auto !important;
+      height: auto !important;
+    }
+  }
 }

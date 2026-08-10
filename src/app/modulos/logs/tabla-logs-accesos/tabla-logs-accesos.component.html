@@ -1,0 +1,126 @@
+<div class="container-fluid mt-4 px-4 pb-5">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #222;">Sistema de Logs · Logs</h2>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <input type="date" class="form-control shadow-sm border-0" style="max-width: 150px;"
+            [(ngModel)]="fechaDesde" (change)="cargarAccesos()" title="Desde">
+
+        <input type="date" class="form-control shadow-sm border-0" style="max-width: 150px;"
+            [(ngModel)]="fechaHasta" (change)="cargarAccesos()" title="Hasta">
+
+        <input type="text" class="form-control shadow-sm border-0" style="max-width: 220px;"
+            placeholder="Buscar por URI..." [(ngModel)]="searchTerm" (input)="onFiltroTexto()">
+
+        <select class="form-select shadow-sm border-0" style="max-width: 140px;" [(ngModel)]="selectedMetodo"
+            (change)="cargarAccesos()">
+            <option value="">Todos</option>
+            <option *ngFor="let m of metodos" [value]="m">{{ m }}</option>
+        </select>
+
+        <input type="text" class="form-control shadow-sm border-0" style="max-width: 150px;"
+            placeholder="Usuario..." [(ngModel)]="usuarioFiltro" (input)="onFiltroTexto()">
+
+        <input type="text" class="form-control shadow-sm border-0" style="max-width: 150px;"
+            placeholder="Aplicación..." [(ngModel)]="aplicacionFiltro" (input)="onFiltroAplicacion()">
+    </div>
+
+    <!-- Tabla -->
+    <div class="card shadow-sm border-0 rounded-3 bg-white">
+        <div class="card-body p-0">
+            <div class="table-responsive p-0">
+                <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap"
+                                style="cursor: pointer;" (click)="onSort('metodo')">
+                                <div class="d-flex align-items-center gap-1">MÉTODO
+                                    <mat-icon>{{ getSortIcon('metodo') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer" style="cursor: pointer;"
+                                (click)="onSort('uri')">
+                                <div class="d-flex align-items-center gap-1">URI
+                                    <mat-icon>{{ getSortIcon('uri') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap"
+                                style="cursor: pointer;" (click)="onSort('aplicacion')">
+                                <div class="d-flex align-items-center gap-1">APLICACIÓN
+                                    <mat-icon>{{ getSortIcon('aplicacion') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap"
+                                style="cursor: pointer;" (click)="onSort('usuario')">
+                                <div class="d-flex align-items-center gap-1">USUARIO
+                                    <mat-icon>{{ getSortIcon('usuario') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap"
+                                style="cursor: pointer;" (click)="onSort('ip')">
+                                <div class="d-flex align-items-center gap-1">IP
+                                    <mat-icon>{{ getSortIcon('ip') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold cursor-pointer text-nowrap"
+                                style="cursor: pointer;" (click)="onSort('timestamp')">
+                                <div class="d-flex align-items-center gap-1">FECHA
+                                    <mat-icon>{{ getSortIcon('timestamp') }}</mat-icon>
+                                </div>
+                            </th>
+                            <th class="py-2 px-3 border-bottom-0 text-muted fw-bold text-center text-nowrap">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="cargando">
+                        <tr>
+                            <td colspan="7" class="text-center py-5 border-0">
+                                <app-spinner-grande minHeight="200px"></app-spinner-grande>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody *ngIf="!cargando">
+                        <tr *ngIf="displayedItems.length === 0">
+                            <td colspan="7" class="text-center py-4 text-muted border-0">No existen registros para los
+                                filtros actuales.</td>
+                        </tr>
+                        <tr *ngFor="let item of displayedItems">
+                            <td class="py-2 px-3">
+                                <span class="badge rounded-pill px-3 py-2 fw-medium border" [ngStyle]="{
+                                        'background-color': getMetodoColor(item.metodo).bg,
+                                        'color': getMetodoColor(item.metodo).color,
+                                        'border-color': getMetodoColor(item.metodo).border
+                                    }">
+                                    {{ item.metodo }}
+                                </span>
+                            </td>
+                            <td class="py-2 px-3 text-muted" style="max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                                [title]="item.uri">{{ item.uri }}</td>
+                            <td class="py-2 px-3 text-muted">{{ item.aplicacion || '-' }}</td>
+                            <td class="py-2 px-3 fw-medium text-dark">{{ item.usuario }}</td>
+                            <td class="py-2 px-3 text-muted">{{ item.ip }}</td>
+                            <td class="py-2 px-3 text-muted text-nowrap">{{ formatFecha(item.timestamp) }}</td>
+                            <td class="py-2 px-3 text-center">
+                                <button class="btn btn-sm btn-outline-secondary border-0" (click)="verDetalle(item)"
+                                    title="Ver detalle">
+                                    <mat-icon style="font-size: 18px; width: 18px; height: 18px;">visibility</mat-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> <!-- End table-responsive -->
+
+            <!-- Paginador -->
+            <div class="px-3 border-top bg-light pt-2 pb-2" *ngIf="!cargando">
+                <mat-paginator [length]="totalItems" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]"
+                    (page)="onPageChange($event)" showFirstLastButtons>
+                </mat-paginator>
+            </div>
+        </div> <!-- End card-body -->
+    </div> <!-- End card -->
+</div>

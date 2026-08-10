@@ -1,0 +1,51 @@
+<div class="detalle-modal-container">
+    <!-- Header -->
+    <div class="header-modal d-flex align-items-center mb-0">
+        <mat-icon class="me-2 header-icon">bug_report</mat-icon>
+        <h2 class="title mb-0">Detalle del Error <span class="id-highlight">#{{ error.id }}</span></h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Close" (click)="cerrar()"></button>
+    </div>
+
+    <div class="modal-body-content">
+        <div class="fields-grid">
+            <div class="field">
+                <span class="field-label">Código de estado</span>
+                <span class="badge status-badge px-3 py-2 fw-medium border" [ngStyle]="{
+                        'background-color': getStatusGroup(error.status_code) === '5xx' ? '#fce8e6' : (getStatusGroup(error.status_code) === '4xx' ? '#fff6e0' : '#e6f4ea'),
+                        'color': getStatusGroup(error.status_code) === '5xx' ? '#d93025' : (getStatusGroup(error.status_code) === '4xx' ? '#b67a00' : '#1e8e3e'),
+                        'border-color': getStatusGroup(error.status_code) === '5xx' ? '#fad2cf' : (getStatusGroup(error.status_code) === '4xx' ? '#fbe5a7' : '#ceead6')
+                    }">
+                    {{ error.status_code }}
+                </span>
+            </div>
+            <div class="field">
+                <span class="field-label">Aplicación</span>
+                <span class="field-value">{{ error.aplicacion || '-' }}</span>
+            </div>
+            <div class="field">
+                <span class="field-label">Fecha</span>
+                <span class="field-value">{{ formatFecha(error.created_at) }}</span>
+            </div>
+            <div class="field">
+                <span class="field-label">Función llamada</span>
+                <span class="field-value"><code>{{ error.called_function }}</code></span>
+            </div>
+            <div class="field">
+                <span class="field-label">Línea</span>
+                <span class="field-value"><code>{{ error.line_number }}</code></span>
+            </div>
+            <div class="field field-full">
+                <span class="field-label">Request URI</span>
+                <span class="field-value text-break">{{ error.request_uri }}</span>
+            </div>
+            <div class="field field-full">
+                <span class="field-label">Archivo</span>
+                <span class="field-value text-break"><code>{{ error.file_path }}</code></span>
+            </div>
+            <div class="field field-full">
+                <span class="field-label">Mensaje</span>
+                <pre class="message-box">{{ mensajeFormateado }}</pre>
+            </div>
+        </div>
+    </div>
+</div>
