@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
@@ -13,12 +13,15 @@ import { SpinnerGrandeComponent } from '../../../shared/components/spinner-grand
   templateUrl: './historial-acciones-ad.component.html',
   styleUrls: ['./historial-acciones-ad.component.scss']
 })
-export class HistorialAccionesAdComponent implements OnInit {
+export class HistorialAccionesAdComponent implements OnInit, OnDestroy {
 
   historialGeneral: any[] = [];
   filteredItems: any[] = [];
   displayedItems: any[] = [];
   cargando: boolean = true;
+
+  private readonly POLLING_INTERVAL_MS = 5 * 60 * 1000;
+  private pollingIntervalId: any = null;
 
   // Filtros
   searchTerm: string = '';
@@ -38,10 +41,32 @@ export class HistorialAccionesAdComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarHistorial();
+    this.startPolling();
   }
 
-  cargarHistorial(): void {
-    this.cargando = true;
+  ngOnDestroy(): void {
+    this.stopPolling();
+  }
+
+  private startPolling(): void {
+    this.pollingIntervalId = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        this.cargarHistorial(false);
+      }
+    }, this.POLLING_INTERVAL_MS);
+  }
+
+  private stopPolling(): void {
+    if (this.pollingIntervalId) {
+      clearInterval(this.pollingIntervalId);
+      this.pollingIntervalId = null;
+    }
+  }
+
+  cargarHistorial(mostrarSpinner: boolean = true): void {
+    if (mostrarSpinner) {
+      this.cargando = true;
+    }
     this.adUserService.getAcciones().subscribe({
       next: (response: any) => {
         const dataArray = Array.isArray(response) ? response : (response.data && Array.isArray(response.data)) ? response.data : null;
