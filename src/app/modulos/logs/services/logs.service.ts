@@ -10,6 +10,9 @@ export class LogsService {
   private apiUrl = 'http://apiqa.ranko.com.ar/super-admin';
   private rootUrl = 'http://apiqa.ranko.com.ar';
 
+  //private apiUrl = 'http://api.ranko.com.ar/super-admin';
+  //private rootUrl = 'http://api.ranko.com.ar';
+
   constructor(private http: HttpClient) { }
 
   private getHeaders(): HttpHeaders {
