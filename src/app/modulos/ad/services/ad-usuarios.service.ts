@@ -6,8 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AdUsuariosService {
-  private apiUrl = 'http://apiqa.ranko.com.ar/super-admin'; 
+  private apiUrl = 'http://api.ranko.com.ar/super-admin';
 
+ /*  private apiUrl = 'http://apiqa.ranko.com.ar/super-admin';  */
   constructor(private http: HttpClient) { }
 
   private getHeaders(): HttpHeaders {
