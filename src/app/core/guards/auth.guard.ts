@@ -9,7 +9,7 @@ export const authGuard: CanActivateFn = (route, state) => {
         router.navigate(['/login']);
         return false;
     }
-    /* Comentar bloque cuando se quiera probar el acceso a API solo */
+    /* Comentar bloque cuando se quiera probar el acceso a API solo 
     const user = JSON.parse(userStorage);
     const roles: string[] = user.roles || [];
 
@@ -20,6 +20,6 @@ export const authGuard: CanActivateFn = (route, state) => {
         router.navigate(['/login']);
         return false;
     }
-
+*/
     return true;
 };
