@@ -35,4 +35,21 @@ export class UsuarioService {
         return this.http.post<any>(`${this.url}/login`, body, { headers });
     }
 
+    // Login contra la API productiva del B2B (rankodigital) para obtener su token
+    loginB2B(usuario: string, contraseña: string): Observable<any> {
+
+        const body = {
+            user: usuario,
+            password: contraseña
+        };
+
+
+        const headers = new HttpHeaders({
+            'Content-Type': 'application/json'
+        });
+
+
+        return this.http.post<any>(`${myGlobals.b2bUrlBase}login`, body, { headers });
+    }
+
 }

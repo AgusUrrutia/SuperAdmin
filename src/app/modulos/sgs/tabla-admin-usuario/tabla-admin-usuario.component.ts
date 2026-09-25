@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UsuarioAdminService } from '../services/usuario-admin.service';
 import { SpinnerGrandeComponent } from '../../../shared/components/spinner-grande/spinner-grande.component';
@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CrearUsuarioSgsComponent } from './components/crear-usuario-sgs/crear-usuario-sgs.component';
 import { EditarUsuarioSgsComponent } from './components/editar-usuario-sgs/editar-usuario-sgs.component';
 import { UsuarioService } from '../../b2b/services/usuario.service';
+import { UsuarioRolesSgsService } from '../services/usuario-roles-sgs.service';
 import { ModalRolesComponent } from '../../b2b/components/admin-user-forms/modal-roles/modal-roles.component';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -18,6 +19,8 @@ type SortDirection = 'asc' | 'desc' | '';
     selector: 'app-tabla-admin-usuario',
     standalone: true,
     imports: [CommonModule, MatDialogModule, MatPaginatorModule, SpinnerGrandeComponent, FormsModule, MatIconModule],
+    // El modal de roles desde SGS sigue pegandole a la API comun (api.ranko)
+    providers: [{ provide: UsuarioService, useClass: UsuarioRolesSgsService }],
     templateUrl: './tabla-admin-usuario.component.html',
     styles: [`
     .cursor-pointer {
@@ -83,7 +86,8 @@ export class TablaAdminUsuarioComponent implements OnInit {
     constructor(
         private usuarioAdminService: UsuarioAdminService,
         private usuarioService: UsuarioService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private injector: Injector
     ) { }
 
     ngOnInit(): void {
@@ -278,6 +282,7 @@ export class TablaAdminUsuarioComponent implements OnInit {
         this.usuarioService.getAllRoles().subscribe(roles => {
             const dialogRef = this.dialog.open(ModalRolesComponent, {
                 width: '600px',
+                injector: this.injector,
                 disableClose: true,
                 data: { roles, usuario }
             });

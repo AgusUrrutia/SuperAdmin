@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 
 import { UsuarioService } from '../../services/usuario.service';
 import Swal from 'sweetalert2';
+import { catchError, forkJoin, of } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -47,8 +48,18 @@ export class LoginComponent implements AfterViewInit {
         }
       });
 
-      this.usuarioSrv.login(this.username, this.password).subscribe(
-        (response: any) => {
+      // Se loguea contra las dos APIs: SGS (api.ranko) y B2B (rankodigital).
+      // Si falla la de B2B se permite el ingreso igual, solo queda sin token B2B.
+      forkJoin({
+        sgs: this.usuarioSrv.login(this.username, this.password),
+        b2b: this.usuarioSrv.loginB2B(this.username, this.password).pipe(
+          catchError((errorB2B: any) => {
+            console.error('Error durante el login B2B:', errorB2B);
+            return of(null);
+          })
+        )
+      }).subscribe(
+        ({ sgs: response, b2b: responseB2B }: any) => {
           Swal.close();
 
           const roles: string[] = response.roles || [];
@@ -70,11 +81,27 @@ export class LoginComponent implements AfterViewInit {
             formulariosSGS: response.formulariosSGS,
             usuario: response.usuario,
             grupos: response.grupos,
-            roles: response.roles
+            roles: response.roles,
+            tokenB2B: responseB2B?.token || null
           };
           sessionStorage.setItem('user', JSON.stringify(user));
           localStorage.setItem('usuario', response.usuario);
+          if (responseB2B?.token) {
+            localStorage.setItem('tokenB2B', responseB2B.token);
+          } else {
+            localStorage.removeItem('tokenB2B');
+          }
           this.router.navigate(['/']);
+
+          if (!responseB2B?.token) {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Sin acceso a B2B',
+              text: 'No se pudo iniciar sesión en la API del B2B. Las acciones del módulo B2B no van a funcionar.',
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#222'
+            });
+          }
         },
         (error: any) => {
           Swal.close();

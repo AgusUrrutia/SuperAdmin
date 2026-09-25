@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Injector, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
@@ -28,6 +28,7 @@ export class ModalRolesComponent implements OnInit {
     public dialogRef: MatDialogRef<ModalRolesComponent>,
     private userService: UsuarioService,
     private dialog: MatDialog,
+    private injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: {
       usuario: any,
       roles: any[]
@@ -93,6 +94,8 @@ export class ModalRolesComponent implements OnInit {
         this.dialog.open(ModalEditarDistribuidorComponent, {
           width: '700px',
           disableClose: true,
+          // Mantiene la misma instancia de UsuarioService (B2B o SGS) que usa este modal
+          injector: this.injector,
           data: { rolData: rolData, rol: rol, usuario: this.usuario }
         });
       },

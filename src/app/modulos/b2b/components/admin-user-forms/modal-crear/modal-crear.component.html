@@ -25,9 +25,48 @@
                 }
             </div>
 
+            <!-- Apellido -->
+            <div class="field full-width mb-3">
+                <label class="section-label">Apellido <span class="text-danger">*</span></label>
+                <input
+                    type="text"
+                    name="apellido"
+                    class="form-control"
+                    [ngModel]="nuevoUsuario.APELLIDO"
+                    (ngModelChange)="nuevoUsuario.APELLIDO = $event.toUpperCase()"
+                    required
+                    #apellidoCtrl="ngModel"
+                    placeholder="Ingrese el apellido"
+                />
+                @if (apellidoCtrl.invalid && (apellidoCtrl.dirty || apellidoCtrl.touched)) {
+                    <small class="text-danger mt-1">El apellido es requerido.</small>
+                }
+            </div>
+
+            <!-- Mail personal -->
+            <div class="field full-width mb-3">
+                <label class="section-label">Mail Personal <span class="text-danger">*</span></label>
+                <input
+                    type="email"
+                    name="mailPersonal"
+                    class="form-control"
+                    [(ngModel)]="nuevoUsuario.MAIL_PERSONAL"
+                    required
+                    email
+                    #mailPersonalCtrl="ngModel"
+                    placeholder="Ingrese el mail personal"
+                />
+                @if (mailPersonalCtrl.invalid && (mailPersonalCtrl.dirty || mailPersonalCtrl.touched)) {
+                    <small class="text-danger mt-1">
+                        @if (mailPersonalCtrl.errors?.['required']) { El mail personal es requerido. }
+                        @else { Debe ser un email válido. }
+                    </small>
+                }
+            </div>
+
             <!-- Email -->
             <div class="field full-width mb-3">
-                <label class="section-label">Email <span class="text-danger">*</span></label>
+                <label class="section-label">Email / Usuario <span class="text-danger">*</span></label>
                 <input
                     type="email"
                     name="mail"

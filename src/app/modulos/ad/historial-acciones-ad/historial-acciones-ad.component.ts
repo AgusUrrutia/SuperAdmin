@@ -20,7 +20,7 @@ export class HistorialAccionesAdComponent implements OnInit, OnDestroy {
   displayedItems: any[] = [];
   cargando: boolean = true;
 
-  private readonly POLLING_INTERVAL_MS = 5 * 60 * 1000;
+  private readonly POLLING_INTERVAL_MS = 3 * 60 * 1000;
   private pollingIntervalId: any = null;
 
   // Filtros

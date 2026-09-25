@@ -32,6 +32,8 @@ export class ModalCrearComponent {
 
   nuevoUsuario: any = {
     NOMBRE: '',
+    APELLIDO: '',
+    MAIL_PERSONAL: '',
     MAIL: '',
     GP_CUSTNMBR: '' 
   };
@@ -86,7 +88,7 @@ export class ModalCrearComponent {
   }
 
   crear(): void {
-    if (!this.nuevoUsuario.NOMBRE || !this.nuevoUsuario.MAIL || !this.nuevoUsuario.GP_CUSTNMBR) {
+    if (!this.nuevoUsuario.NOMBRE || !this.nuevoUsuario.APELLIDO || !this.nuevoUsuario.MAIL_PERSONAL || !this.nuevoUsuario.MAIL || !this.nuevoUsuario.GP_CUSTNMBR) {
       Swal.fire({
         icon: 'warning',
         title: 'Campos requeridos',

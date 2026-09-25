@@ -7,7 +7,10 @@ import Swal from 'sweetalert2';
   providedIn: 'root'
 })
 export class UsuarioService {
-  private url: string = proyectSettings.onlineUrlBase;
+  // Todas las acciones del B2B van contra la API productiva de rankodigital
+  protected url: string = proyectSettings.b2bUrlBase;
+  // Campo del user en sessionStorage que tiene el token a usar
+  protected tokenKey: string = 'tokenB2B';
   addressDemo: any[] = [
     { id: 1, nombre: 'Casa', calle: 'Calle 123', localidad: 'Localidad A', cod_postal: '12345', numero: '123', piso: '1', departamento: 'A', provincia: 'Provincia X', comentario: '', metodo: "envio" },
     { id: 2, nombre: 'Oficina', calle: 'Avenida 456', localidad: 'Localidad B', cod_postal: '67890', numero: '456', piso: '2', departamento: 'B', provincia: 'Provincia Y', comentario: '', metodo: "envio" },
@@ -26,9 +29,10 @@ export class UsuarioService {
       user = sessionStorage?.getItem('user');
     }
     user = sessionStorage?.getItem('user');
+    // Por defecto se usa el token obtenido en el login contra la API del B2B
     let token = "";
     if (user) {
-      token = (JSON.parse(user)).token;
+      token = (JSON.parse(user))[this.tokenKey] || "";
     }
 
     headers = new HttpHeaders({
