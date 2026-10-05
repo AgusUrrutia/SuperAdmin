@@ -205,8 +205,9 @@ export class EditarUsuarioSgsComponent {
                     this.instancias.push(nueva);
                     this.seleccionarInstancia(nueva);
                 } else {
-                    this.usuarioAdminService.getUsers().subscribe((allUsers: any[]) => {
-                        const mail = this.nuevaInstancia.MAIL.toLowerCase().trim();
+                    const mail = this.nuevaInstancia.MAIL.toLowerCase().trim();
+                    // Busca en la API las cuentas de ese mail (no solo entre los primeros registros)
+                    this.usuarioAdminService.getUsers('all', 500, 0, mail).subscribe((allUsers: any[]) => {
                         this.instancias = allUsers.filter(u => (u.MAIL || '').toLowerCase().trim() === mail);
                         const creada = this.instancias.find(i => i.GP_CUSTNMBR === this.nuevaInstancia.GP_CUSTNMBR) || this.instancias[this.instancias.length - 1];
                         if (creada) this.seleccionarInstancia(creada);

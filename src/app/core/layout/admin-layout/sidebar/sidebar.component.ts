@@ -33,6 +33,10 @@ export class SidebarComponent {
     return this.isSectionActive('ad');
   }
 
+  isAplicacionesActive(): boolean {
+    return this.isSectionActive('aplicaciones');
+  }
+
   isLogsActive(): boolean {
     return this.isSectionActive('logs');
   }

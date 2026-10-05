@@ -82,6 +82,8 @@ export class LoginComponent implements AfterViewInit {
             usuario: response.usuario,
             grupos: response.grupos,
             roles: response.roles,
+            // Apps asignadas al usuario (por ID); se usan para filtrar el menu de apps
+            sistemas_permitidos_ids: response.sistemas_permitidos_ids,
             tokenB2B: responseB2B?.token || null
           };
           sessionStorage.setItem('user', JSON.stringify(user));

@@ -84,6 +84,26 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'aplicaciones',
+    canActivate: [authGuard],
+    loadComponent: () => import('./core/layout/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
+    children: [
+      {
+        path: 'usuarios',
+        loadComponent: () => import('./modulos/aplicaciones/usuarios-aplicaciones/usuarios-aplicaciones.component').then(m => m.UsuariosAplicacionesComponent)
+      },
+      {
+        path: 'apps',
+        loadComponent: () => import('./modulos/aplicaciones/apps-aplicaciones/apps-aplicaciones.component').then(m => m.AppsAplicacionesComponent)
+      },
+      {
+        path: '',
+        redirectTo: 'usuarios',
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
     path: 'logs',
     canActivate: [authGuard],
     loadComponent: () => import('./core/layout/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),

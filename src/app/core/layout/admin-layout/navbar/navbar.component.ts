@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { AppsMenuItem, AppsMenuService } from '../../../services/apps-menu.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,9 +14,13 @@ export class NavbarComponent implements OnInit {
   @Output() openSidebar = new EventEmitter<void>();
   username: string = '';
 
-  constructor(private router: Router) { }
+  // Apps del menu de la grilla; salen solo de ek-apps-menu
+  apps: AppsMenuItem[] = [];
+
+  constructor(private router: Router, private appsMenuService: AppsMenuService) { }
 
   ngOnInit(): void {
+    this.appsMenuService.getApps().subscribe(apps => this.apps = apps);
     const storedUser = localStorage.getItem('usuario');
     if (storedUser) {
       this.username = storedUser;

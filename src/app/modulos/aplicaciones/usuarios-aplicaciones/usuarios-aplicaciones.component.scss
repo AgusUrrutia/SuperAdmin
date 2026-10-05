@@ -1,0 +1,38 @@
+// Mismos estilos que la tabla de Usuarios SGS
+.cursor-pointer {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+
+  &:hover {
+    color: #222 !important;
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+
+  &.active-sort {
+    color: #222 !important;
+
+    mat-icon { color: #222; }
+  }
+}
+
+.table-fixed { table-layout: fixed; width: 100%; }
+// Anchos en % para que la tabla se adapte con el sidebar abierto o cerrado
+.col-email    { width: 22%; }
+.col-nombre   { width: 18%; }
+.col-gp       { width: 11%; }
+.col-apps     { width: 16%; }
+.col-estado   { width: 10%; }
+.col-cuentas  { width: 10%; }
+.col-acciones { width: 13%; }
+
+.btn-dark { background-color: #222; border-color: #222; }
+.btn-icon { font-size: 16px; width: 16px; height: 16px; }
+.btn-apps { white-space: nowrap; font-size: 0.8rem; padding: 4px 10px; }
+
+// Badges de estado y cuentas un poco mas compactos
+td .badge.rounded-pill { white-space: nowrap; }
+
+.text-truncate { overflow: hidden; display: block; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; }
+
+td { min-height: 75px; vertical-align: middle; }

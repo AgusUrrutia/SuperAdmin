@@ -1,0 +1,27 @@
+// Grilla del menu de apps: 3 por fila (igual que el SGS)
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+// Los logos de ek-apps-menu son cuadrados con la sigla en la franja del medio:
+// `cover` en una caja mas ancha que alta recorta el transparente (igual que en el SGS)
+.app-logo {
+  width: 60px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.app-name {
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+// Icono generico cuando la app no tiene logo (misma altura que los logos para alinear nombres)
+.app-logo-generico {
+  width: 40px;
+  height: 40px;
+  padding: 6px;
+  color: #6c757d;
+}

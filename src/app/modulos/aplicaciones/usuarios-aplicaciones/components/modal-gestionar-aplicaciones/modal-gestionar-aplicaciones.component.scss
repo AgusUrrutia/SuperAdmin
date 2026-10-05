@@ -1,0 +1,71 @@
+.gestionar-container {
+  background: #fff;
+}
+
+.header-modal {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+
+  .title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #222;
+  }
+}
+
+.content-modal {
+  padding: 20px 24px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.section-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6c757d;
+  margin-bottom: 10px;
+}
+
+.cuenta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 150px;
+  padding: 10px 14px;
+  border: 1px solid #dae1e7;
+  border-radius: 8px;
+  background: #fff;
+  text-align: left;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #f8f9fa;
+  }
+
+  &.seleccionada {
+    border-color: #000;
+    background: #f1f3f5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.app {
+  padding: 10px 4px;
+  border-bottom: 1px solid #f1f3f5;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .form-check-input {
+    width: 2.5em;
+    height: 1.3em;
+    cursor: pointer;
+
+    &:checked {
+      background-color: #222;
+      border-color: #222;
+    }
+  }
+}

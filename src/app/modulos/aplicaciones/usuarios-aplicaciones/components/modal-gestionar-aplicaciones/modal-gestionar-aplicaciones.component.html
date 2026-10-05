@@ -1,0 +1,44 @@
+<div class="gestionar-container">
+    <div class="header-modal d-flex align-items-center">
+        <mat-icon class="me-2">apps</mat-icon>
+        <h2 class="title mb-0">Gestionar aplicaciones — {{ instanciaSeleccionada?.MAIL }}</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Cerrar" (click)="onCerrar()"></button>
+    </div>
+
+    <div class="content-modal">
+        <!-- Cuentas del usuario -->
+        <h6 class="section-label">Cuentas ({{ instancias.length }})</h6>
+        <div class="cuentas d-flex flex-wrap gap-2 mb-4">
+            @for (inst of instancias; track inst.ID_USUARIO) {
+            <button type="button" class="cuenta" [class.seleccionada]="instanciaSeleccionada?.ID_USUARIO === inst.ID_USUARIO"
+                [disabled]="guardandoAppId !== null" (click)="seleccionarInstancia(inst)">
+                <span class="fw-bold">{{ inst.GP_CUSTNMBR || 'Sin GP' }}</span>
+                <small class="text-muted">ID {{ inst.ID_USUARIO }} · {{ cantidadAsignadas(inst) }} apps</small>
+                <span class="badge rounded-pill border fw-normal mt-1"
+                    [ngClass]="inst.ACTIVO === '1' ? 'bg-success-subtle text-success border-success' : 'bg-danger-subtle text-danger border-danger'">
+                    {{ inst.ACTIVO === '1' ? 'Activo' : 'Inactivo' }}
+                </span>
+            </button>
+            }
+        </div>
+
+        <!-- Aplicaciones de la cuenta seleccionada -->
+        <h6 class="section-label">Aplicaciones de la cuenta {{ instanciaSeleccionada?.GP_CUSTNMBR || ('ID ' + instanciaSeleccionada?.ID_USUARIO) }}</h6>
+        @if (aplicaciones.length === 0) {
+        <div class="text-muted py-3">Cargando aplicaciones...</div>
+        } @else {
+        <ul class="apps list-unstyled mb-0">
+            @for (app of aplicaciones; track obtenerId(app)) {
+            <li class="app d-flex align-items-center justify-content-between">
+                <span class="fw-medium">{{ nombreApp(app) }}</span>
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" role="switch" [id]="'app-' + obtenerId(app)"
+                        [checked]="tieneApp(app)" [disabled]="guardandoAppId !== null" (change)="toggleApp(app, $event)">
+                </div>
+            </li>
+            }
+        </ul>
+        }
+    </div>
+
+</div>

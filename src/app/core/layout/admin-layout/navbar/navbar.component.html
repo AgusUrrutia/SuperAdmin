@@ -45,23 +45,27 @@
           </svg>
         </a>
         <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2 rounded-3" aria-labelledby="appsDropdown"
-          style="width: 160px;">
+          style="width: 330px;">
           <li>
-            <div class="d-flex justify-content-evenly">
-              <a href="https://www.rankodigital.com.ar/b2b" target="_blank"
+            <div class="apps-grid">
+              <!-- Apps de ek-apps-menu permitidas al usuario: logo, nombre y link vienen de la API -->
+              @for (app of apps; track app.id_sistema) {
+              <a [href]="app.link" [target]="app.extras?.abrir_en_nueva_pestana ? '_blank' : '_self'"
+                rel="noopener" [title]="app.extras?.descripcion || app.app_name"
                 class="text-decoration-none text-center d-flex flex-column align-items-center p-2 rounded hover-bg-light"
-                style="width: 45%; transition: background-color 0.2s;">
-                <div class="fw-bold fs-3 text-dark mb-1" style="line-height:1; letter-spacing: -2px;">S<span
-                    style="color: #4a148c;">K</span></div>
-                <small class="text-dark fw-medium" style="font-size: 0.8rem;">SGS</small>
+                style="transition: background-color 0.2s;">
+                @if (app.image) {
+                <img class="app-logo mb-1" [src]="app.image" [alt]="app.app_name" />
+                } @else {
+                <!-- Icono generico cuando la app no tiene logo -->
+                <svg class="app-logo-generico mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" />
+                </svg>
+                }
+                <small class="text-dark fw-medium app-name">{{ app.app_name }}</small>
               </a>
-              <a href="https://www.rankodigital.com.ar/b2b" target="_blank"
-                class="text-decoration-none text-center d-flex flex-column align-items-center p-2 rounded hover-bg-light"
-                style="width: 45%; transition: background-color 0.2s;">
-                <div class="fw-bold fs-3 text-dark mb-1" style="line-height:1; letter-spacing: -2px;">S<span
-                    style="color: #0288d1;">K</span></div>
-                <small class="text-dark fw-medium" style="font-size: 0.8rem;">B2B</small>
-              </a>
+              }
             </div>
           </li>
         </ul>

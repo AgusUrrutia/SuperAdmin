@@ -149,15 +149,16 @@ export class TablaAdminUsuarioComponent implements OnInit {
     applyFilters(): void {
         let filtered = [...this.groupedUserList];
 
-        if (this.searchTerm.trim()) {
-            const term = this.searchTerm.toLowerCase();
-            filtered = filtered.filter(group =>
-                group.ID_USUARIO?.toString().includes(term) ||
-                group.MAIL?.toLowerCase().includes(term) ||
-                group.NOMBRE?.toLowerCase().includes(term) ||
-                group.APELLIDO?.toLowerCase().includes(term) ||
-                group.GP_CUSTNMBR?.toLowerCase().includes(term)
-            );
+        const term = this.searchTerm.trim().toLowerCase();
+        if (term) {
+            // Busca en todas las cuentas del mail, no solo en la principal
+            const coincide = (u: any) =>
+                u.ID_USUARIO?.toString().includes(term) ||
+                u.MAIL?.toLowerCase().includes(term) ||
+                u.NOMBRE?.toLowerCase().includes(term) ||
+                u.APELLIDO?.toLowerCase().includes(term) ||
+                u.GP_CUSTNMBR?.toLowerCase().includes(term);
+            filtered = filtered.filter(group => (group.instancias || [group]).some(coincide));
         }
 
         if (this.selectedEstado) {

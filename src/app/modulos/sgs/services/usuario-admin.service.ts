@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
+import { catchError, expand, map, reduce, tap } from 'rxjs/operators';
 import * as proyectSettings from '../../../core/services/proyectSettings';
 import Swal from 'sweetalert2';
 
@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 })
 export class UsuarioAdminService {
     private url: string = proyectSettings.onlineUrlBase;
+    private readonly TAMANIO_TANDA = 500;
 
     constructor(private http: HttpClient) { }
 
@@ -37,7 +38,7 @@ export class UsuarioAdminService {
         const headers = this.makeHeaders();
         let endpoint = `${this.url}/ek-usuarios/${estado}/${fetch}/${offset}/`;
         if (buscar) {
-            endpoint += buscar;
+            endpoint += encodeURIComponent(buscar);
         }
 
         return this.http.get<any>(endpoint, { headers }).pipe(
@@ -138,8 +139,23 @@ export class UsuarioAdminService {
         );
     }
 
-    reloadUsers(estado: string = 'all', fetch: number = 100, offset: number = 0, buscar: string = ''): void {
-        this.getUsers(estado, fetch, offset, buscar).subscribe(res => {
+    // Trae todos los usuarios pidiendo a la API en tandas hasta que no queden mas.
+    // La busqueda, filtros y paginacion de la tabla se hacen en el front sobre esta lista completa.
+    getAllUsers(estado: string = 'all'): Observable<any[]> {
+        const tamanioTanda = this.TAMANIO_TANDA;
+        return this.getUsers(estado, tamanioTanda, 0).pipe(
+            map((res: any) => ({ rows: Array.isArray(res) ? res : [], offset: 0 })),
+            expand(tanda => tanda.rows.length < tamanioTanda
+                ? EMPTY
+                : this.getUsers(estado, tamanioTanda, tanda.offset + tamanioTanda).pipe(
+                    map((res: any) => ({ rows: Array.isArray(res) ? res : [], offset: tanda.offset + tamanioTanda }))
+                )),
+            reduce((acc: any[], tanda) => acc.concat(tanda.rows), [])
+        );
+    }
+
+    reloadUsers(): void {
+        this.getAllUsers().subscribe(res => {
             if (res) {
                 this.users.next(res);
             }

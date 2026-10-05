@@ -14,98 +14,103 @@
   </div>
 
   <!-- Navigation -->
-  <ul class="nav nav-pills flex-column mb-auto">
-    <!-- Categories Collapse (No White Frame) -->
-    <li class="nav-item mb-1">
-      <button class="nav-link text-white w-100 text-start d-flex align-items-center justify-content-between px-2"
-        type="button" data-bs-toggle="collapse" data-bs-target="#categoriesCollapse" aria-expanded="true"
-        style="color: #cccccc !important;">
-        Apps
+  <ul class="nav flex-column mb-auto" style="font-size: 0.95rem;">
+    <li class="nav-item w-100">
+      <button
+        class="nav-link py-2 px-2 text-white-50 w-100 text-start d-flex align-items-center justify-content-between rounded-1 border-0 bg-transparent"
+        type="button" data-bs-toggle="collapse" data-bs-target="#sgsCollapse" aria-expanded="false">
+        SGS
         <span class="dropdown-toggle"></span>
       </button>
-      <div class="collapse show w-100 mt-1" id="categoriesCollapse">
-        <ul class="nav flex-column ps-3 py-1" style="font-size: 0.95rem;">
+      <div class="collapse w-100 mt-1 ps-2" [class.show]="isSgsActive()" id="sgsCollapse">
+        <ul class="nav flex-column ps-3 py-1" style="font-size: 0.9rem;">
           <li class="nav-item w-100">
-            <button
-              class="nav-link py-2 px-2 text-white-50 w-100 text-start d-flex align-items-center justify-content-between rounded-1 border-0 bg-transparent"
-              type="button" data-bs-toggle="collapse" data-bs-target="#sgsCollapse" aria-expanded="false">
-              SGS
-              <span class="dropdown-toggle"></span>
-            </button>
-            <div class="collapse w-100 mt-1 ps-2" [class.show]="isSgsActive()" id="sgsCollapse">
-              <ul class="nav flex-column ps-3 py-1" style="font-size: 0.9rem;">
-                <li class="nav-item w-100">
-                  <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none"
-                    routerLink="/sgs/grupos" routerLinkActive="active">Grupos</a>
-                </li>
-                <li class="nav-item w-100">
-                  <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none"
-                    routerLink="/sgs/usuarios" routerLinkActive="active">Usuarios</a>
-                </li>
-              </ul>
-            </div>
+            <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none"
+              routerLink="/sgs/grupos" routerLinkActive="active">Grupos</a>
           </li>
           <li class="nav-item w-100">
-            <button
-              class="nav-link py-2 px-2 text-white-50 w-100 text-start d-flex align-items-center justify-content-between rounded-1 border-0 bg-transparent"
-              type="button" data-bs-toggle="collapse" data-bs-target="#b2bCollapse" aria-expanded="false">
-              B2B
-              <span class="dropdown-toggle"></span>
-            </button>
-            <div class="collapse w-100 mt-1 ps-2" [class.show]="isB2bActive()" id="b2bCollapse">
-              <ul class="nav flex-column ps-3 py-1" style="font-size: 0.9rem;">
-                <li class="nav-item w-100">
-                  <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none"
-                    routerLink="/b2b/usuarios" routerLinkActive="active">Usuarios</a>
-                </li>
-              </ul>
-            </div>
+            <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none"
+              routerLink="/sgs/usuarios" routerLinkActive="active">Usuarios</a>
           </li>
-          <li class="nav-item w-100">
-            <button
-              class="nav-link py-2 px-2 text-white-50 w-100 text-start d-flex align-items-center justify-content-between rounded-1 border-0 bg-transparent"
-              type="button" data-bs-toggle="collapse" data-bs-target="#adCollapse" aria-expanded="false">
-              AD
-              <span class="dropdown-toggle"></span>
-            </button>
-            <div class="collapse w-100 mt-1 ps-2" [class.show]="isAdActive()" id="adCollapse">
-              <ul class="nav flex-column ps-3 py-1" style="font-size: 0.9rem;">
-                <li class="nav-item w-100">
-                  <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
-                    routerLink="/ad/usuarios" routerLinkActive="active">Usuarios</a>
-                </li>
-                <li class="nav-item w-100">
-                  <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
-                    routerLink="/ad/historial" routerLinkActive="active">Historial de Acciones</a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item w-100">
-            <button
-              class="nav-link py-2 px-2 text-white-50 w-100 text-start d-flex align-items-center justify-content-between rounded-1 border-0 bg-transparent"
-              type="button" data-bs-toggle="collapse" data-bs-target="#logsCollapse" aria-expanded="false">
-              LOGS
-              <span class="dropdown-toggle"></span>
-            </button>
-            <div class="collapse w-100 mt-1 ps-2" [class.show]="isLogsActive()" id="logsCollapse">
-              <ul class="nav flex-column ps-3 py-1" style="font-size: 0.9rem;">
-                <li class="nav-item w-100">
-                  <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
-                    routerLink="/logs/errores" routerLinkActive="active">Errores</a>
-                </li>
-                <li class="nav-item w-100">
-                  <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
-                    routerLink="/logs/accesos" routerLinkActive="active">Logs</a>
-                </li>
-              </ul>
-            </div>
-          </li>
-
         </ul>
       </div>
     </li>
-
+    <li class="nav-item w-100">
+      <button
+        class="nav-link py-2 px-2 text-white-50 w-100 text-start d-flex align-items-center justify-content-between rounded-1 border-0 bg-transparent"
+        type="button" data-bs-toggle="collapse" data-bs-target="#b2bCollapse" aria-expanded="false">
+        B2B
+        <span class="dropdown-toggle"></span>
+      </button>
+      <div class="collapse w-100 mt-1 ps-2" [class.show]="isB2bActive()" id="b2bCollapse">
+        <ul class="nav flex-column ps-3 py-1" style="font-size: 0.9rem;">
+          <li class="nav-item w-100">
+            <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none"
+              routerLink="/b2b/usuarios" routerLinkActive="active">Usuarios</a>
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item w-100">
+      <button
+        class="nav-link py-2 px-2 text-white-50 w-100 text-start d-flex align-items-center justify-content-between rounded-1 border-0 bg-transparent"
+        type="button" data-bs-toggle="collapse" data-bs-target="#adCollapse" aria-expanded="false">
+        AD
+        <span class="dropdown-toggle"></span>
+      </button>
+      <div class="collapse w-100 mt-1 ps-2" [class.show]="isAdActive()" id="adCollapse">
+        <ul class="nav flex-column ps-3 py-1" style="font-size: 0.9rem;">
+          <li class="nav-item w-100">
+            <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
+              routerLink="/ad/usuarios" routerLinkActive="active">Usuarios</a>
+          </li>
+          <li class="nav-item w-100">
+            <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
+              routerLink="/ad/historial" routerLinkActive="active">Historial de Acciones</a>
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item w-100">
+      <button
+        class="nav-link py-2 px-2 text-white-50 w-100 text-start d-flex align-items-center justify-content-between rounded-1 border-0 bg-transparent"
+        type="button" data-bs-toggle="collapse" data-bs-target="#logsCollapse" aria-expanded="false">
+        LOGS
+        <span class="dropdown-toggle"></span>
+      </button>
+      <div class="collapse w-100 mt-1 ps-2" [class.show]="isLogsActive()" id="logsCollapse">
+        <ul class="nav flex-column ps-3 py-1" style="font-size: 0.9rem;">
+          <li class="nav-item w-100">
+            <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
+              routerLink="/logs/errores" routerLinkActive="active">Errores</a>
+          </li>
+          <li class="nav-item w-100">
+            <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
+              routerLink="/logs/accesos" routerLinkActive="active">Logs</a>
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item w-100">
+      <button
+        class="nav-link py-2 px-2 text-white-50 w-100 text-start d-flex align-items-center justify-content-between rounded-1 border-0 bg-transparent"
+        type="button" data-bs-toggle="collapse" data-bs-target="#aplicacionesCollapse" aria-expanded="false">
+        APLICACIONES
+        <span class="dropdown-toggle"></span>
+      </button>
+      <div class="collapse w-100 mt-1 ps-2" [class.show]="isAplicacionesActive()" id="aplicacionesCollapse">
+        <ul class="nav flex-column ps-3 py-1" style="font-size: 0.9rem;">
+          <li class="nav-item w-100">
+            <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
+              routerLink="/aplicaciones/usuarios" routerLinkActive="active">Usuarios</a>
+          </li>
+          <li class="nav-item w-100">
+            <a class="nav-link py-1 px-2 text-white-50 w-100 rounded-1 text-decoration-none sidebar-sublink"
+              routerLink="/aplicaciones/apps" routerLinkActive="active">Apps</a>
+          </li>
+        </ul>
+      </div>
+    </li>
 
   </ul>
 
