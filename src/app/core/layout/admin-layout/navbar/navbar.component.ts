@@ -20,7 +20,8 @@ export class NavbarComponent implements OnInit {
   constructor(private router: Router, private appsMenuService: AppsMenuService) { }
 
   ngOnInit(): void {
-    this.appsMenuService.getApps().subscribe(apps => this.apps = apps);
+    this.appsMenuService.apps$.subscribe(apps => this.apps = apps);
+    this.appsMenuService.recargar();
     const storedUser = localStorage.getItem('usuario');
     if (storedUser) {
       this.username = storedUser;

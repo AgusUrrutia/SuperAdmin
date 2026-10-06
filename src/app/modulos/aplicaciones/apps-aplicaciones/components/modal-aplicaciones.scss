@@ -1,0 +1,104 @@
+// Estilos compartidos por los modales de la vista Apps (sistemas y menu)
+.modal-container {
+  background: #fff;
+}
+
+.header-modal {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+
+  .title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #222;
+  }
+}
+
+.content-modal {
+  padding: 20px 24px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.section-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6c757d;
+  margin-bottom: 6px;
+}
+
+.form-check-input {
+  cursor: pointer;
+
+  &:checked {
+    background-color: #222;
+    border-color: #222;
+  }
+}
+
+// Selector de logos
+.logos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+}
+
+.logo-opcion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border: 1px solid #dae1e7;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.7rem;
+  color: #6c757d;
+  transition: all 0.2s;
+
+  img {
+    width: 60px;
+    height: 40px;
+    object-fit: cover;
+  }
+
+  &:hover {
+    background: #f8f9fa;
+  }
+
+  &.seleccionado {
+    border-color: #000;
+    background: #f1f3f5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.sin-logo {
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.actions-modal {
+  padding: 14px 24px;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn-guardar {
+  background-color: #222;
+  color: #fff;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+
+  &:hover:not(:disabled) {
+    background-color: #444;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}

@@ -1,0 +1,29 @@
+<div class="modal-container">
+    <div class="header-modal d-flex align-items-center">
+        <mat-icon class="me-2">edit</mat-icon>
+        <h2 class="title mb-0">Editar sistema — {{ data.sistema.SISTEMA }}</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Cerrar" (click)="onCerrar()"></button>
+    </div>
+
+    <form class="content-modal" (ngSubmit)="guardar()">
+        <!-- Sigla (solo lectura) -->
+        <div class="mb-3">
+            <label class="section-label">Sigla</label>
+            <input type="text" name="sigla" class="form-control" [value]="data.sistema.SISTEMA" disabled />
+            <small class="text-muted">La sigla no se puede modificar.</small>
+        </div>
+
+        <!-- Nombre largo -->
+        <div class="mb-1">
+            <label class="section-label">Nombre</label>
+            <input type="text" name="nombre" class="form-control" [(ngModel)]="nombre" maxlength="100"
+                placeholder="Ej: Taller de Equipos Usados" />
+        </div>
+    </form>
+
+    <div class="actions-modal d-flex justify-content-end">
+        <button type="button" class="btn-guardar" [disabled]="guardando" (click)="guardar()">
+            {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+    </div>
+</div>

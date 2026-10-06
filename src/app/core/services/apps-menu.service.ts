@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { forkJoin, Observable, of } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as proyectSettings from './proyectSettings';
 
@@ -31,7 +31,16 @@ const ID_SISTEMA_APP_ACTUAL = 5;
 export class AppsMenuService {
     private url: string = proyectSettings.onlineUrlBase;
 
+    // Apps del menu compartidas: el navbar se suscribe y se actualiza cuando alguien llama a recargar()
+    // (ej: al editar una app en Aplicaciones -> Apps), sin recargar la pagina
+    private apps = new BehaviorSubject<AppsMenuItem[]>([]);
+    apps$ = this.apps.asObservable();
+
     constructor(private http: HttpClient) { }
+
+    recargar(): void {
+        this.getApps().subscribe(apps => this.apps.next(apps));
+    }
 
     private getUser(): any {
         try {

@@ -1,0 +1,41 @@
+.nav-tabs .nav-link {
+  color: #6c757d;
+  font-weight: 500;
+
+  &.active { color: #222; font-weight: 700; }
+}
+
+.form-check-input {
+  cursor: pointer;
+
+  &:checked { background-color: #222; border-color: #222; }
+}
+
+// Anchos en % para que la tabla se adapte con el sidebar abierto o cerrado
+.table-fixed { table-layout: fixed; width: 100%; }
+.col-orden    { width: 7%; }
+.col-logo     { width: 9%; }
+.col-app      { width: 20%; }
+.col-link     { width: 25%; }
+.col-pestana  { width: 9%; }
+.col-grupos   { width: 11%; }
+.col-estado   { width: 10%; }
+.col-acciones { width: 9%; }
+
+.col-id       { width: 7%; }
+.col-sigla    { width: 14%; }
+.col-contador { width: 12%; }
+.col-acciones-sistema { width: 12%; }
+
+.logo-tabla { width: 60px; height: 40px; object-fit: cover; }
+
+.link-app { display: block; color: #2b6cb0; text-decoration: none; }
+
+.fila-inactiva td { opacity: 0.6; }
+
+.btn-accion { white-space: nowrap; font-size: 0.8rem; padding: 4px 10px; }
+.btn-primary { background-color: #2b6cb0; border-color: #2b6cb0; }
+
+.text-truncate { overflow: hidden; display: block; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; }
+
+td { vertical-align: middle; }

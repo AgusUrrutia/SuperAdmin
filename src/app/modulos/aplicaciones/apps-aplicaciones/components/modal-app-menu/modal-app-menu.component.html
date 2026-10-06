@@ -1,0 +1,78 @@
+<div class="modal-container">
+    <div class="header-modal d-flex align-items-center">
+        <mat-icon class="me-2">edit</mat-icon>
+        <h2 class="title mb-0">Editar aplicación — {{ data.app.APP_NAME }}</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Cerrar" (click)="onCerrar()"></button>
+    </div>
+
+    <form class="content-modal" (ngSubmit)="guardar()">
+        <!-- Sistema -->
+        <div class="mb-3">
+            <label class="section-label">Sistema <span class="text-danger">*</span></label>
+            <select name="idSistema" class="form-select" [(ngModel)]="form.ID_SISTEMA">
+                <option [ngValue]="null" disabled>-- Seleccione un sistema --</option>
+                @for (s of data.sistemas; track s.ID) {
+                <option [ngValue]="s.ID">{{ s.SISTEMA }}{{ s.NOMBRE ? ' — ' + s.NOMBRE : '' }}</option>
+                }
+            </select>
+            <small class="text-muted">El nombre y la descripción del menú se toman del sistema.</small>
+        </div>
+
+        <!-- Logo -->
+        <div class="mb-3">
+            <label class="section-label">Logo</label>
+            @if (cargandoLogos) {
+            <div class="text-muted">Cargando logos...</div>
+            } @else {
+            <div class="logos">
+                <button type="button" class="logo-opcion" [class.seleccionado]="!form.IMAGE" (click)="seleccionarLogo(null)">
+                    <span class="sin-logo"><mat-icon>block</mat-icon></span>
+                    Sin logo
+                </button>
+                @for (logo of logos; track logo.file) {
+                <button type="button" class="logo-opcion" [class.seleccionado]="form.IMAGE === logo.file"
+                    [title]="logo.file" (click)="seleccionarLogo(logo.file)">
+                    <img [src]="logo.url" [alt]="logo.file" />
+                    {{ logo.file }}
+                </button>
+                }
+            </div>
+            }
+        </div>
+
+        <!-- Link -->
+        <div class="mb-3">
+            <label class="section-label">Link</label>
+            <input type="text" name="link" class="form-control" [(ngModel)]="form.LINK" maxlength="500"
+                placeholder="http://..." />
+        </div>
+
+        <div class="row g-3 mb-1">
+            <!-- Orden -->
+            <div class="col-4">
+                <label class="section-label">Orden</label>
+                <input type="number" name="orden" class="form-control" [(ngModel)]="form.ORDEN" step="1" />
+            </div>
+            <!-- Opciones -->
+            <div class="col-8 d-flex flex-column justify-content-end gap-2">
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" role="switch" id="nuevaPestana" name="nuevaPestana"
+                        [(ngModel)]="form.ABRIR_EN_NUEVA_PESTANA">
+                    <label class="form-check-label" for="nuevaPestana">Abrir en nueva pestaña</label>
+                </div>
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" role="switch" id="activo" name="activo"
+                        [(ngModel)]="form.ACTIVO">
+                    <label class="form-check-label" for="activo">Activa (se muestra en el menú)</label>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <div class="actions-modal d-flex justify-content-end">
+        <button type="button" class="btn-guardar" [disabled]="guardando" (click)="guardar()">
+            {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+    </div>
+</div>
