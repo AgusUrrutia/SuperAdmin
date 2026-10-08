@@ -50,7 +50,8 @@
             <div class="apps-grid">
               <!-- Apps de ek-apps-menu permitidas al usuario: logo, nombre y link vienen de la API -->
               @for (app of apps; track app.id_sistema) {
-              <a [href]="app.link" [target]="app.extras?.abrir_en_nueva_pestana ? '_blank' : '_self'"
+              <!-- El link lleva el token (#sso=) para entrar sin volver a loguearse -->
+              <a [href]="linkConSso(app.link)" [target]="app.extras?.abrir_en_nueva_pestana ? '_blank' : '_self'"
                 rel="noopener" [title]="app.extras?.descripcion || app.app_name"
                 class="text-decoration-none text-center d-flex flex-column align-items-center p-2 rounded hover-bg-light"
                 style="transition: background-color 0.2s;">

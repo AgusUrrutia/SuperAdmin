@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 
 import { UsuarioService } from '../../services/usuario.service';
 import Swal from 'sweetalert2';
-import { catchError, forkJoin, of } from 'rxjs';
+import { guardarSesion } from '../../services/sesion';
 
 @Component({
   selector: 'app-login',
@@ -48,22 +48,14 @@ export class LoginComponent implements AfterViewInit {
         }
       });
 
-      // Se loguea contra las dos APIs: SGS (api.ranko) y B2B (rankodigital).
-      // Si falla la de B2B se permite el ingreso igual, solo queda sin token B2B.
-      forkJoin({
-        sgs: this.usuarioSrv.login(this.username, this.password),
-        b2b: this.usuarioSrv.loginB2B(this.username, this.password).pipe(
-          catchError((errorB2B: any) => {
-            console.error('Error durante el login B2B:', errorB2B);
-            return of(null);
-          })
-        )
-      }).subscribe(
-        ({ sgs: response, b2b: responseB2B }: any) => {
-          Swal.close();
-
+      // Login en la API de SGS. Para el módulo B2B se usa el mismo token si la API del B2B ya valida
+      // contra la base común EK_SEGURIDAD; si no, se hace su login aparte (ver UsuarioService.tokenB2B).
+      // Con la base común NO se puede hacer el segundo login: invalidaría el token del primero.
+      this.usuarioSrv.login(this.username, this.password).subscribe(
+        (response: any) => {
           const roles: string[] = response.roles || [];
           if (!roles.includes('Superadmin')) {
+            Swal.close();
             Swal.fire({
               icon: 'error',
               title: 'Permisos denegados',
@@ -74,36 +66,21 @@ export class LoginComponent implements AfterViewInit {
             return;
           }
 
-          localStorage.setItem('token', response.token);
-          const user = {
-            token: response.token,
-            'update-token': response['update-token'],
-            formulariosSGS: response.formulariosSGS,
-            usuario: response.usuario,
-            grupos: response.grupos,
-            roles: response.roles,
-            // Apps asignadas al usuario (por ID); se usan para filtrar el menu de apps
-            sistemas_permitidos_ids: response.sistemas_permitidos_ids,
-            tokenB2B: responseB2B?.token || null
-          };
-          sessionStorage.setItem('user', JSON.stringify(user));
-          localStorage.setItem('usuario', response.usuario);
-          if (responseB2B?.token) {
-            localStorage.setItem('tokenB2B', responseB2B.token);
-          } else {
-            localStorage.removeItem('tokenB2B');
-          }
-          this.router.navigate(['/']);
+          this.usuarioSrv.tokenB2B(response.token, this.username, this.password).subscribe((tokenB2B) => {
+            Swal.close();
+            guardarSesion(response, response.token, tokenB2B);
+            this.router.navigate(['/']);
 
-          if (!responseB2B?.token) {
-            Swal.fire({
-              icon: 'warning',
-              title: 'Sin acceso a B2B',
-              text: 'No se pudo iniciar sesión en la API del B2B. Las acciones del módulo B2B no van a funcionar.',
-              confirmButtonText: 'Aceptar',
-              confirmButtonColor: '#222'
-            });
-          }
+            if (!tokenB2B) {
+              Swal.fire({
+                icon: 'warning',
+                title: 'Sin acceso a B2B',
+                text: 'No se pudo iniciar sesión en la API del B2B. Las acciones del módulo B2B no van a funcionar.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#222'
+              });
+            }
+          });
         },
         (error: any) => {
           Swal.close();

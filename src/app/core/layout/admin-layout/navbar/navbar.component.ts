@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppsMenuItem, AppsMenuService } from '../../../services/apps-menu.service';
+import { linkConSso } from '../../../services/sso';
 
 @Component({
   selector: 'app-navbar',
@@ -16,6 +17,7 @@ export class NavbarComponent implements OnInit {
 
   // Apps del menu de la grilla; salen solo de ek-apps-menu
   apps: AppsMenuItem[] = [];
+  linkConSso = linkConSso;
 
   constructor(private router: Router, private appsMenuService: AppsMenuService) { }
 
