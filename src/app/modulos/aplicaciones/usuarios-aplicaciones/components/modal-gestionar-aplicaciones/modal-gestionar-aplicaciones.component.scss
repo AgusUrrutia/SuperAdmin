@@ -58,9 +58,55 @@
     border-bottom: none;
   }
 
-  .form-check-input {
+  .form-switch .form-check-input {
     width: 2.5em;
     height: 1.3em;
+    cursor: pointer;
+
+    &:checked {
+      background-color: #222;
+      border-color: #222;
+    }
+  }
+}
+
+// Roles y grupos de la app, debajo del switch
+.roles-grupos {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.etiqueta-tipo {
+  min-width: 52px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6c757d;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border: 1px solid #dae1e7;
+  border-radius: 14px;
+  background: #fff;
+  font-size: 0.8rem;
+  cursor: pointer;
+
+  &.marcado {
+    border-color: #222;
+  }
+
+  &.inactivo {
+    opacity: 0.6;
+    text-decoration: line-through;
+  }
+
+  .form-check-input {
+    margin-top: 0;
     cursor: pointer;
 
     &:checked {

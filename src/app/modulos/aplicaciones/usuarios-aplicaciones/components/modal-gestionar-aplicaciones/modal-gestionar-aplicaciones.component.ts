@@ -3,9 +3,17 @@ import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { UsuarioAdminService } from '../../../../sgs/services/usuario-admin.service';
+import { AppsMenuAdminService, RolGrupoApp, TipoRolGrupo } from '../../../services/apps-menu-admin.service';
+
+interface AsignacionesCuenta {
+  roles: Set<number>;
+  grupos: Set<number>;
+}
 
 // Gestiona las aplicaciones asignadas a cada cuenta (instancia) de un usuario.
 // Cada cambio se guarda en el momento con aplicaciones/add y aplicaciones/delete (mismas requests que SGS).
+// Debajo de cada app asignada se eligen sus roles y grupos propios (ek-apps-menu/usuario/roles-grupos/*).
+// Si se quita la app, sus roles y grupos quedan guardados pero el login no los devuelve.
 @Component({
   selector: 'app-modal-gestionar-aplicaciones',
   standalone: true,
@@ -26,9 +34,19 @@ export class ModalGestionarAplicacionesComponent implements OnInit {
   guardandoAppId: string | null = null;
   huboCambios = false;
 
+  readonly tipos: TipoRolGrupo[] = ['rol', 'grupo'];
+  // Catalogo de roles y grupos de todas las apps, por ID_SISTEMA
+  rolesPorApp: { [idSistema: string]: RolGrupoApp[] } = {};
+  gruposPorApp: { [idSistema: string]: RolGrupoApp[] } = {};
+  // Roles y grupos asignados, por ID_USUARIO de cada cuenta (se piden al seleccionar la cuenta)
+  rolesGruposPorCuenta: { [idUsuario: string]: AsignacionesCuenta } = {};
+  // "tipo-id" del rol/grupo que se esta guardando
+  guardandoRolGrupo: string | null = null;
+
   constructor(
     public dialogRef: MatDialogRef<ModalGestionarAplicacionesComponent>,
     private usuarioAdminService: UsuarioAdminService,
+    private appsMenuAdminService: AppsMenuAdminService,
     @Inject(MAT_DIALOG_DATA) public data: { usuario: any, instancias?: any[] }
   ) {
     this.instancias = (data.instancias ?? [data.usuario]).slice().sort((a: any, b: any) => {
@@ -43,6 +61,74 @@ export class ModalGestionarAplicacionesComponent implements OnInit {
       this.aplicaciones = res?.data || res || [];
       for (const inst of this.instancias) {
         this.asignadasPorCuenta[String(inst.ID_USUARIO)] = this.calcularAsignadas(inst);
+      }
+    });
+    this.appsMenuAdminService.getRolesGrupos().subscribe(res => {
+      this.rolesPorApp = this.agruparPorApp(res?.roles || []);
+      this.gruposPorApp = this.agruparPorApp(res?.grupos || []);
+    });
+    this.cargarRolesGruposCuenta(this.instanciaSeleccionada);
+  }
+
+  private agruparPorApp(items: RolGrupoApp[]): { [idSistema: string]: RolGrupoApp[] } {
+    const porApp: { [idSistema: string]: RolGrupoApp[] } = {};
+    for (const item of items) {
+      (porApp[String(item.ID_SISTEMA)] ||= []).push(item);
+    }
+    return porApp;
+  }
+
+  private cargarRolesGruposCuenta(inst: any): void {
+    const id = String(inst?.ID_USUARIO ?? '');
+    if (!id || this.rolesGruposPorCuenta[id]) return;
+    this.appsMenuAdminService.getAsignacionesUsuario(id).subscribe(res => {
+      this.rolesGruposPorCuenta[id] = { roles: new Set(res?.roles || []), grupos: new Set(res?.grupos || []) };
+    });
+  }
+
+  private asignacionesSeleccionada(): AsignacionesCuenta | undefined {
+    return this.rolesGruposPorCuenta[String(this.instanciaSeleccionada?.ID_USUARIO)];
+  }
+
+  // Roles o grupos de la app para mostrar: los activos y los inactivos que la cuenta todavia tiene (para poder quitarlos)
+  itemsApp(app: any, tipo: TipoRolGrupo): RolGrupoApp[] {
+    const catalogo = (tipo === 'rol' ? this.rolesPorApp : this.gruposPorApp)[this.obtenerId(app)] || [];
+    return catalogo.filter(i => i.ACTIVO || this.tieneRolGrupo(tipo, i));
+  }
+
+  tieneRolGrupo(tipo: TipoRolGrupo, item: RolGrupoApp): boolean {
+    const asignaciones = this.asignacionesSeleccionada();
+    return !!asignaciones && (tipo === 'rol' ? asignaciones.roles : asignaciones.grupos).has(item.ID);
+  }
+
+  cargandoRolesGrupos(): boolean {
+    return !this.asignacionesSeleccionada();
+  }
+
+  toggleRolGrupo(tipo: TipoRolGrupo, item: RolGrupoApp, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const asignaciones = this.asignacionesSeleccionada();
+    if (this.guardandoRolGrupo || this.guardandoAppId || !asignaciones) {
+      input.checked = this.tieneRolGrupo(tipo, item);
+      return;
+    }
+    const quitar = this.tieneRolGrupo(tipo, item);
+    const set = tipo === 'rol' ? asignaciones.roles : asignaciones.grupos;
+    this.guardandoRolGrupo = `${tipo}-${item.ID}`;
+    this.appsMenuAdminService.cambiarAsignacion(quitar ? 'remove' : 'add', {
+      ID_USUARIO: this.instanciaSeleccionada.ID_USUARIO,
+      TIPO: tipo,
+      ID: item.ID
+    }).subscribe({
+      next: () => {
+        if (quitar) set.delete(item.ID); else set.add(item.ID);
+        this.guardandoRolGrupo = null;
+        this.huboCambios = true;
+      },
+      // El servicio ya muestra el error; el check vuelve a su estado anterior
+      error: () => {
+        input.checked = this.tieneRolGrupo(tipo, item);
+        this.guardandoRolGrupo = null;
       }
     });
   }
@@ -69,8 +155,9 @@ export class ModalGestionarAplicacionesComponent implements OnInit {
   }
 
   seleccionarInstancia(inst: any): void {
-    if (this.guardandoAppId) return;
+    if (this.guardandoAppId || this.guardandoRolGrupo) return;
     this.instanciaSeleccionada = inst;
+    this.cargarRolesGruposCuenta(inst);
   }
 
   get asignadasSeleccionada(): Set<string> {

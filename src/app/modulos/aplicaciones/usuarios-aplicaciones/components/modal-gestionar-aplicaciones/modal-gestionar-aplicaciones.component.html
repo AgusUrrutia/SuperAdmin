@@ -29,12 +29,40 @@
         } @else {
         <ul class="apps list-unstyled mb-0">
             @for (app of aplicaciones; track obtenerId(app)) {
-            <li class="app d-flex align-items-center justify-content-between">
-                <span class="fw-medium">{{ nombreApp(app) }}</span>
-                <div class="form-check form-switch mb-0">
-                    <input class="form-check-input" type="checkbox" role="switch" [id]="'app-' + obtenerId(app)"
-                        [checked]="tieneApp(app)" [disabled]="guardandoAppId !== null" (change)="toggleApp(app, $event)">
+            <li class="app">
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="fw-medium">{{ nombreApp(app) }}</span>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" role="switch" [id]="'app-' + obtenerId(app)"
+                            [checked]="tieneApp(app)" [disabled]="guardandoAppId !== null || guardandoRolGrupo !== null" (change)="toggleApp(app, $event)">
+                    </div>
                 </div>
+
+                <!-- Roles y grupos propios de la app (solo si la cuenta la tiene asignada) -->
+                @if (tieneApp(app) && (itemsApp(app, 'rol').length || itemsApp(app, 'grupo').length)) {
+                <div class="roles-grupos">
+                    @if (cargandoRolesGrupos()) {
+                    <small class="text-muted">Cargando roles y grupos...</small>
+                    } @else {
+                    @for (tipo of tipos; track tipo) {
+                    @if (itemsApp(app, tipo).length) {
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                        <small class="etiqueta-tipo">{{ tipo === 'rol' ? 'Roles' : 'Grupos' }}</small>
+                        @for (item of itemsApp(app, tipo); track item.ID) {
+                        <label class="chip" [class.marcado]="tieneRolGrupo(tipo, item)" [class.inactivo]="!item.ACTIVO"
+                            [title]="item.DESCRIPCION || (item.ACTIVO ? '' : 'Inactivo: solo se puede quitar')">
+                            <input type="checkbox" class="form-check-input me-1" [checked]="tieneRolGrupo(tipo, item)"
+                                [disabled]="guardandoRolGrupo !== null || guardandoAppId !== null || (!item.ACTIVO && !tieneRolGrupo(tipo, item))"
+                                (change)="toggleRolGrupo(tipo, item, $event)">
+                            {{ item.NOMBRE }}
+                        </label>
+                        }
+                    </div>
+                    }
+                    }
+                    }
+                </div>
+                }
             </li>
             }
         </ul>

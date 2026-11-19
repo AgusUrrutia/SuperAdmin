@@ -8,6 +8,8 @@ import { AppMenuAdmin, AppsMenuAdminService, SistemaAdmin } from '../services/ap
 import { AppsMenuService } from '../../../core/services/apps-menu.service';
 import { ModalAppMenuComponent } from './components/modal-app-menu/modal-app-menu.component';
 import { ModalSistemaComponent } from './components/modal-sistema/modal-sistema.component';
+import { ModalNuevaAplicacionComponent } from './components/modal-nueva-aplicacion/modal-nueva-aplicacion.component';
+import { ModalRolesGruposComponent } from './components/modal-roles-grupos/modal-roles-grupos.component';
 
 type Pestana = 'menu' | 'sistemas';
 
@@ -102,6 +104,33 @@ export class AppsAplicacionesComponent implements OnInit {
         this.cargarApps(); // el nombre del sistema se propaga a la descripcion del menu
         this.appsMenuService.recargar();
       }
+    });
+  }
+
+  // Alta completa: sistema + roles + grupos + fila del menu (opcional)
+  nuevaAplicacion(): void {
+    const dialogRef = this.dialog.open(ModalNuevaAplicacionComponent, {
+      width: '760px',
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe(huboCambios => {
+      if (huboCambios) {
+        this.pestana = 'sistemas';
+        this.cargarSistemas();
+        this.cargarApps();
+        this.appsMenuService.recargar();
+      }
+    });
+  }
+
+  gestionarRolesGrupos(sistema: SistemaAdmin): void {
+    const dialogRef = this.dialog.open(ModalRolesGruposComponent, {
+      width: '800px',
+      disableClose: true,
+      data: { sistema }
+    });
+    dialogRef.afterClosed().subscribe(huboCambios => {
+      if (huboCambios) this.cargarSistemas(); // cambian los contadores
     });
   }
 }

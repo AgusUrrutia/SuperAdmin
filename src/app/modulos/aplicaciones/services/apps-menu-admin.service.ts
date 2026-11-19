@@ -28,6 +28,52 @@ export interface SistemaAdmin {
     NOMBRE: string | null;
     USUARIOS: number;
     FILAS_MENU: number;
+    // Cantidad de roles y grupos propios de la app (la API vieja no los manda)
+    ROLES?: number;
+    GRUPOS?: number;
+}
+
+// Rol o grupo propio de una app (SISTEMA_ROL / SISTEMA_GRUPO). Son independientes entre si.
+export type TipoRolGrupo = 'rol' | 'grupo';
+
+export interface RolGrupoApp {
+    ID: number;
+    ID_SISTEMA: number;
+    NOMBRE: string;
+    DESCRIPCION: string | null;
+    ACTIVO: boolean;
+    USUARIOS: number; // cuentas que lo tienen asignado
+}
+
+export interface RolesGruposApp {
+    roles: RolGrupoApp[];
+    grupos: RolGrupoApp[];
+}
+
+// IDs asignados a una cuenta (de todas las apps)
+export interface AsignacionesUsuario {
+    roles: number[];
+    grupos: number[];
+}
+
+export interface ItemNuevoRolGrupo {
+    NOMBRE: string;
+    DESCRIPCION?: string | null;
+}
+
+// Alta completa: sistema + fila del menu opcional + roles y grupos, en una transaccion
+export interface NuevaAplicacion {
+    SISTEMA: string;
+    NOMBRE: string | null;
+    MENU: {
+        IMAGE: string | null;
+        LINK: string;
+        ORDEN: number;
+        ACTIVO: boolean;
+        ABRIR_EN_NUEVA_PESTANA: boolean;
+    } | null;
+    ROLES: ItemNuevoRolGrupo[];
+    GRUPOS: ItemNuevoRolGrupo[];
 }
 
 export interface LogoMenu {
@@ -98,6 +144,53 @@ export class AppsMenuAdminService {
     updateSistema(payload: { ID: number, NOMBRE: string | null }): Observable<any> {
         return this.http.post<any>(`${this.url}ek-apps-menu/sistemas/update`, payload, { headers: this.makeHeaders() })
             .pipe(catchError(err => this.manejarError('Error al actualizar el sistema', err)));
+    }
+
+    crearAplicacion(payload: NuevaAplicacion): Observable<any> {
+        return this.http.post<any>(`${this.url}ek-apps-menu/aplicaciones/create`, payload, { headers: this.makeHeaders() })
+            .pipe(catchError(err => this.manejarError('Error al crear la aplicación', err)));
+    }
+
+    // ---------- Roles y grupos propios de cada app ----------
+
+    private rutaTipo(tipo: TipoRolGrupo): string {
+        return tipo === 'rol' ? 'roles' : 'grupos';
+    }
+
+    // Sin idSistema trae los de todas las apps
+    getRolesGrupos(idSistema?: number): Observable<RolesGruposApp> {
+        const ruta = idSistema != null ? `ek-apps-menu/sistemas/${idSistema}/roles-grupos` : 'ek-apps-menu/roles-grupos';
+        return this.http.get<RolesGruposApp>(`${this.url}${ruta}`, { headers: this.makeHeaders() })
+            .pipe(catchError(err => this.manejarError('Error al obtener los roles y grupos', err)));
+    }
+
+    crearRolGrupo(tipo: TipoRolGrupo, payload: { ID_SISTEMA: number, NOMBRE: string, DESCRIPCION: string | null }): Observable<any> {
+        return this.http.post<any>(`${this.url}ek-apps-menu/sistemas/${this.rutaTipo(tipo)}/create`, payload, { headers: this.makeHeaders() })
+            .pipe(catchError(err => this.manejarError(`Error al crear el ${tipo}`, err)));
+    }
+
+    // ID mas solo los campos que cambian (NOMBRE, DESCRIPCION, ACTIVO)
+    updateRolGrupo(tipo: TipoRolGrupo, payload: any): Observable<any> {
+        return this.http.post<any>(`${this.url}ek-apps-menu/sistemas/${this.rutaTipo(tipo)}/update`, payload, { headers: this.makeHeaders() })
+            .pipe(catchError(err => this.manejarError(`Error al actualizar el ${tipo}`, err)));
+    }
+
+    // La API solo lo borra si ninguna cuenta lo tiene asignado (si no, 409)
+    eliminarRolGrupo(tipo: TipoRolGrupo, id: number): Observable<any> {
+        return this.http.post<any>(`${this.url}ek-apps-menu/sistemas/${this.rutaTipo(tipo)}/delete/${id}`, {}, { headers: this.makeHeaders() })
+            .pipe(catchError(err => this.manejarError(`Error al eliminar el ${tipo}`, err)));
+    }
+
+    getAsignacionesUsuario(idUsuario: number | string): Observable<AsignacionesUsuario> {
+        return this.http.get<AsignacionesUsuario>(`${this.url}ek-apps-menu/usuario/${idUsuario}/roles-grupos`, { headers: this.makeHeaders() })
+            .pipe(catchError(err => this.manejarError('Error al obtener los roles y grupos del usuario', err)));
+    }
+
+    // Asigna o quita un rol/grupo a una cuenta; devuelve las asignaciones actualizadas en data
+    cambiarAsignacion(accion: 'add' | 'remove', payload: { ID_USUARIO: number | string, TIPO: TipoRolGrupo, ID: number }): Observable<any> {
+        const titulo = accion === 'add' ? `Error al asignar el ${payload.TIPO}` : `Error al quitar el ${payload.TIPO}`;
+        return this.http.post<any>(`${this.url}ek-apps-menu/usuario/roles-grupos/${accion}`, payload, { headers: this.makeHeaders() })
+            .pipe(catchError(err => this.manejarError(titulo, err)));
     }
 
     private manejarError(titulo: string, error: any): Observable<never> {

@@ -1,0 +1,96 @@
+<div class="modal-container">
+    <div class="header-modal d-flex align-items-center">
+        <mat-icon class="me-2">admin_panel_settings</mat-icon>
+        <h2 class="title mb-0">Roles y grupos — {{ data.sistema.SISTEMA }}</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Cerrar" (click)="onCerrar()"></button>
+    </div>
+
+    <div class="content-modal">
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <button type="button" class="nav-link" [class.active]="pestana === 'rol'" (click)="cambiarPestana('rol')">
+                    Roles ({{ roles.length }})
+                </button>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="nav-link" [class.active]="pestana === 'grupo'" (click)="cambiarPestana('grupo')">
+                    Grupos ({{ grupos.length }})
+                </button>
+            </li>
+        </ul>
+
+        <!-- Alta -->
+        <div class="d-flex gap-2 mb-3">
+            <input type="text" class="form-control" name="nuevoNombre" [(ngModel)]="nuevo.NOMBRE" maxlength="100"
+                [placeholder]="'Nombre del ' + etiqueta" (keydown.enter)="agregar()" />
+            <input type="text" class="form-control" name="nuevaDesc" [(ngModel)]="nuevo.DESCRIPCION" maxlength="250"
+                placeholder="Descripción (opcional)" (keydown.enter)="agregar()" />
+            <button type="button" class="btn btn-outline-dark btn-sm text-nowrap" [disabled]="guardando || !nuevo.NOMBRE.trim()"
+                (click)="agregar()">
+                <mat-icon class="icono-btn">add</mat-icon> Agregar
+            </button>
+        </div>
+
+        @if (cargando) {
+        <div class="text-muted py-3">Cargando...</div>
+        } @else if (items.length === 0) {
+        <div class="text-muted py-3">La aplicación no tiene {{ pestana === 'rol' ? 'roles' : 'grupos' }}.</div>
+        } @else {
+        <table class="table align-middle mb-0 tabla-roles">
+            <thead>
+                <tr>
+                    <th class="text-muted">NOMBRE</th>
+                    <th class="text-muted">DESCRIPCIÓN</th>
+                    <th class="text-muted col-usuarios">USUARIOS</th>
+                    <th class="text-muted col-activo">ACTIVO</th>
+                    <th class="col-acciones"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (item of items; track item.ID) {
+                <tr [class.fila-inactiva]="!item.ACTIVO">
+                    @if (editandoId === item.ID) {
+                    <td>
+                        <input type="text" class="form-control form-control-sm" [(ngModel)]="edicion.NOMBRE" maxlength="100"
+                            (keydown.enter)="guardarEdicion(item)" (keydown.escape)="cancelarEdicion()" />
+                    </td>
+                    <td>
+                        <input type="text" class="form-control form-control-sm" [(ngModel)]="edicion.DESCRIPCION" maxlength="250"
+                            (keydown.enter)="guardarEdicion(item)" (keydown.escape)="cancelarEdicion()" />
+                    </td>
+                    } @else {
+                    <td class="fw-medium">{{ item.NOMBRE }}</td>
+                    <td class="text-muted">{{ item.DESCRIPCION || '—' }}</td>
+                    }
+                    <td class="text-muted">{{ item.USUARIOS }}</td>
+                    <td>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" role="switch" [checked]="item.ACTIVO"
+                                [disabled]="guardando" (change)="toggleActivo(item, $event)" [title]="item.ACTIVO ? 'Desactivar' : 'Activar'">
+                        </div>
+                    </td>
+                    <td class="text-end text-nowrap">
+                        @if (editandoId === item.ID) {
+                        <button type="button" class="btn btn-link btn-sm p-0 me-2 text-success" title="Guardar" [disabled]="guardando"
+                            (click)="guardarEdicion(item)"><mat-icon>check</mat-icon></button>
+                        <button type="button" class="btn btn-link btn-sm p-0 text-secondary" title="Cancelar"
+                            (click)="cancelarEdicion()"><mat-icon>close</mat-icon></button>
+                        } @else {
+                        <button type="button" class="btn btn-link btn-sm p-0 me-2 text-dark" title="Editar" [disabled]="guardando"
+                            (click)="editar(item)"><mat-icon>edit</mat-icon></button>
+                        <button type="button" class="btn btn-link btn-sm p-0 text-danger" title="Eliminar" [disabled]="guardando"
+                            (click)="eliminar(item)"><mat-icon>delete</mat-icon></button>
+                        }
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        }
+
+        <small class="text-muted d-block mt-3">
+            Los roles y grupos se asignan a cada usuario desde Aplicaciones → Usuarios → Gestionar.
+            Un {{ etiqueta }} inactivo no se puede asignar y no se envía en el login.
+        </small>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+.nav-tabs .nav-link {
+  color: #6c757d;
+  font-weight: 500;
+
+  &.active { color: #222; font-weight: 700; }
+}
+
+.tabla-roles {
+  font-size: 0.9rem;
+
+  th { font-size: 0.75rem; font-weight: 700; border-top: none; }
+  .col-usuarios { width: 90px; }
+  .col-activo   { width: 70px; }
+  .col-acciones { width: 80px; }
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+}

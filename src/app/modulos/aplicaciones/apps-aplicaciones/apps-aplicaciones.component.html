@@ -2,6 +2,9 @@
     <!-- Encabezado -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold mb-0" style="color: #222;">Aplicaciones</h2>
+        <button type="button" class="btn btn-dark d-flex align-items-center gap-1" (click)="nuevaAplicacion()">
+            <mat-icon>add</mat-icon> Nueva aplicación
+        </button>
     </div>
 
     <!-- Pestañas -->
@@ -121,13 +124,15 @@
                             <th class="py-3 px-3 border-0 text-muted fw-bold">NOMBRE</th>
                             <th class="py-3 px-3 border-0 text-muted fw-bold col-contador">USUARIOS</th>
                             <th class="py-3 px-3 border-0 text-muted fw-bold col-contador">EN EL MENÚ</th>
+                            <th class="py-3 px-3 border-0 text-muted fw-bold col-contador-chico">ROLES</th>
+                            <th class="py-3 px-3 border-0 text-muted fw-bold col-contador-chico">GRUPOS</th>
                             <th class="py-3 px-3 border-0 text-muted fw-bold col-acciones-sistema">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (cargandoSistemas) {
                         <tr>
-                            <td colspan="6" class="text-center py-5 border-0">
+                            <td colspan="8" class="text-center py-5 border-0">
                                 <app-spinner-grande minHeight="200px"></app-spinner-grande>
                             </td>
                         </tr>
@@ -151,14 +156,19 @@
                                     title="Tiene más de una fila en el menú: revisar duplicados">Sí ({{ sistema.FILAS_MENU }} filas)</span>
                                 }
                             </td>
+                            <td class="py-3 px-3 border-bottom text-muted">{{ sistema.ROLES ?? 0 }}</td>
+                            <td class="py-3 px-3 border-bottom text-muted">{{ sistema.GRUPOS ?? 0 }}</td>
                             <td class="py-3 px-3 border-bottom">
-                                <button class="btn btn-primary btn-sm btn-accion" (click)="editarSistema(sistema)">Editar</button>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <button class="btn btn-primary btn-sm btn-accion" (click)="editarSistema(sistema)">Editar</button>
+                                    <button class="btn btn-outline-dark btn-sm btn-accion" (click)="gestionarRolesGrupos(sistema)">Roles y grupos</button>
+                                </div>
                             </td>
                         </tr>
                         }
                         @if (sistemas.length === 0) {
                         <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">No hay sistemas cargados</td>
+                            <td colspan="8" class="text-center py-4 text-muted">No hay sistemas cargados</td>
                         </tr>
                         }
                         }

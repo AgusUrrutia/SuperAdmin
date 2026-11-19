@@ -1,0 +1,139 @@
+<div class="modal-container">
+    <div class="header-modal d-flex align-items-center">
+        <mat-icon class="me-2">add_box</mat-icon>
+        <h2 class="title mb-0">Nueva aplicación</h2>
+        <button type="button" class="btn-close ms-auto" aria-label="Cerrar" (click)="onCerrar()"></button>
+    </div>
+
+    <form class="content-modal" (ngSubmit)="guardar()">
+        <!-- Datos de la app -->
+        <div class="row g-3 mb-3">
+            <div class="col-4">
+                <label class="section-label">Sigla <span class="text-danger">*</span></label>
+                <input type="text" name="sigla" class="form-control" [(ngModel)]="sigla" (ngModelChange)="normalizarSigla()"
+                    maxlength="50" placeholder="Ej: TEU" />
+            </div>
+            <div class="col-8">
+                <label class="section-label">Nombre</label>
+                <input type="text" name="nombre" class="form-control" [(ngModel)]="nombre" maxlength="100"
+                    placeholder="Ej: Taller de Equipos Usados" />
+            </div>
+            <div class="col-12 mt-1">
+                <small class="text-muted">La sigla identifica a la app en el login (mayúsculas, números o "_") y no se puede modificar después.</small>
+            </div>
+        </div>
+
+        <!-- Roles -->
+        <div class="bloque mb-3">
+            <label class="section-label">Roles de la aplicación</label>
+            <ng-container *ngTemplateOutlet="editorLista; context: { tipo: 'rol', etiqueta: 'rol' }"></ng-container>
+        </div>
+
+        <!-- Grupos -->
+        <div class="bloque mb-3">
+            <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="tieneGrupos" name="tieneGrupos"
+                    [(ngModel)]="tieneGrupos">
+                <label class="form-check-label fw-bold" for="tieneGrupos">La aplicación tiene grupos</label>
+            </div>
+            @if (tieneGrupos) {
+            <ng-container *ngTemplateOutlet="editorLista; context: { tipo: 'grupo', etiqueta: 'grupo' }"></ng-container>
+            }
+        </div>
+
+        <!-- Menú de apps -->
+        <div class="bloque mb-1">
+            <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="agregarAlMenu" name="agregarAlMenu"
+                    [(ngModel)]="agregarAlMenu">
+                <label class="form-check-label fw-bold" for="agregarAlMenu">Agregar al menú de aplicaciones (⊞)</label>
+            </div>
+
+            @if (agregarAlMenu) {
+            <div class="mb-3">
+                <label class="section-label">Logo</label>
+                @if (cargandoLogos) {
+                <div class="text-muted">Cargando logos...</div>
+                } @else {
+                <div class="logos">
+                    <button type="button" class="logo-opcion" [class.seleccionado]="!menu.IMAGE" (click)="seleccionarLogo(null)">
+                        <span class="sin-logo"><mat-icon>block</mat-icon></span>
+                        Sin logo
+                    </button>
+                    @for (logo of logos; track logo.file) {
+                    <button type="button" class="logo-opcion" [class.seleccionado]="menu.IMAGE === logo.file"
+                        [title]="logo.file" (click)="seleccionarLogo(logo.file)">
+                        <img [src]="logo.url" [alt]="logo.file" />
+                        {{ logo.file }}
+                    </button>
+                    }
+                </div>
+                }
+            </div>
+
+            <div class="mb-3">
+                <label class="section-label">Link <span class="text-danger">*</span></label>
+                <input type="text" name="link" class="form-control" [(ngModel)]="menu.LINK" maxlength="500"
+                    placeholder="https://..." />
+            </div>
+
+            <div class="row g-3">
+                <div class="col-4">
+                    <label class="section-label">Orden</label>
+                    <input type="number" name="orden" class="form-control" [(ngModel)]="menu.ORDEN" step="1" />
+                </div>
+                <div class="col-8 d-flex flex-column justify-content-end gap-2">
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="nuevaPestana" name="nuevaPestana"
+                            [(ngModel)]="menu.ABRIR_EN_NUEVA_PESTANA">
+                        <label class="form-check-label" for="nuevaPestana">Abrir en nueva pestaña</label>
+                    </div>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="activo" name="activo"
+                            [(ngModel)]="menu.ACTIVO">
+                        <label class="form-check-label" for="activo">Activa (se muestra en el menú)</label>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </form>
+
+    <div class="actions-modal d-flex justify-content-end">
+        <button type="button" class="btn-guardar" [disabled]="guardando" (click)="guardar()">
+            {{ guardando ? 'Creando...' : 'Crear aplicación' }}
+        </button>
+    </div>
+</div>
+
+<!-- Lista editable de roles o grupos (antes de crear la app) -->
+<ng-template #editorLista let-tipo="tipo" let-etiqueta="etiqueta">
+    <div class="d-flex gap-2 mb-2">
+        <input type="text" class="form-control" [name]="'nuevoNombre-' + tipo" [(ngModel)]="nuevoDe(tipo).NOMBRE"
+            maxlength="100" [placeholder]="'Nombre del ' + etiqueta" (keydown.enter)="$event.preventDefault(); agregar(tipo)" />
+        <input type="text" class="form-control" [name]="'nuevaDesc-' + tipo" [(ngModel)]="nuevoDe(tipo).DESCRIPCION"
+            maxlength="250" placeholder="Descripción (opcional)" (keydown.enter)="$event.preventDefault(); agregar(tipo)" />
+        <button type="button" class="btn btn-outline-dark btn-sm text-nowrap" (click)="agregar(tipo)">
+            <mat-icon class="icono-btn">add</mat-icon> Agregar
+        </button>
+    </div>
+    @if (lista(tipo).length === 0) {
+    <small class="text-muted">Todavía no agregaste ningún {{ etiqueta }}.</small>
+    } @else {
+    <ul class="list-unstyled mb-0 items">
+        @for (item of lista(tipo); track item.NOMBRE; let i = $index) {
+        <li class="item d-flex align-items-center">
+            <div class="flex-grow-1">
+                <span class="fw-medium">{{ item.NOMBRE }}</span>
+                @if (item.DESCRIPCION) {
+                <small class="text-muted ms-2">{{ item.DESCRIPCION }}</small>
+                }
+            </div>
+            <button type="button" class="btn btn-link btn-sm text-danger p-0" [title]="'Quitar ' + etiqueta" (click)="quitar(tipo, i)">
+                <mat-icon>close</mat-icon>
+            </button>
+        </li>
+        }
+    </ul>
+    }
+</ng-template>
